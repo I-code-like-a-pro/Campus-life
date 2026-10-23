@@ -53,7 +53,7 @@ export async function openFeedback(getContext) {
 
     const lines = [
       `Thanks for trying Campus Life (early preview ${VERSION}). Tell us what you liked, what confused you and what you would add.`,
-      FORM_URL || EMAIL ? 'Choose how you would like to send it:' : 'Copy the report below and send it to whoever shared this game with you.'
+      FORM_URL || EMAIL ? 'Choose how you would like to send it:' : 'Copy a short anonymous report (no name, no money) and send it, with your thoughts, to whoever shared this game with you.'
     ];
     const pick = await showModal({ title: '💡 Send feedback', lines, buttons });
     if (pick === 'x') return;

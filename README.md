@@ -5,6 +5,7 @@ A phone-first 3D campus life game (three.js + Vite).
 ## Documents
 - [docs/GAME_SPEC.md](docs/GAME_SPEC.md): the full product and technical specification
 - [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md): what is built, what is partial and what is blocked
+- [docs/DEPLOY.md](docs/DEPLOY.md): putting the game online for reviewers (Vercel, Render, Railway, Netlify) and adding the feedback form
 
 ## Run
 ```
