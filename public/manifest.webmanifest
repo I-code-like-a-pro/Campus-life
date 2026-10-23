@@ -1,0 +1,11 @@
+{
+  "name": "Campus Life",
+  "short_name": "Campus Life",
+  "description": "Live the Nigerian student story: from JAMB results to graduation.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0f2c",
+  "theme_color": "#0a0f2c",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

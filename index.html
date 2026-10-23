@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#0a0f2c">
+  <meta name="description" content="Live the Nigerian student story in your browser: from JAMB results to graduation.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <title>Campus Life</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div id="top">
+    <div class="pill" id="clock"><span id="sun">🌞</span><span id="time">07:00</span><span id="day">Day 1</span></div>
+    <div class="right">
+      <div class="pill" id="weather">☀️</div>
+      <button class="pill iconbtn" id="portalbtn" aria-label="Phone">📱<span id="badge" hidden></span></button>
+      <button class="pill iconbtn" id="menubtn" aria-label="Menu">☰</button>
+      <button class="pill iconbtn" id="logbtn" aria-label="Campus gist log" hidden>📜</button>
+    </div>
+  </div>
+
+  <div id="stats">
+    <div class="pill" id="wallet"><span id="money">₦0</span><span id="mood">😐</span></div>
+    <div class="pill" id="goal" hidden></div>
+    <div class="pill" id="guide" hidden><span id="garrow">▲</span><span id="gtext"></span></div>
+    <div id="needs"></div>
+  </div>
+
+  <div id="banner"><b id="bt"></b><span id="bm"></span></div>
+  <div id="toast"></div>
+  <div id="tip" hidden></div>
+  <div id="log"><h4>Campus gist</h4><div id="loglist">Nothing yet. Just vibe.</div></div>
+  <div id="menu">
+    <h4 id="menuTitle"></h4>
+    <button id="resume">Resume</button>
+    <button id="feedbackbtn">💡 Send feedback</button>
+    <button id="newgame" class="danger">New game (erases save)</button>
+  </div>
+
+  <div id="panel"><div id="ptitle"></div><div id="pnote"></div><div id="acts"></div></div>
+  <div id="dark"></div>
+  <div id="fade"></div>
+  <div id="pad"><div id="knob"></div></div>
+  <div id="hint">Drag the stick to move<br>(WASD / arrows on desktop)</div>
+
+  <div id="modal" hidden>
+    <div class="mbox">
+      <h3 id="mTitle"></h3>
+      <div id="mBody"></div>
+      <div id="mBtns"></div>
+    </div>
+  </div>
+
+  <div id="start">
+    <div class="card-wrap" id="step1">
+      <h1>Campus Life</h1>
+      <p class="sub">You wrote JAMB. Now the waiting begins.</p>
+      <p class="preview-note">🚧 Early preview: art and content are still placeholder. Your ideas shape the game, so tap ☰ then <b>Send feedback</b> any time.</p>
+      <label class="field">Your name
+        <input id="nameInput" maxlength="16" placeholder="e.g. Tunde" autocomplete="off">
+      </label>
+      <p class="label">Your background</p>
+      <div id="bgs"></div>
+      <button id="next" class="primary">Next: fill your JAMB form</button>
+      <button id="continue" class="ghost" hidden></button>
+    </div>
+    <div class="card-wrap" id="step2" hidden>
+      <h1>JAMB / CAPS form</h1>
+      <p class="sub">Choose your university and course. You get two choices.</p>
+      <div id="choices"></div>
+      <p id="formErr" class="err"></p>
+      <button id="submitForm" class="primary">Submit and wait for results</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
