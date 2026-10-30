@@ -2,7 +2,7 @@
 // earlier build always loads in the newest one (spec F-004).
 
 const KEY = 'campuslife.save.v1';       // storage key kept stable across versions
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 /** Default "meta" block: progression, money history, notifications and tutorial flags (added in v2). */
 export function newMeta() {
@@ -15,14 +15,23 @@ export function newMeta() {
     ledger: [],                // recent money movements [{ day, text, amount }]
     inbox: [],                 // notification centre [{ id, day, icon, title, text, read }]
     savings: 0,
-    jobs: {}                   // job id -> { shifts, lastDay }
+    jobs: {},                  // action id -> { day, n } daily limits
+    // added in v3
+    health: { sick: null, immuneUntil: 0, visits: 0, recovered: 0, net: false, lastRoll: 0 },
+    pantry: 0,                 // portions of cooking ingredients
+    room: {},                  // decorations bought for the hostel room
+    bills: [],                 // [{ id, label, amount, due, paid }]
+    relations: {},             // npc id -> { points, lastTalk, lastGift }
+    clubs: []                  // joined club ids
   };
 }
 
 // migrations[n] upgrades a version-n save to version n + 1.
 const MIGRATIONS = {
   // v1 was the unversioned prototype save
-  1: s => ({ ...s, meta: s.meta ?? newMeta() })
+  1: s => ({ ...s, meta: s.meta ?? newMeta() }),
+  // v2 -> v3: health, pantry, room, bills, relations and clubs (filled in by the meta merge below)
+  2: s => ({ ...s, meta: { ...newMeta(), ...(s.meta || {}) } })
 };
 
 /** Upgrades any save to the current schema. Never mutates its input. Returns null for unusable data. */

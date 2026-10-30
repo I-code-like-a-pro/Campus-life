@@ -151,3 +151,23 @@ export async function bizmanager(c, npc) {
 }
 
 export const WORLD_DIALOGUES = { student, roommate, lecturer, librarian, vendor, bizmanager };
+
+/* ------------------------------ the nurse ------------------------------ */
+import { ILLNESSES } from './health.js';
+
+export async function nurse(c, npc) {
+  const h = c.state.meta.health;
+  const sick = h.sick;
+  let open = 'Welcome to the clinic. How are you feeling today?';
+  if (sick && !sick.diagnosed) open = 'You do not look well. Please see the doctor in the consulting room so we can find out what is wrong.';
+  else if (sick) open = `The doctor says you have ${ILLNESSES[sick.id].name.toLowerCase()}. Buy the prescribed drugs at the pharmacy counter and you will recover quickly.`;
+  else open = 'You look healthy. Keep it that way: eat well, sleep well and keep clean.';
+  await converse(c, npc, open, () => [
+    { label: '🦟 How do I avoid malaria?', run: () => 'Sleep under a mosquito net, especially in the rainy season. You can buy one at the market for ₦2,500. It cuts your risk a lot.' },
+    { label: '🧼 How do I stay healthy?', run: () => 'Bathe regularly, eat proper meals, sleep enough and do not let stress pile up. When your bars run low, you fall ill more easily.' },
+    { label: '🌫️ Why do I catch cold in harmattan?', run: () => 'The dry, dusty air and cold mornings. Eat well, keep warm and do not skip sleep.' },
+    { label: '🧭 Where is the market?', run: () => c.directionsTo('Campus Market') }
+  ]);
+}
+
+WORLD_DIALOGUES.nurse = nurse;

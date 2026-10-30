@@ -3,7 +3,7 @@ import { createSign } from './world.js';
 
 const lam = c => new THREE.MeshLambertMaterial({ color: c });
 
-export const ENTERABLE = new Set(['hostel', 'home', 'cafe', 'canteen', 'library', 'lecture', 'biz']);
+export const ENTERABLE = new Set(['hostel', 'home', 'cafe', 'canteen', 'library', 'lecture', 'biz', 'clinic']);
 
 const W = 20;      // room width (x)
 const D = 16;      // room depth (z): back wall at z = -8, open front edge at z = +8
@@ -107,6 +107,21 @@ export function buildInterior(scene, place, ox) {
       box(9, 2.2, 0.15, 0x1f4d33, 0, 4.2, -D / 2 + 0.15);      // price board
       spot('Computers', '🖥️', 0, 5.0, 4.2, ['browse', 'results']);
     },
+    clinic() {
+      solid(6, 1.2, 1.6, 0xd6a96a, -5, 0.6, -5.2);                          // reception and consulting desk
+      box(1.4, 0.9, 0.12, 0x222a35, -5, 1.7, -5.6);
+      [1, 5.5].forEach(z => {                                                // two beds along the left wall
+        solid(3.2, 0.6, 4, 0xf4f4f4, -7.6, 0.3, z);
+        box(3.0, 0.3, 3.2, 0x4a78c2, -7.6, 0.75, z + 0.3);
+        box(2.2, 0.25, 0.9, 0xffffff, -7.6, 0.95, z - 1.4);
+      });
+      solid(8, 4, 1, 0xe9eef2, 5, 2, -7.2);                                  // pharmacy shelves with boxes
+      [0xc0392b, 0x2f6fd0, 0x27ae60, 0xe5a52a].forEach((c, i) => box(1.4, 0.9, 0.5, c, 2.6 + i * 1.6, 1.8 + (i % 2), -6.6));
+      solid(6, 1.2, 1.4, 0x8a5a3a, 5, 0.6, -4.6);                            // pharmacy counter
+      box(0.5, 2.2, 0.15, 0x27ae60, 0, 3.4, -D / 2 + 0.15); box(2.2, 0.5, 0.15, 0x27ae60, 0, 3.4, -D / 2 + 0.15);   // green cross
+      spot('Consulting room', '🩺', -4.5, -2.6, 3.4, ['consult']);
+      spot('Pharmacy counter', '💊', 5, -2.6, 3.4, ['drugs', 'paracetamol']);
+    },
     biz() {
       solid(10, 1.4, 1.6, 0x8a5a3a, 0, 0.7, -6.4);                         // counter
       [-6, 6].forEach(x => {                                                // photocopiers and printers
@@ -178,6 +193,7 @@ export function buildInterior(scene, place, ox) {
     library: { x: ox, z: -4.6 },
     canteen: { x: ox + 5.5, z: -3.0 },
     biz:     { x: ox + 7, z: -3.5 },
+    clinic:  { x: ox + 0.5, z: -3.0 },
     hostel:  { x: ox + 1.5, z: -2.5 },
     home:    { x: ox + 1.5, z: -2.5 }
   };

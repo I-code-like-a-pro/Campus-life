@@ -80,8 +80,10 @@ export function createHud() {
     for (const { b, a } of panelButtons) b.disabled = !canDo(a);
   }
 
-  function update({ minutes, day, weatherIcon, blackoutAmount, needs, money, goal, weekday }) {
+  function update({ minutes, day, weatherIcon, blackoutAmount, needs, money, goal, weekday, status }) {
     const hour = minutes / 60;
+    $('status').hidden = !status;
+    if (status) $('status').textContent = status;
     $('goal').hidden = !goal;
     if (goal) $('goal').textContent = goal;
     $('time').textContent = formatTime(minutes);

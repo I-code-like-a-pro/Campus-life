@@ -218,7 +218,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
       const picks = shuffle(pool).slice(0, perCourse);
       c.usedQ.push(...picks);
       // preparation rules out wrong options; being exhausted or stressed takes one hint away (spec F-021)
-      const tired = !!state.needs && (state.needs.energy < 20 || state.needs.stress > 85);
+      const tired = (!!state.needs && (state.needs.energy < 20 || state.needs.stress > 85)) || !!state.meta?.health?.sick;
       const hide = Math.max(0, (c.knowledge >= 60 ? 2 : c.knowledge >= 25 ? 1 : 0) - (tired ? 1 : 0));
 
       let right = 0;
@@ -228,7 +228,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
         const ok = await showModal({
           title: `${kind} · ${c.code} · Q${i + 1}/${picks.length}`,
           lines: [q, ...(hide ? [`💡 Your preparation helped you rule out ${hide} wrong option${hide > 1 ? 's' : ''}.`] : []),
-            ...(tired ? ['😵 You are too tired or stressed to think clearly.'] : [])],
+            ...(tired ? ['😵 You are too tired, stressed or unwell to think clearly.'] : [])],
           buttons: options.map(o => ({ label: o.t, value: o.ok }))
         });
         if (ok) right++;

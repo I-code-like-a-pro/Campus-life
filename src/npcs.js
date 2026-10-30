@@ -156,6 +156,8 @@ export function interiorNpcDefs(place, interior) {
       return [{ ...base, id: `lib-${place.name}`, name: 'Mrs. Bello', role: 'Librarian', emoji: '📚', dialogue: 'librarian', shirt: 0x8e44ad, skin: 0x6b4a2f }];
     case 'canteen':
       return [{ ...base, id: `vend-${place.name}`, name: 'Mama Put', role: 'Canteen owner', emoji: '🍛', dialogue: 'vendor', shirt: 0xe67e22, skin: 0x3b2418 }];
+    case 'clinic':
+      return [{ ...base, id: `nurse-${place.name}`, name: 'Nurse Amaka', role: 'Nurse', emoji: '🩺', dialogue: 'nurse', shirt: 0xf4f7f5, skin: 0x5a3a26 }];
     case 'biz':
       return [{ ...base, id: `biz-${place.name}`, name: 'Madam Ify', role: 'Business Centre manager', emoji: '💼', dialogue: 'bizmanager', shirt: 0x16a085, skin: 0x8d5a3b }];
     case 'hostel':

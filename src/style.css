@@ -74,6 +74,8 @@ button { font:inherit; color:inherit; }
 
 #goal { font-size:12px; font-weight:600; max-width:230px; padding:6px 12px; border-radius:14px; background:rgba(10,143,79,.85); }
 #acts button .pay { color:#bff5d3; }
+#status { font-size:12px; font-weight:600; width:fit-content; padding:6px 12px; border-radius:14px; background:rgba(150,40,40,.88); }
+#status[hidden] { display:none; }
 #guide { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; width:fit-content; max-width:230px; padding:6px 12px; border-radius:14px; background:rgba(180,140,0,.88); }
 #guide[hidden] { display:none; }
 #garrow { display:inline-block; font-size:15px; line-height:1; transition:transform .15s; }

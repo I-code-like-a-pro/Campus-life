@@ -20,6 +20,15 @@ describe('save migration', () => {
     expect(s.meta.savings).toBe(900);
     expect(s.meta.inbox).toEqual([]);
   });
+  it('upgrades a v2 save, adding the v3 fields without touching existing meta', () => {
+    const s = migrate({ ...v1, v: 2, meta: { savings: 1200, inbox: [{ title: 'x' }] } });
+    expect(s.v).toBe(SCHEMA_VERSION);
+    expect(s.meta.savings).toBe(1200);
+    expect(s.meta.inbox).toHaveLength(1);
+    expect(s.meta.health).toEqual({ sick: null, immuneUntil: 0, visits: 0, recovered: 0, net: false, lastRoll: 0 });
+    expect(s.meta.pantry).toBe(0);
+    expect(s.meta.clubs).toEqual([]);
+  });
   it('rejects unusable data and saves from a newer build', () => {
     expect(migrate(null)).toBeNull();
     expect(migrate({})).toBeNull();

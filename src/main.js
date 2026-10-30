@@ -6,11 +6,12 @@ import { createCharacter } from './character.js';
 import { createInput } from './input.js';
 import { createDayNight } from './daynight.js';
 import { createEvents } from './events.js';
-import { createEventEngine } from './eventengine.js';
+import { createEventEngine, seasonFor } from './eventengine.js';
 import { createHud } from './hud.js';
 import { CAMPUSES } from './campuses.js';
 import { ACTIONS, COMING_SOON } from './actions.js';
-import { newNeeds, tickNeeds, applyEffects, naira } from './needs.js';
+import { newNeeds, tickNeeds, applyEffects, naira, setSickness } from './needs.js';
+import { rollIllness, fallSick, dayPassed, rest, diagnose, recover, statusLabel, ILLNESSES } from './health.js';
 import { loadSave, writeSave, clearSave, newMeta } from './save.js';
 import { showStart, showJambForm } from './start.js';
 import { showModal } from './modal.js';
@@ -235,8 +236,23 @@ async function main() {
   window.addEventListener('pagehide', save);
 
   /* ---- time passing (shared by the clock and by actions) ---- */
+  /** Once per game day: an illness runs its course, or a new one may strike (deterministic, see health.js). */
+  function dailyHealth(d) {
+    const h = state.meta.health;
+    if (dayPassed(h, d) === 'recovered') {
+      meta.track('recoveries');
+      meta.notify({ icon: '💪', title: 'You have recovered', text: 'You are feeling like yourself again.' });
+    }
+    const id = rollIllness({ day: d, season: seasonFor({ term: state.academic?.term ?? null, day: d }), needs: state.needs, health: h });
+    if (id) {
+      fallSick(h, id, d);
+      meta.notify({ icon: '🤒', title: 'You are not feeling well', text: 'Weak and feverish. See a doctor at the Health Centre, or rest and sleep.' });
+    }
+  }
+
   function afterTime(_crossed, prevDay) {
     for (let d = prevDay + 1; d <= dayNight.state.day; d++) {
+      dailyHealth(d);
       if ((d - 1) % 7 === 0) {
         state.money += ALLOWANCE;
         meta.ledger('Allowance from home', ALLOWANCE);
@@ -531,6 +547,10 @@ async function main() {
       return false;
     }
     if (a.needsAcademic && !state.academic) { toast('That is for enrolled students.'); return false; }
+    const health = state.meta.health;
+    if (a.pay && health.sick) { toast('🤒 You are too sick to work. Rest or see a doctor.'); return false; }
+    if (a.id === 'drugs' && !(health.sick && health.sick.diagnosed)) { toast(health.sick ? 'See the doctor first so you get the right drugs.' : 'You are not sick. No drugs needed.'); return false; }
+    if (a.id === 'buynet' && health.net) { toast('You already have a mosquito net.'); return false; }
     if (a.limit) {
       const j = state.meta.jobs[a.id] || (state.meta.jobs[a.id] = { day: 0, n: 0 });
       if (j.day !== day()) { j.day = day(); j.n = 0; }
@@ -546,6 +566,19 @@ async function main() {
     if (MEAL_IDS.has(a.id)) meta.track('meals');
     if (a.id === 'sleep') meta.track('sleeps');
     if (a.id === 'bathe') meta.track('bathes');
+    if (a.id === 'sleep') rest(health, 8);
+    if (a.id === 'buynet') { health.net = true; meta.track('netBought'); }
+    if (a.id === 'consult') {
+      meta.track('doctorVisits');
+      health.visits += 1;
+      const ill = diagnose(health);
+      meta.notify({ icon: '🩺', title: ill ? `Diagnosis: ${ill.name}` : 'Clean bill of health', text: ill ? `${ill.note} Buy the prescribed drugs at the pharmacy counter.` : 'The doctor says you are healthy. Keep it up!' });
+    }
+    if (a.id === 'drugs') {
+      recover(health, day());
+      meta.track('recoveries');
+      meta.notify({ icon: '💪', title: 'You have recovered', text: 'The medicine worked.' });
+    }
     toast(a.msg);
     save();
     return true;
@@ -686,6 +719,7 @@ async function main() {
     tickNeeds(state.needs, dt * 2);           // 2 game minutes per real second (matches the clock)
     if (state.needs.energy <= 0.5) faint();
     meta.refreshDay();
+    setSickness(state.meta.health.sick ? 1 : 0);
 
     // "sapa" tracking for the Sapa Survivor achievement
     const c = state.meta.counters;
@@ -712,7 +746,8 @@ async function main() {
     badge.textContent = unread > 9 ? '9+' : String(unread);
     hud.update({
       minutes: dayNight.state.minutes, day: dayNight.state.day, weatherIcon, blackoutAmount,
-      needs: state.needs, money: state.money, goal: goalText(), weekday: academics.weekday()
+      needs: state.needs, money: state.money, goal: goalText(), weekday: academics.weekday(),
+      status: statusLabel(state.meta.health)
     });
 
     // movement
@@ -797,6 +832,7 @@ async function main() {
       if (inside?.place.type === 'library') hints.show('library');
       if (actions.some(a => a.pay)) hints.show('work');
       if (world.powerCut) hints.show('power');
+      if (state.meta.health.sick) hints.show('health');
     }
 
     updateSigns(engine.camera.position);

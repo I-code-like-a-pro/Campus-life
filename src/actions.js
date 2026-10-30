@@ -29,11 +29,17 @@ export const ACTIONS = {
   ],
   shop: [
     { id: 'snack', label: '🍪 Buy snacks', cost: 500, minutes: 5, fx: { hunger: 14, fun: 3 }, msg: 'Biscuit and sweet. Small belle fill.' },
+    { id: 'buynet', label: '🦟 Mosquito net', cost: 2500, minutes: 5, msg: 'You hung a mosquito net. Malaria will think twice.' },
     { id: 'shopwork', label: '🧾 Help at the shop (2 hrs)', pay: 2000, minutes: 120, limit: 2, fx: { energy: -12, fun: -5, hunger: -6, stress: 2 }, needs: { energy: 20 }, msg: 'Oga paid you for the help.' }
   ],
   field: [
     { id: 'football', label: '⚽ Play football', minutes: 90, fx: { fun: 28, energy: -20, hygiene: -18, hunger: -12, stress: -10 }, needs: { energy: 20 }, msg: 'What a match! You are sweaty but happy.' },
     { id: 'jog', label: '🏃 Go for a jog', minutes: 40, fx: { fun: 8, energy: -10, hygiene: -8, stress: -12 }, needs: { energy: 12 }, msg: 'Fresh air cleared your head.' }
+  ],
+  clinic: [
+    { id: 'consult', label: '🩺 See the doctor', cost: 2000, minutes: 45, msg: 'The doctor examined you.' },
+    { id: 'drugs', label: '💊 Buy prescribed drugs', cost: 2500, minutes: 15, msg: 'You took your medicine. You feel much better.' },
+    { id: 'paracetamol', label: '💊 Paracetamol', cost: 500, minutes: 5, fx: { energy: 8, stress: -3 }, msg: 'The ache eases for now.' }
   ],
   biz: [
     { id: 'print', label: '🖨️ Run the printing desk (2 hrs)', pay: 3000, minutes: 120, limit: 2, needsPower: true, needs: { energy: 20 },

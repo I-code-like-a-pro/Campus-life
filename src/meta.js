@@ -42,6 +42,9 @@ export const ACHIEVEMENTS = [
   { id: 'explorer',      icon: '🧭', name: 'Explorer',           text: 'Visit 6 different places',                c: 'placesSeen',   n: 6 },
   { id: 'gist_master',   icon: '🗣️', name: 'Gist Master',        text: 'Have 20 conversations',                   c: 'talks',        n: 20 },
   { id: 'popular',       icon: '🌟', name: 'Popular',            text: 'Talk to 10 different people',             c: 'peopleMet',    n: 10 },
+  { id: 'checkup',       icon: '🩺', name: 'Check-up',           text: 'See a doctor',                            c: 'doctorVisits', n: 1 },
+  { id: 'back_on_feet',  icon: '💪', name: 'Back on Your Feet',  text: 'Recover from an illness',                 c: 'recoveries',   n: 1 },
+  { id: 'netted',        icon: '🦟', name: 'Netted',             text: 'Buy a mosquito net',                      c: 'netBought',    n: 1 },
   { id: 'first_ride',    icon: '🛺', name: 'First Ride',         text: 'Take a keke or okada',                    c: 'rides',        n: 1 },
   { id: 'rider',         icon: '🛵', name: 'Frequent Rider',     text: 'Take 10 rides',                           c: 'rides',        n: 10 },
   { id: 'weeks',         icon: '📅', name: 'Settling In',        text: 'Play for 14 game days',                   c: 'daysPlayed',   n: 14 }

@@ -16,10 +16,15 @@ export function newNeeds() {
   return { hunger: 85, energy: 90, fun: 70, hygiene: 85, stress: 15 };
 }
 
+// While the player is ill (see health.js) energy and fun drain faster and stress climbs.
+let sickLevel = 0;
+export const setSickness = level => { sickLevel = level; };
+
 export function tickNeeds(needs, minutes) {
   for (const k of Object.keys(RATE)) {
     let r = RATE[k];
     if (k === 'stress' && needs.hunger < 15) r += 0.02;     // hungry people get stressed
+    if (sickLevel) { if (k === 'energy') r -= 0.03 * sickLevel; if (k === 'fun') r -= 0.015 * sickLevel; if (k === 'stress') r += 0.015 * sickLevel; }
     needs[k] = clamp(needs[k] + r * minutes);
   }
 }

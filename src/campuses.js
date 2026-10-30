@@ -87,7 +87,12 @@ CAMPUSES.home = {
   ]
 };
 
-// A place to work and buy handouts, on every campus.
+// Shared buildings on every campus: somewhere to work and buy handouts, a clinic, and a market.
 for (const id of CAMPUS_ORDER) {
-  CAMPUSES[id].buildings.push({ name: 'Business Centre', emoji: '💼', type: 'biz', x: -26, z: 42, w: 12, d: 10, h: 5, color: 0xdde8f0, roof: 0x3a4f66 });
+  CAMPUSES[id].buildings.push(
+    { name: 'Business Centre', emoji: '💼', type: 'biz', x: -26, z: 42, w: 12, d: 10, h: 5, color: 0xdde8f0, roof: 0x3a4f66 },
+    { name: 'Health Centre', emoji: '🏥', type: 'clinic', x: -24, z: -44, w: 12, d: 9, h: 5, color: 0xe8f4ee, roof: 0x2d8f6f },
+    { name: 'Campus Market', emoji: '🛒', type: 'shop', x: 26, z: -44, w: 12, d: 9, h: 4, color: 0xf0d9c2, roof: 0x7a4a2a }
+  );
 }
+CAMPUSES.home.buildings.push({ name: 'Chemist', emoji: '💊', type: 'clinic', x: 26, z: 44, w: 10, d: 8, h: 5, color: 0xe8f4ee, roof: 0x2d8f6f });
