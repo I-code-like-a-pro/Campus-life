@@ -7,6 +7,7 @@ This is the complete journey a player lives, stage by stage. Each system is tagg
 - ⬜ not built yet
 - 🎯 recommended for the launch (next 4 weeks)
 - 🔮 after launch
+- ❌ out of scope (owner decision)
 
 Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sunday break. A session is 100L to 400L (500L for Medicine/Engineering is a post-launch option).
 
@@ -128,8 +129,8 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 |---|---|---|
 | Final results and CGPA | 🟡 | 🎯 degree class and honours |
 | Graduation ceremony | ⬜ 🎯 | Cap and gown event with a share card |
-| NYSC (mobilisation, camp, posting) | ⬜ 🎯 | The natural ending chapter |
-| Life after: job hunt, further study | ⬜ 🔮 | |
+| NYSC (mobilisation, camp, posting) | ❌ | Out of scope: owner decision, the game ends at graduation |
+| Life after: job hunt, further study | ❌ | Out of scope, the game ends at graduation |
 | Final summary screen (stats, achievements, "your story") | ⬜ 🎯 | Highly shareable |
 
 ---
@@ -170,10 +171,10 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 3. Launch-week social posts (see the marketing notes in chat).
 
 ## Definition of done for launch
-A new player can finish the whole story in one or two evenings of play (about 60 to 90 real minutes for the fast route) with no crashes: JAMB, admission, clearance, matriculation, at least two semesters, a graduation or an honest failure ending, and a final summary they want to share.
+A new player can finish the whole story in one or two evenings of play (about 60 to 90 real minutes for the fast route) with no crashes: JAMB, admission, clearance, matriculation, at least two semesters, a graduation or an honest failure ending (withdrawal), and a final summary they want to share.
 
 ## Owner decisions needed
-1. NYSC at the end: include it for launch, or end at graduation?
+1. ~~NYSC at the end~~ Decided: no NYSC. The game ends at graduation.
 2. Length: the full 4 years, or a shorter "fast track" of 2 years at launch?
 3. Backend (cloud save): decide before Week 3, or defer past launch?
 4. Who reviews questions and Pidgin lines for accuracy?
