@@ -177,4 +177,4 @@ A new player can finish the whole story in one or two evenings of play (about 60
 1. ~~NYSC at the end~~ Decided: no NYSC. The game ends at graduation.
 2. Length: the full 4 years, or a shorter "fast track" of 2 years at launch?
 3. Backend (cloud save): decide before Week 3, or defer past launch?
-4. Who reviews questions and Pidgin lines for accuracy?
+4. Who reviews the exam questions for accuracy? (No Pidgin: standard English only.)
