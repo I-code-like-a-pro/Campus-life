@@ -57,6 +57,8 @@ export function buildCampus(scene, campus, extraReserved = []) {
   const colliders = [];
   const places = [];
   const reserved = [...extraReserved]; // [x, z, halfWidth, halfDepth] kept free of trees
+  // Trees, lamps and windows are collected here and drawn as a few instanced meshes at the end (keeps draw calls low on phones).
+  const treeSpots = [], lampSpots = [], windowSpots = [];
 
   const box = (w, h, d, c, x, y, z, parent = scene) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), lambert(c));
@@ -102,10 +104,7 @@ export function buildCampus(scene, campus, extraReserved = []) {
       for (let c = 0; c < cols; c++) {
         const wx = (c - (cols - 1) / 2) * (o.w / cols) * 0.95;
         if (r === 0 && Math.abs(wx) < 2) continue;
-        const m = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), windowMat);
-        m.position.set(wx, 2.4 + r * 3, fz + face * 0.02);
-        if (face < 0) m.rotation.y = Math.PI;
-        g.add(m);
+        windowSpots.push({ x: o.x + wx, y: 2.4 + r * 3, z: o.z + fz + face * 0.02, ry: face < 0 ? Math.PI : 0 });
       }
     }
     g.position.set(o.x, 0, o.z);
@@ -121,19 +120,12 @@ export function buildCampus(scene, campus, extraReserved = []) {
   }
 
   function tree(x, z) {
-    const s = 0.8 + Math.random() * 0.7;
-    box(0.5 * s, 2.4 * s, 0.5 * s, 0x6b4a2b, x, 1.2 * s, z);
-    const crown = new THREE.Mesh(new THREE.SphereGeometry(1.9 * s, 10, 8), lambert(0x2f8f3a));
-    crown.position.set(x, 3.8 * s, z);
-    scene.add(crown);
+    treeSpots.push({ x, z, s: 0.8 + Math.random() * 0.7 });
     colliders.push({ x, z, hw: 0.6, hd: 0.6 });
   }
 
   function lamp(x, z) {
-    box(0.18, 5, 0.18, 0x333b44, x, 2.5, z);
-    const b = new THREE.Mesh(new THREE.SphereGeometry(0.45, 10, 8), bulbMat);
-    b.position.set(x, 5.2, z);
-    scene.add(b);
+    lampSpots.push({ x, z });
   }
 
   // ground and paths
@@ -223,6 +215,29 @@ export function buildCampus(scene, campus, extraReserved = []) {
   // boundary fence
   [[0, -60, 130, 0.4], [0, 60, 130, 0.4], [-60, 0, 0.4, 130], [60, 0, 0.4, 130]]
     .forEach(fn => box(fn[2], 1.4, fn[3], 0x8a8f94, fn[0], 0.7, fn[1]));
+
+  // batch the repeated small objects: one draw call per kind instead of one per object
+  const dummy = new THREE.Object3D();
+  const instanced = (geometry, material, spots, place) => {
+    if (!spots.length) return;
+    const mesh = new THREE.InstancedMesh(geometry, material, spots.length);
+    spots.forEach((t, i) => {
+      dummy.position.set(0, 0, 0); dummy.rotation.set(0, 0, 0); dummy.scale.set(1, 1, 1);
+      place(dummy, t);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.frustumCulled = false;
+    scene.add(mesh);
+  };
+  const unitBox = new THREE.BoxGeometry(1, 1, 1);
+  const unitSphere = (seg) => new THREE.SphereGeometry(1, seg, Math.max(6, seg - 2));
+  instanced(unitBox, lambert(0x6b4a2b), treeSpots, (d, t) => { d.position.set(t.x, 1.2 * t.s, t.z); d.scale.set(0.5 * t.s, 2.4 * t.s, 0.5 * t.s); });
+  instanced(unitSphere(10), lambert(0x2f8f3a), treeSpots, (d, t) => { d.position.set(t.x, 3.8 * t.s, t.z); d.scale.setScalar(1.9 * t.s); });
+  instanced(unitBox, lambert(0x333b44), lampSpots, (d, t) => { d.position.set(t.x, 2.5, t.z); d.scale.set(0.18, 5, 0.18); });
+  instanced(unitSphere(10), bulbMat, lampSpots, (d, t) => { d.position.set(t.x, 5.2, t.z); d.scale.setScalar(0.45); });
+  instanced(new THREE.PlaneGeometry(1.5, 1.5), windowMat, windowSpots, (d, w) => { d.position.set(w.x, w.y, w.z); d.rotation.y = w.ry; });
 
   return { colliders, places };
 }
