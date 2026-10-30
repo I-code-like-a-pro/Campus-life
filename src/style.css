@@ -148,3 +148,6 @@ h1 { margin:0; font-size:34px; letter-spacing:-.5px; }
 #maphint { margin:0; font-size:13px; opacity:.9; text-align:center; }
 #mapclose { padding:10px 22px; border:0; border-radius:12px; background:rgba(255,255,255,.18); font-weight:700; cursor:pointer; }
 .left-handed #minimap { right:auto; left:12px; top:auto; bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px); }
+
+.legal-links { margin:18px 0 0; font-size:12px; opacity:.75; text-align:center; line-height:1.7; }
+.legal-links a { color:inherit; }

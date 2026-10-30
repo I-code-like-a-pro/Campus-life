@@ -24,7 +24,7 @@ import { WORLD_DIALOGUES } from './worlddialogues.js';
 import { DESKS, DESK_RESERVED, buildDesks, nextStep } from './clearance.js';
 import { createAcademics } from './academics.js';
 import { createMeta } from './meta.js';
-import { createPhone } from './phone.js';
+import { createPhone, openAbout } from './phone.js';
 import { createHints } from './hints.js';
 import { settings, onSettingChange, applySettings } from './settings.js';
 import { unlockAudio, sfx, syncAudio } from './audio.js';
@@ -607,6 +607,10 @@ async function main() {
   });
   onSettingChange(() => { applySettings(engine); syncAudio(); });
   document.getElementById('portalbtn').addEventListener('click', () => { sfx('click'); runModal(() => phone.open()); });
+  document.getElementById('aboutbtn').addEventListener('click', () => {
+    document.getElementById('menu').classList.remove('open');
+    runModal(() => openAbout(showModal));
+  });
   document.getElementById('feedbackbtn').addEventListener('click', () => {
     document.getElementById('menu').classList.remove('open');
     runModal(() => openFeedback(() => ({ state, day: day() })));

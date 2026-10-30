@@ -19,6 +19,27 @@ const next = (list, v) => list[(list.indexOf(v) + 1) % list.length];
  * The phone: one hub for the student portal, bank, messages, goals and settings (spec F-122, F-007, F-082).
  * deps: { state, meta, academics, day(), give(n), spend(n) -> boolean, onSettingsChanged() }
  */
+/** The "About and legal" dialog (also reachable from the menu). */
+export async function openAbout(showModal) {
+  for (;;) {
+    const pick = await showModal({
+      title: 'ℹ️ About Campus Life',
+      lines: [
+        'Campus Life is a free, fan-made game about Nigerian student life. It is fiction and is not affiliated with, endorsed by or sponsored by any university, school or exam board it mentions.',
+        'Cut-offs for UI and OAU are game estimates, and quiz questions are for fun, not exam preparation.'
+      ],
+      buttons: [
+        { label: 'About and disclaimer', value: 'about' },
+        { label: 'Privacy policy', value: 'privacy' },
+        { label: 'Terms of use', value: 'terms' },
+        { label: 'Close', value: 'x', secondary: true }
+      ]
+    });
+    if (pick === 'x') return;
+    window.open(`/${pick}.html`, '_blank', 'noopener');
+  }
+}
+
 export function createPhone({ state, meta, academics, day, give, spend, onSettingsChanged, onOpenMap = () => {}, payBill = () => 'Not available.', getSnapshot = () => ({}), applyImportedSave = () => {} }) {
   const back = [{ label: '← Back', value: 'b' }];
 
