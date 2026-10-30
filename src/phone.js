@@ -3,6 +3,7 @@ import { settings, setSetting } from './settings.js';
 import { ACHIEVEMENTS } from './meta.js';
 import { naira } from './needs.js';
 import { DECOR, owed } from './housing.js';
+import { levelOf, CLUBS, clubSchedule, joinClub, leaveClub, MAX_CLUBS, CLUB_DUES, clubById } from './social.js';
 
 const SAVE_STEP = 5000;
 const MUM_GIFT = 3000;
@@ -51,6 +52,35 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
           await showModal({ title: '📞 Mum', lines: [`"Ah ah, again? Okay, I have sent ${naira(MUM_GIFT)}. Spend it well o!"`], buttons: back });
         }
       }
+    }
+  }
+
+  async function friendsApp() {
+    const list = Object.values(state.meta.relations).filter(r => r.points > 0).sort((a, b) => b.points - a.points);
+    await showModal({
+      title: '👥 Friends',
+      lines: list.length
+        ? list.slice(0, 25).map(r => `${levelOf(r.points).icon} ${r.name}: ${levelOf(r.points).name} (${r.points} points)`)
+        : ['You have not made any friends yet. Chat with people and tap "Spend time together".'],
+      buttons: back
+    });
+  }
+
+  async function clubsApp() {
+    for (;;) {
+      const joined = state.meta.clubs;
+      const pick = await showModal({
+        title: '🎪 Clubs',
+        lines: [`Join up to ${MAX_CLUBS} clubs (₦${CLUB_DUES} dues each). Meetings are in the evening.`, ...CLUBS.map(c => `${c.icon} ${c.name}: ${clubSchedule(c)}${joined.includes(c.id) ? ' ✅' : ''}`)],
+        buttons: [...CLUBS.map(c => ({ label: joined.includes(c.id) ? `Leave ${c.name}` : `Join ${c.name}`, value: c.id })), { label: '← Back', value: 'b', secondary: true }]
+      });
+      if (pick === 'b') return;
+      let msg;
+      if (joined.includes(pick)) { leaveClub(joined, pick); msg = `You left the ${clubById(pick).name}.`; }
+      else if (joined.length >= MAX_CLUBS) msg = `You can join at most ${MAX_CLUBS} clubs. Leave one first.`;
+      else if (!spend(CLUB_DUES)) msg = `Dues are ₦${CLUB_DUES}. You do not have enough.`;
+      else { joinClub(joined, pick); meta.ledger('Club dues', -CLUB_DUES); meta.track('clubsJoined'); msg = `Welcome to the ${clubById(pick).name}! Meetings: ${clubSchedule(clubById(pick))}.`; }
+      await showModal({ title: '🎪 Clubs', lines: [msg], buttons: back });
     }
   }
 
@@ -137,6 +167,8 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
         { label: '🗺️ Map and travel', value: 'map' },
         ...(state.hostel || state.meta.bills.length ? [{ label: '🏠 My room and bills', value: 'room' }] : []),
         { label: '🏦 Bank', value: 'bank' },
+        { label: '👥 Friends', value: 'friends' },
+        ...(state.academic ? [{ label: '🎪 Clubs', value: 'clubs' }] : []),
         { label: `💬 Messages${u ? ` (${u} new)` : ''}`, value: 'messages' },
         { label: '🏆 Goals and achievements', value: 'goals' },
         { label: '⚙️ Settings', value: 'settings' },
@@ -148,6 +180,8 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
       if (pick === 'portal') await academics.openPortal();
       else if (pick === 'room') await roomApp();
       else if (pick === 'bank') await bank();
+      else if (pick === 'friends') await friendsApp();
+      else if (pick === 'clubs') await clubsApp();
       else if (pick === 'messages') await messages();
       else if (pick === 'goals') await goals();
       else if (pick === 'settings') await settingsMenu();

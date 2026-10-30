@@ -1,4 +1,5 @@
 import { converse, asks, tip } from './dialogues.js';
+import { traitOf, levelOf, TONES, toneDelta, toneReply, GIFTS, giftDelta, FAVOURS, canAsk } from './social.js';
 
 /*
  * Dialogue for the living world: students, roommates, lecturers, the librarian, vendors and the Business Centre.
@@ -65,10 +66,49 @@ export const GIST = [
 
 const gistOrSituation = c => pickLine('gist-or-sit', [...situationLines(c), ...GIST]);
 
+/**
+ * "Spend time together": pick a tone, share a gift, or ask a favour once you are friends.
+ * Needs c.relation(npc), c.addRelation(npc, n), c.addLoan(npc), c.studyTogether(npc), c.borrowNotes(npc).
+ */
+export async function socialMenu(c, npc) {
+  const trait = traitOf(npc.id);
+  for (;;) {
+    const rel = c.relation(npc);
+    const lvl = levelOf(rel.points);
+    const buttons = [
+      ...Object.entries(TONES).map(([k, t]) => ({ label: t.label, value: `tone:${k}` })),
+      ...Object.entries(GIFTS).map(([k, g]) => ({ label: `${g.label} (₦${g.cost.toLocaleString('en-NG')})`, value: `gift:${k}` })),
+      ...(canAsk('study', rel.points) && c.state.academic ? [{ label: FAVOURS.study.label, value: 'study' }] : []),
+      ...(canAsk('loan', rel.points) ? [{ label: FAVOURS.loan.label, value: 'loan' }] : []),
+      ...(canAsk('notes', rel.points) && c.state.academic ? [{ label: FAVOURS.notes.label, value: 'notes' }] : []),
+      { label: '← Back', value: 'back', secondary: true }
+    ];
+    const pick = await c.say(npc, `${lvl.icon} ${lvl.name} (${rel.points} points). What would you like to do?`, buttons);
+    if (pick === 'back') return;
+
+    let reply = '';
+    if (pick.startsWith('tone:')) {
+      const tone = pick.slice(5);
+      if (!c.meta.trackOnce(`tone-${c.day()}`, npc.id, 'toneChats')) reply = 'We already had a long chat today. Let us talk tomorrow.';
+      else { c.addRelation(npc, toneDelta(trait, tone)); reply = toneReply(trait, tone); }
+    } else if (pick.startsWith('gift:')) {
+      const key = pick.slice(5);
+      const g = GIFTS[key];
+      const ok = c.doAction({ id: `gift-${key}-${npc.id}`, label: g.label, cost: g.cost, minutes: 5, limit: 1, msg: `You gave ${npc.name} a ${key === 'snack' ? 'snack' : 'gift'}.` });
+      if (ok) { c.addRelation(npc, giftDelta(trait, key)); c.meta.track('gifts'); reply = trait === 'foodie' && key === 'snack' ? 'Food! You really know me. Thank you!' : 'That is so kind. Thank you!'; }
+      else reply = 'You can only give me one of those a day, and you must have enough money.';
+    } else if (pick === 'study') reply = c.studyTogether(npc);
+    else if (pick === 'loan') reply = c.addLoan(npc);
+    else if (pick === 'notes') reply = c.borrowNotes(npc);
+    await c.say(npc, reply, [{ label: 'OK', value: 'ok' }]);
+  }
+}
+
 export async function student(c, npc) {
   const sit = situationLines(c);
   const open = sit.length && Math.random() < 0.65 ? pickLine(`sit-${npc.id}`, sit) : pickLine('gist', GIST);
   await converse(c, npc, `Hey! ${open}`, () => [
+    { label: '💞 Spend time together', run: async () => { await socialMenu(c, npc); } },
     { label: '💬 Any more gist?', run: () => gistOrSituation(c) },
     asks(c)(npc),
     { label: '📚 Any study tips?', run: () => `Sure. ${tip()}` }
@@ -85,6 +125,7 @@ export async function roommate(c, npc) {
       c.meta.track('friendly');
       return 'Haha, thanks! You are a real one.';
     } },
+    { label: '💞 Spend time together', run: async () => { await socialMenu(c, npc); } },
     { label: '💬 Gist me', run: () => gistOrSituation(c) },
     asks(c)(npc)
   ]);

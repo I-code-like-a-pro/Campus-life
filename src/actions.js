@@ -64,6 +64,6 @@ export const ACTIONS = {
 export const COMING_SOON = {
   lecture: 'Lectures and timetables arrive in the next stage.',
   library: 'Studying and assignments arrive in the next stage.',
-  auditorium: 'Events and convocations arrive in a later stage.',
+  auditorium: 'Clubs and Sunday fellowship meet here. Check your phone for club times.',
   park: 'Talk to the conductor to travel to school once you have admission.'
 };

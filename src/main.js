@@ -33,6 +33,7 @@ import { openFeedback } from './feedback.js';
 import { buildGrid, findPath } from './pathfind.js';
 import { createMapUI, createMinimap } from './map.js';
 import { MODES, fareFor, minutesFor, okadaScare } from './transport.js';
+import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS } from './social.js';
 
 const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES };
 
@@ -261,8 +262,11 @@ async function main() {
     for (let d = prevDay + 1; d <= dayNight.state.day; d++) {
       dailyHealth(d);
       for (const ev of dailyBillCheck(state.meta.bills, d)) {
-        if (ev.type === 'reminder') meta.notify({ icon: '💳', title: 'Hostel dues tomorrow', text: `${naira(owed(ev.bill))} is due tomorrow. Pay in your phone.` });
-        else meta.notify({ icon: '⚠️', title: 'Late fee added', text: `Your hostel dues are overdue. A late fee was added: ${naira(owed(ev.bill))} now.` });
+        if (ev.type === 'reminder') meta.notify({ icon: '💳', title: ev.bill.npc ? `Repay ${ev.bill.label.replace('Repay ', '')} tomorrow` : 'Hostel dues tomorrow', text: `${naira(owed(ev.bill))} is due tomorrow. Pay in your phone.` });
+        else if (ev.bill.npc) {
+          addRelation({ id: ev.bill.npc, name: ev.bill.label.replace('Repay ', '') }, -10);
+          meta.notify({ icon: '😠', title: `${ev.bill.label.replace('Repay ', '')} is upset`, text: 'You have not repaid your loan. Your friendship took a hit. Pay under My room and bills.' });
+        } else meta.notify({ icon: '⚠️', title: 'Late fee added', text: `Your hostel dues are overdue. A late fee was added: ${naira(owed(ev.bill))} now.` });
       }
       if ((d - 1) % 7 === 0) {
         state.money += ALLOWANCE;
@@ -474,7 +478,57 @@ async function main() {
     return tellWay(npc, dests[pick].target);
   }
 
+  /* ---- relationships (spec F-120) ---- */
+  const relation = npc => getRel(state.meta.relations, npc);
+  function addRelation(npc, n) {
+    const ch = addPoints(relation(npc), n);
+    if (ch.to > ch.from) {
+      const lvl = levelOf(relation(npc).points);
+      meta.notify({ icon: lvl.icon, title: `${npc.name} is now your ${lvl.name.toLowerCase()}`, text: 'Your friendship is growing.' });
+      if (ch.to >= 2 && ch.from < 2) meta.track('friendsMade');
+      if (ch.to >= 3 && ch.from < 3) meta.track('closeFriends');
+      if (ch.to >= 4 && ch.from < 4) meta.track('bestFriends');
+    }
+    return ch;
+  }
+  const weakestCourse = () => state.academic?.courses.slice().sort((a, b) => a.knowledge - b.knowledge)[0];
+  function studyTogether(npc) {
+    const c = weakestCourse();
+    if (!c) return 'You are not enrolled in any course yet.';
+    const ok = execute({ id: `study-${npc.id}`, label: 'Study together', minutes: 120, limit: 1, needsAcademic: true, fx: { energy: -8, fun: 6, hunger: -6, stress: -2 }, msg: `You and ${npc.name} studied together.` });
+    if (!ok) return 'We already studied together today. Let us rest.';
+    c.knowledge = Math.min(100, c.knowledge + 8);
+    addRelation(npc, 3);
+    return `Good session! We went through ${c.code}. (Preparation +8%)`;
+  }
+  function addLoan(npc) {
+    if (!meta.trackOnce(`loan-${Math.floor(day() / 7)}`, npc.id, 'loansTaken')) return 'I lent you money this week already. Let us wait until next week.';
+    state.money += FAVOURS.loan.amount;
+    meta.ledger(`Loan from ${npc.name}`, FAVOURS.loan.amount, { count: false });
+    addBill(state.meta.bills, loanBill(npc, day()));
+    return `Here is ₦${FAVOURS.loan.amount.toLocaleString('en-NG')}. Pay me back within a week, please. It will show under My room and bills.`;
+  }
+  function borrowNotes(npc) {
+    const c = weakestCourse();
+    if (!c) return 'You are not enrolled in any course yet.';
+    if (!meta.trackOnce(`notes-${Math.floor(day() / 7)}`, npc.id, 'notesBorrowed')) return 'You already have my notes this week.';
+    c.knowledge = Math.min(100, c.knowledge + 6);
+    addRelation(npc, 1);
+    return `My ${c.code} notes are in your bag now. (Preparation +6%)`;
+  }
+  /** Parties and club meetings are a chance to meet people: those nearby warm to you a little. */
+  function boostNearby() {
+    const p = player.group.position;
+    npcs.list.filter(n => n.where === null && n.present && n.dialogue === 'student' && Math.hypot(n.char.group.position.x - p.x, n.char.group.position.z - p.z) < 22)
+      .slice(0, 4).forEach(n => addRelation(n, 2));
+  }
+
   const talkContext = {
+    relation,
+    addRelation,
+    addLoan,
+    studyTogether,
+    borrowNotes,
     state,
     campus,
     meta,
@@ -505,6 +559,8 @@ async function main() {
     paused = true;
     meta.track('talks');
     meta.trackOnce('met', npc.id, 'peopleMet');
+    const gain = dailyChat(relation(npc), day());
+    if (gain) addRelation(npc, gain);
     try { await run(talkContext, npc); }
     finally { paused = false; save(); }
   }
@@ -523,8 +579,14 @@ async function main() {
     onSettingsChanged: () => { applySettings(engine); syncAudio(); minimap.setVisible(settings.minimap); },
     onOpenMap: () => mapUI.open(),
     payBill: id => {
+      const bill = state.meta.bills.find(b => b.id === id);
       const r = payHostelBill(state.meta.bills, id, state.money);
-      if (r.ok) { state.money -= r.cost; meta.ledger('Hostel dues', -r.cost); meta.track('billsPaid'); sfx('coin'); }
+      if (r.ok) {
+        state.money -= r.cost;
+        meta.ledger(bill.npc ? bill.label : 'Hostel dues', -r.cost, { count: !bill.npc });
+        if (bill.npc) addRelation({ id: bill.npc, name: bill.label.replace('Repay ', '') }, 3); else meta.track('billsPaid');
+        sfx('coin');
+      }
       return r.message;
     }
   });
@@ -588,6 +650,9 @@ async function main() {
     if (a.id === 'sleep') meta.track('sleeps');
     if (a.id === 'bathe') meta.track('bathes');
     if (a.id === 'sleep') { rest(health, 8); applyEffects(state.needs, { stress: -restBonus(state.meta.room) }); }
+    if (a.socialBoost) boostNearby();
+    if (a.clubId) meta.track('clubMeetings');
+    if (a.id === 'party') meta.track('parties');
     if (a.id === 'foodstuff') state.meta.pantry += 4;
     if (a.id === 'cook') { state.meta.pantry -= 1; meta.track('cooked'); }
     if (a.decor) {
@@ -801,7 +866,8 @@ async function main() {
     if (npc) {
       panelPlace = { name: npc.name, emoji: npc.emoji };
       actions = [{ id: 'talk', label: '💬 Talk', npc }];
-      note = npc.role;
+      const rel = state.meta.relations[npc.id];
+      note = rel && rel.points >= 8 ? `${npc.role} · ${levelOf(rel.points).name}` : npc.role;
     } else if (inside) {
       const it = inside.interior;
       if (Math.hypot(p.x - it.exit.x, p.z - it.exit.z) < it.exit.r) {
@@ -839,7 +905,10 @@ async function main() {
           activePlace = place;
           actions = [{ id: 'enter', label: '🚪 Enter' }];
         } else {
-          actions = ACTIONS[place.type] || [];
+          const sd = academics.semDay();
+          const social = state.academic && state.academic.phase !== 'pre'
+            ? socialActions({ venue: place.type, sd, hour: dayNight.state.minutes / 60, clubs: state.meta.clubs }) : [];
+          actions = [...(ACTIONS[place.type] || []), ...social];
           if (!actions.length) note = COMING_SOON[place.type] || '';
         }
       }
@@ -852,7 +921,7 @@ async function main() {
       if (playTime > 1) hints.show('move');
       else if (playTime > 16) hints.show('goal');
       if (Object.values(state.needs).some((val, i) => (i === 4 ? 100 - val : val) < 45)) hints.show('needs');
-      if (npc) hints.show('talk');
+      if (npc) { hints.show('talk'); if (npc.dialogue === 'student' || npc.dialogue === 'roommate') hints.show('social'); }
       if (activePlace) hints.show('enter');
       if (unread > 0 && !state.academic) hints.show('phone');
       if (state.academic) hints.show('portal');
@@ -911,7 +980,8 @@ async function main() {
     state, places, player, npcs, guide, enter: enterPlace, leave: leavePlace, get inside() { return inside; },
     checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
-    mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; }
+    mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
+    addRelation, relation, boostNearby
   };
 }
 

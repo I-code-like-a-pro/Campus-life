@@ -16,6 +16,7 @@ export const HINTS = {
   lecture:  'Lectures run at set times. Go to the right lecture hall and tap Attend before it ends.',
   library:  'Study at the library to raise your preparation. Better preparation rules out wrong answers in tests.',
   work:     'Jobs pay naira but cost energy. Watch your needs, and check the limit per day.',
+  social:   'Tap 💞 Spend time together to pick a tone, share a snack or ask a favour. Friends can lend money and study with you.',
   health:   'You are not feeling well. See a doctor at the Health Centre (or the Chemist at home), or rest and sleep to get better.',
   power:    'NEPA took the light. Phones, printers and browsing wait until power returns.'
 };
