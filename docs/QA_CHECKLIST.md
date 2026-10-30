@@ -45,3 +45,6 @@ npm test                  # all unit and balance tests
 node tools/balance.js     # prints the balance table for the three bot styles
 npm run build             # production build
 ```
+
+## Mobile-first rule
+The game is designed for phones first, desktop second. Every UI change must be checked at 375x812 (portrait), 320x568 (small phone) and 667x375 (landscape): no horizontal scroll, no overlapping HUD elements (joystick, action panel, Kick button, minimap, needs), touch targets at least 44px, and inputs at 16px font size.

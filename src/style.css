@@ -161,3 +161,40 @@ h1 { margin:0; font-size:34px; letter-spacing:-.5px; }
 #kickbtn small { font-size:9px; font-weight:400; opacity:.85; }
 #kickbtn:active { background:rgba(47,158,68,1); transform:scale(.95); }
 .left-handed #kickbtn { left:auto; right:calc(max(18px,env(safe-area-inset-right)) + 150px); }
+
+/* ---- mobile-first refinements: comfortable touch targets, short landscape screens, narrow phones ---- */
+.iconbtn { width:44px; height:44px; }
+#acts button { min-height:44px; align-items:center; }
+#mBtns button { min-height:48px; }
+.mbox { max-height:88vh; max-height:88dvh; overscroll-behavior:contain; }
+input, select, textarea { font-size:16px; }               /* stops iOS zooming the page on focus */
+button { touch-action:manipulation; }
+
+/* portrait phones: the Kick button sits above the joystick so it never collides with the action panel */
+@media (max-width:560px) and (orientation:portrait) {
+  #kickbtn { left:max(34px,calc(env(safe-area-inset-left) + 28px)); bottom:calc(max(22px,env(safe-area-inset-bottom)) + 146px); }
+  .left-handed #kickbtn { left:auto; right:max(34px,calc(env(safe-area-inset-right) + 28px)); }
+}
+
+/* short landscape screens: shrink the HUD so it never covers the joystick or the action panel */
+@media (max-height:520px) {
+  #needs { flex-direction:row; width:auto; gap:10px; padding:6px 10px; }
+  .need { gap:3px; }
+  .need b { flex:none; width:30px; }
+  #stats { top:calc(max(8px,env(safe-area-inset-top)) + 48px); }
+  #goal, #guide { max-width:min(46vw,300px); }
+  #toast { bottom:auto; top:calc(max(8px,env(safe-area-inset-top)) + 54px); max-width:min(50vw,360px); }
+  #minimap { width:76px; height:76px; }
+  #pad { width:116px; height:116px; bottom:max(14px,env(safe-area-inset-bottom)); }
+  #panel { bottom:max(12px,env(safe-area-inset-bottom)); }
+  #kickbtn { bottom:max(22px,env(safe-area-inset-bottom)); left:calc(max(18px,env(safe-area-inset-left)) + 130px); width:76px; height:76px; }
+}
+
+/* very narrow phones */
+@media (max-width:350px) {
+  #clock { font-size:13px; }
+  #acts button { font-size:13px; padding:8px 10px; }
+  #panel { width:47vw; }
+  #minimap { width:64px; height:64px; }
+  #goal, #guide { max-width:calc(100vw - 96px); }
+}
