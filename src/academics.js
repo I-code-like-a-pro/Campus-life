@@ -19,6 +19,18 @@ const EXAM_DAY = 6;          // Saturday
 const ASSIGNMENT_DUE = 5;    // Friday
 const CA_QUESTIONS = 3;      // per course
 const EXAM_QUESTIONS = 5;    // per course
+export const EXAM_CURVE = 1.4;   // raw exam fraction is raised to this power, so weak papers lose more than strong ones
+
+/**
+ * How many wrong options your preparation rules out. Easier in first year, harder later:
+ * the preparation needed for each hint rises with the year. Being tired, stressed or ill removes one.
+ */
+export function hintCount(knowledge, year, tired = false) {
+  const t1 = 25 + 5 * Math.min(2, Math.max(0, year - 1));
+  const t2 = 60 + 5 * Math.min(2, Math.max(0, year - 1));
+  return Math.max(0, (knowledge >= t2 ? 2 : knowledge >= t1 ? 1 : 0) - (tired ? 1 : 0));
+}
+
 const GRADES = [[70, 'A', 5], [60, 'B', 4], [50, 'C', 3], [45, 'D', 2], [40, 'E', 1], [0, 'F', 0]];
 
 const hhmm = h => `${String(h).padStart(2, '0')}:00`;
@@ -86,7 +98,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
       const attendance = lectures ? 10 * (c.att.ok + 0.5 * c.att.late) / lectures : 10;
       const assignment = c.assign.done ? 10 : Math.min(5, c.assign.progress * 3);
       const ca = (c.ca ?? 0) * 20;
-      const exam = (c.exam ?? 0) * 60;
+      const exam = Math.pow(c.exam ?? 0, EXAM_CURVE) * 60;
       const total = Math.round(attendance + assignment + ca + exam);
       const [, grade, points] = gradeFor(total);
       return { code: c.code, title: c.title, units: c.units, carry: c.carry, total, grade, points };
@@ -220,7 +232,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
       c.usedQ.push(...picks);
       // preparation rules out wrong options; being exhausted or stressed takes one hint away (spec F-021)
       const tired = (!!state.needs && (state.needs.energy < 20 || state.needs.stress > 85)) || !!state.meta?.health?.sick;
-      const hide = Math.max(0, (c.knowledge >= 60 ? 2 : c.knowledge >= 25 ? 1 : 0) - (tired ? 1 : 0));
+      const hide = hintCount(c.knowledge, a.year, tired);
 
       let right = 0;
       for (let i = 0; i < picks.length; i++) {

@@ -3,7 +3,7 @@
  * Pure rules, so they can be tested. State lives in state.meta (bills, pantry, room).
  */
 
-export const HOSTEL_DUES = 6000;
+export const HOSTEL_DUES = 10000;
 export const LATE_FEE = 1000;
 export const PANTRY_PER_PURCHASE = 4;
 export const BURN_CHANCE = 0.15;

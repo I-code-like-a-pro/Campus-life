@@ -24,6 +24,7 @@ import { WORLD_DIALOGUES } from './worlddialogues.js';
 import { DESKS, DESK_RESERVED, buildDesks, nextStep } from './clearance.js';
 import { createAcademics } from './academics.js';
 import { createMeta } from './meta.js';
+import { ALLOWANCE, FARE, TRANSPORT_GIFT } from './economy.js';
 import { createPhone, openAbout } from './phone.js';
 import { createHints } from './hints.js';
 import { settings, onSettingChange, applySettings } from './settings.js';
@@ -37,15 +38,12 @@ import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS
 
 const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES };
 
-const ALLOWANCE = 25000;      // arrives every 7th day
 const SPEED = 9;
 const REACH = 5;              // how close you must be to a building to use it
 const TALK_REACH = 3.8;       // how close you must be to an NPC to talk (outdoors)
 const TALK_REACH_INSIDE = 2.6;// indoors, so furniture panels aren't hidden by NPCs behind counters
 const JAMB_DAY = 2;           // JAMB result: Day 2 (about 8.5 real minutes after starting at 07:00 on Day 1)
 const ADMISSION_GAP = 1;      // admission list: one day later, Day 3 (about 20.5 real minutes in)
-const FARE = 3500;            // bus fare to school
-const TRANSPORT_GIFT = 10000; // Mum's gift when you get admission
 const ARRIVAL = { x: 0, z: 48 };   // where the bus drops you: just inside the main gate
 const MEAL_IDS = new Set(['jollof', 'pie', 'zobo', 'momfood', 'snack', 'vendorhalf', 'cook']);
 const CROWD_BY_QUALITY = { low: 4, medium: 8, high: 12 };

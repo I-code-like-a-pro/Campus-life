@@ -4,6 +4,7 @@
 
 const HOSTEL = [
   { id: 'sleep', label: '😴 Sleep (8 hrs)', minutes: 480, sleep: true, fx: { energy: 85, stress: -15, hunger: -22, hygiene: -8 }, msg: 'You slept well. New day, new gist.' },
+  { id: 'nap', label: '😪 Power nap (1 hr)', minutes: 60, sleep: true, fx: { energy: 16, stress: -2, hunger: -3 }, msg: 'A short nap. You feel a bit sharper.' },
   { id: 'bathe', label: '🚿 Bathe', minutes: 15, fx: { hygiene: 65, stress: -3 }, msg: 'Fresh and clean!' },
   { id: 'cook', label: '🍳 Cook a meal (uses 1 foodstuff)', minutes: 45, needsPantry: 1, fx: { hunger: 48, fun: 5, stress: -2 }, msg: 'You cooked a proper meal and saved money.' },
   { id: 'phone', label: '📱 Scroll TikTok', minutes: 60, needsPower: true, fx: { fun: 22, energy: -4, stress: -4 }, msg: 'One hour don waka. Nice videos!' },
@@ -18,8 +19,8 @@ export const ACTIONS = {
     { id: 'momfood', label: '🍲 Mum\'s jollof', minutes: 20, fx: { hunger: 50, fun: 5, stress: -3 }, msg: 'Mama cooked! Free food, no stories.' }
   ],
   canteen: [
-    { id: 'jollof', label: '🍛 Jollof & chicken', cost: 2500, minutes: 20, fx: { hunger: 55, fun: 5 }, msg: 'Jollof sweet die!' },
-    { id: 'pie', label: '🥧 Meat pie', cost: 700, minutes: 5, fx: { hunger: 18 }, msg: 'Quick bite, quick mouth.' },
+    { id: 'jollof', label: '🍛 Jollof & chicken', cost: 3000, minutes: 20, fx: { hunger: 55, fun: 5 }, msg: 'Jollof sweet die!' },
+    { id: 'pie', label: '🥧 Meat pie', cost: 900, minutes: 5, fx: { hunger: 18 }, msg: 'Quick bite, quick mouth.' },
     { id: 'zobo', label: '🥤 Zobo drink', cost: 300, minutes: 5, fx: { hunger: 5, fun: 4, stress: -2 }, msg: 'Chilled zobo. Refreshing!' },
     { id: 'canteenjob', label: '🍽️ Serve food (2 hrs)', pay: 2500, minutes: 120, limit: 2, needs: { energy: 20 },
       fx: { energy: -14, fun: -6, hunger: -6, hygiene: -6, stress: 3 }, msg: 'You served a long queue. Oga madam paid you.' }

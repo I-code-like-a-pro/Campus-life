@@ -86,7 +86,7 @@ export function buildInterior(scene, place, ox) {
       box(1, 0.2, 0.6, 0xb0b8c0, -8.8, 4.2, 4.6);
       // rug
       box(5, 0.04, 3, 0xc2694a, 1, 0.02, 1);
-      spot('Bed', '🛏️', -6.5, -2.4, 3.8, ['sleep']);
+      spot('Bed', '🛏️', -6.5, -2.4, 3.8, ['sleep', 'nap']);
       spot('Desk & phone', '📱', 4.5, -4.8, 3.4, ['phone', 'freelance']);
       // kitchenette on the right wall
       solid(2.4, 1.2, 3.6, 0xdfe5e8, 8.4, 0.6, 0.8);
