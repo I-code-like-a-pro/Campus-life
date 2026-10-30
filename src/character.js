@@ -98,3 +98,19 @@ export function createCharacter(opts = {}) {
 
   return { group, update };
 }
+
+/**
+ * Draws a translucent outline of the character wherever something is in front of it (a building, a wall, a tree), so the
+ * player never "disappears" behind scenery. It only appears where the real body is hidden (depth test is inverted).
+ */
+export function addXray(group, color = 0x8fd0ff) {
+  const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.6, depthFunc: THREE.GreaterDepth, depthWrite: false });
+  const meshes = [];
+  group.traverse(o => { if (o.isMesh && !o.userData.xray) meshes.push(o); });
+  for (const m of meshes) {
+    const ghost = new THREE.Mesh(m.geometry, mat);
+    ghost.userData.xray = true;
+    ghost.renderOrder = 10;
+    m.add(ghost);                 // a child of the part, so it follows every animated limb
+  }
+}

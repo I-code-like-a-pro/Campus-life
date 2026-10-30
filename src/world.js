@@ -126,6 +126,7 @@ export function buildCampus(scene, campus, extraReserved = []) {
 
   function lamp(x, z) {
     lampSpots.push({ x, z });
+    colliders.push({ x, z, hw: 0.3, hd: 0.3 });
   }
 
   // ground and paths
@@ -254,14 +255,24 @@ export function updateDoors(places, playerPos, dt) {
 }
 
 // Push a circle (radius r) at `pos` out of every box collider and keep it inside `bounds`.
+// Two passes so being pushed out of one box can't leave you inside the next, and if the centre is already
+// inside a box it is pushed out through the nearest side (never always the same way, which could tunnel through a wall).
 export function resolveCollisions(pos, colliders, r = 0.75, bounds = BOUNDS) {
-  for (const c of colliders) {
-    const nx = Math.max(c.x - c.hw, Math.min(pos.x, c.x + c.hw));
-    const nz = Math.max(c.z - c.hd, Math.min(pos.z, c.z + c.hd));
-    const dx = pos.x - nx, dz = pos.z - nz, dd = Math.hypot(dx, dz);
-    if (dd < r) {
-      if (dd > 1e-4) { pos.x = nx + dx / dd * r; pos.z = nz + dz / dd * r; }
-      else pos.x += r;
+  for (let pass = 0; pass < 2; pass++) {
+    for (const c of colliders) {
+      const nx = Math.max(c.x - c.hw, Math.min(pos.x, c.x + c.hw));
+      const nz = Math.max(c.z - c.hd, Math.min(pos.z, c.z + c.hd));
+      const dx = pos.x - nx, dz = pos.z - nz, dd = Math.hypot(dx, dz);
+      if (dd >= r) continue;
+      if (dd > 1e-4) { pos.x = nx + dx / dd * r; pos.z = nz + dz / dd * r; continue; }
+      // centre inside the box: leave by the closest face
+      const toLeft = pos.x - (c.x - c.hw), toRight = (c.x + c.hw) - pos.x;
+      const toBack = pos.z - (c.z - c.hd), toFront = (c.z + c.hd) - pos.z;
+      const m = Math.min(toLeft, toRight, toBack, toFront);
+      if (m === toLeft) pos.x = c.x - c.hw - r;
+      else if (m === toRight) pos.x = c.x + c.hw + r;
+      else if (m === toBack) pos.z = c.z - c.hd - r;
+      else pos.z = c.z + c.hd + r;
     }
   }
   pos.x = Math.max(bounds.minX, Math.min(bounds.maxX, pos.x));

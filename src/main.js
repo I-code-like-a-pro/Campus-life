@@ -3,7 +3,7 @@ import { createEngine } from './engine.js';
 import { buildCampus, resolveCollisions, updateDoors, updateSigns, SPAWN, BOUNDS } from './world.js';
 import { buildInterior, addDecor, ENTERABLE } from './interiors.js';
 import { newBill, addBill, dailyBillCheck, payBill as payHostelBill, cookBurns, restBonus, owed, HOSTEL_DUES } from './housing.js';
-import { createCharacter } from './character.js';
+import { createCharacter, addXray } from './character.js';
 import { createInput } from './input.js';
 import { createDayNight } from './daynight.js';
 import { createEvents } from './events.js';
@@ -109,6 +109,7 @@ async function main() {
   // createCharacter({ modelUrl: '/assets/models/student.glb' })
   const player = createCharacter();
   player.group.position.set(state.x, 0, state.z);
+  addXray(player.group);
   engine.scene.add(player.group);
 
   const npcs = createNpcs(engine.scene, colliders);
@@ -862,13 +863,18 @@ async function main() {
 
     // movement
     const v = driveAutoWalk(input.read());
+    const solids = inside ? inside.interior.colliders : colliders;
+    const limits = inside ? inside.interior.bounds : undefined;
     if (v.len > 0.08) {
-      player.group.position.x += v.x * SPEED * dt;
-      player.group.position.z += v.y * SPEED * dt;
       player.group.rotation.y = Math.atan2(v.x, v.y);
-    }
-    if (inside) resolveCollisions(player.group.position, inside.interior.colliders, 0.75, inside.interior.bounds);
-    else resolveCollisions(player.group.position, colliders);
+      // move in small steps (at most 0.3 units) and resolve each one, so no frame rate can carry you through a wall
+      const stride = SPEED * dt, steps = Math.max(1, Math.ceil(stride / 0.3));
+      for (let i = 0; i < steps; i++) {
+        player.group.position.x += v.x * stride / steps;
+        player.group.position.z += v.y * stride / steps;
+        resolveCollisions(player.group.position, solids, 0.75, limits);
+      }
+    } else resolveCollisions(player.group.position, solids, 0.75, limits);
     player.update(dt, v.len);
     const where = inside ? inside.place.name : null;
     if (!inside) updateDoors(places, player.group.position, dt);
@@ -999,7 +1005,7 @@ async function main() {
     checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
     mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
-    addRelation, relation, boostNearby, engine
+    addRelation, relation, boostNearby, engine, colliders, resolveCollisions
   };
 }
 
