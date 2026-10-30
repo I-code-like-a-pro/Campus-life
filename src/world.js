@@ -146,6 +146,18 @@ export function buildCampus(scene, campus, extraReserved = []) {
     scene.add(ring);
     box(0.2, 3, 5, 0xffffff, f.x + f.w / 2 - 0.5, 1.5, f.z);
     box(0.2, 3, 5, 0xffffff, f.x - f.w / 2 + 0.5, 1.5, f.z);
+    // Fence all round the pitch (solid), with one gap in the west side: the entrance.
+    const fx0 = f.x - f.w / 2 - 0.6, fx1 = f.x + f.w / 2 + 0.6, fz0 = f.z - f.d / 2 - 0.6, fz1 = f.z + f.d / 2 + 0.6, gap = 2.4;
+    const fence = (xa, za, xb, zb) => {
+      const len = Math.hypot(xb - xa, zb - za), cx = (xa + xb) / 2, cz = (za + zb) / 2, alongX = Math.abs(xb - xa) > 0;
+      box(alongX ? len : 0.12, 0.12, alongX ? 0.12 : len, 0xeeeeee, cx, 1.0, cz);
+      box(alongX ? len : 0.12, 0.12, alongX ? 0.12 : len, 0xeeeeee, cx, 0.5, cz);
+      for (let t = 0; t <= len + 0.01; t += len) box(0.2, 1.3, 0.2, 0x8a8a8a, alongX ? xa + t : xa, 0.65, alongX ? za : za + t);
+      colliders.push({ x: cx, z: cz, hw: alongX ? len / 2 : 0.15, hd: alongX ? 0.15 : len / 2 });
+    };
+    fence(fx0, fz0, fx1, fz0); fence(fx0, fz1, fx1, fz1);          // long sides
+    fence(fx1, fz0, fx1, fz1);                                       // east end
+    fence(fx0, fz0, fx0, f.z - gap); fence(fx0, f.z + gap, fx0, fz1);   // west end, with the entrance between
     sign('⚽', f.name, f.x, 5, f.z);
     reserved.push([f.x, f.z, f.w / 2 + 3, f.d / 2 + 3]);
     places.push({
