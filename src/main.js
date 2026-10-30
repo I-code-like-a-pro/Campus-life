@@ -981,7 +981,7 @@ async function main() {
     checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
     mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
-    addRelation, relation, boostNearby
+    addRelation, relation, boostNearby, engine
   };
 }
 
