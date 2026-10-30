@@ -28,6 +28,15 @@
     <div id="needs"></div>
   </div>
 
+  <canvas id="minimap" width="96" height="96" aria-label="Minimap. Tap to open the full map."></canvas>
+  <div id="maplayer" hidden>
+    <div class="mapbox">
+      <canvas id="mapcanvas" aria-label="Campus map"></canvas>
+      <p id="maphint"></p>
+      <button id="mapclose">Close map</button>
+    </div>
+  </div>
+
   <div id="banner"><b id="bt"></b><span id="bm"></span></div>
   <div id="toast"></div>
   <div id="tip" hidden></div>

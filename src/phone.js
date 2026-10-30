@@ -16,7 +16,7 @@ const next = (list, v) => list[(list.indexOf(v) + 1) % list.length];
  * The phone: one hub for the student portal, bank, messages, goals and settings (spec F-122, F-007, F-082).
  * deps: { state, meta, academics, day(), give(n), spend(n) -> boolean, onSettingsChanged() }
  */
-export function createPhone({ state, meta, academics, day, give, spend, onSettingsChanged }) {
+export function createPhone({ state, meta, academics, day, give, spend, onSettingsChanged, onOpenMap = () => {} }) {
   const back = [{ label: '← Back', value: 'b' }];
 
   async function bank() {
@@ -95,6 +95,7 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
           { label: `✋ Joystick on the ${settings.leftHanded ? 'right' : 'left'}`, value: 'leftHanded' },
           { label: `🐢 Reduced motion: ${onOff(settings.reducedMotion)}`, value: 'reducedMotion' },
           { label: `💡 Tutorial hints: ${onOff(settings.hints)}`, value: 'hints' },
+          { label: `🗺️ Minimap: ${onOff(settings.minimap)}`, value: 'minimap' },
           { label: `📊 Share anonymous usage data: ${onOff(settings.analytics)}`, value: 'analytics' },
           { label: '← Back', value: 'b', secondary: true }
         ]
@@ -111,6 +112,7 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
       const u = meta.unread();
       const buttons = [
         ...(state.academic ? [{ label: '🎓 Student portal', value: 'portal' }] : []),
+        { label: '🗺️ Map and travel', value: 'map' },
         { label: '🏦 Bank', value: 'bank' },
         { label: `💬 Messages${u ? ` (${u} new)` : ''}`, value: 'messages' },
         { label: '🏆 Goals and achievements', value: 'goals' },
@@ -119,6 +121,7 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
       ];
       const pick = await showModal({ title: '📱 Phone', lines: [`${state.name} · ${naira(state.money)}`], buttons });
       if (pick === 'x') return;
+      if (pick === 'map') { onOpenMap(); return; }
       if (pick === 'portal') await academics.openPortal();
       else if (pick === 'bank') await bank();
       else if (pick === 'messages') await messages();

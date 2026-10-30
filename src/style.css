@@ -134,3 +134,15 @@ h1 { margin:0; font-size:34px; letter-spacing:-.5px; }
 :focus-visible { outline:3px solid #ffd54a; outline-offset:2px; }
 
 .preview-note { margin:-6px 0 16px; padding:8px 12px; border-radius:12px; background:rgba(255,213,74,.12); border:1px solid rgba(255,213,74,.35); font-size:12px; line-height:1.4; }
+
+/* minimap and map screen */
+#minimap { position:fixed; right:12px; top:calc(max(10px,env(safe-area-inset-top)) + 54px); width:92px; height:92px; border-radius:14px; border:2px solid rgba(255,255,255,.55);
+  box-shadow:0 2px 10px rgba(0,0,0,.4); z-index:4; cursor:pointer; background:#222; }
+#minimap[hidden] { display:none; }
+#maplayer { position:fixed; inset:0; z-index:12; background:rgba(5,10,20,.8); display:flex; align-items:center; justify-content:center; touch-action:none; }
+#maplayer[hidden] { display:none; }
+.mapbox { display:flex; flex-direction:column; align-items:center; gap:8px; }
+#mapcanvas { border-radius:16px; border:3px solid rgba(255,255,255,.6); background:#222; touch-action:none; }
+#maphint { margin:0; font-size:13px; opacity:.9; text-align:center; }
+#mapclose { padding:10px 22px; border:0; border-radius:12px; background:rgba(255,255,255,.18); font-weight:700; cursor:pointer; }
+.left-handed #minimap { right:auto; left:12px; top:auto; bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px); }

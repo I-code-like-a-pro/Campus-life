@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { createEngine } from './engine.js';
-import { buildCampus, resolveCollisions, updateDoors, updateSigns, SPAWN } from './world.js';
+import { buildCampus, resolveCollisions, updateDoors, updateSigns, SPAWN, BOUNDS } from './world.js';
 import { buildInterior, ENTERABLE } from './interiors.js';
 import { createCharacter } from './character.js';
 import { createInput } from './input.js';
@@ -28,6 +28,9 @@ import { settings, onSettingChange, applySettings } from './settings.js';
 import { unlockAudio, sfx, syncAudio } from './audio.js';
 import { installErrorHandlers, track } from './telemetry.js';
 import { openFeedback } from './feedback.js';
+import { buildGrid, findPath } from './pathfind.js';
+import { createMapUI, createMinimap } from './map.js';
+import { MODES, fareFor, minutesFor, okadaScare } from './transport.js';
 
 const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES };
 
@@ -111,6 +114,7 @@ async function main() {
   [...npcDefsFor(campus, places), ...deskNpcs].forEach(npcs.add);
   const crowdCount = campus.id === 'home' ? 4 : CROWD_BY_QUALITY[settings.quality] ?? 8;
   crowdDefs(campus, crowdCount, state.name.length * 97 + 13).forEach(npcs.add);
+  const navGrid = buildGrid(colliders, BOUNDS);
 
   /* ---- progression, notifications, phone ---- */
   const meta = createMeta({
@@ -489,7 +493,8 @@ async function main() {
     state, meta, academics, day,
     give: n => { state.money += n; },
     spend: n => { if (state.money < n) return false; state.money -= n; return true; },
-    onSettingsChanged: () => { applySettings(engine); syncAudio(); }
+    onSettingsChanged: () => { applySettings(engine); syncAudio(); minimap.setVisible(settings.minimap); },
+    onOpenMap: () => mapUI.open()
   });
   onSettingChange(() => { applySettings(engine); syncAudio(); });
   document.getElementById('portalbtn').addEventListener('click', () => { sfx('click'); runModal(() => phone.open()); });
@@ -586,6 +591,83 @@ async function main() {
   let prev = performance.now();
   let playTime = 0;
 
+  /* ---- map, auto-walk and fast travel (spec F-043, F-046) ---- */
+  let autoWalk = null;                         // { path, i } while the character walks itself somewhere
+  const getMapScene = () => ({
+    campus,
+    places,
+    desks: state.clearance && !state.clearance.done ? DESKS : [],
+    player: player.group.position,
+    npcs: npcs.list.filter(n => n.where === null).map(n => ({ x: n.char.group.position.x, z: n.char.group.position.z })),
+    target: guide.target,
+    indoors: !!inside
+  });
+  const mapUI = createMapUI({ getScene: getMapScene, onDestination: dest => runModal(() => chooseTrip(dest)) });
+  const minimap = createMinimap({ getScene: getMapScene, onTap: () => { sfx('click'); mapUI.open(); } });
+  minimap.setVisible(settings.minimap);
+
+  async function chooseTrip(dest) {
+    const dist = Math.hypot(dest.x - player.group.position.x, dest.z - player.group.position.z);
+    const opt = id => `${MODES[id].icon} ${MODES[id].name}${id === 'walk' ? ' (free' : ` (${naira(fareFor(id, dist))}`}, about ${minutesFor(id, dist)} min)`;
+    const pick = await showModal({
+      title: `${dest.emoji} ${dest.label}`,
+      lines: [`About ${Math.round(dist)} metres from you.`],
+      buttons: [
+        { label: '📍 Show it on my screen', value: 'guide' },
+        { label: opt('walk'), value: 'walk' },
+        { label: opt('keke'), value: 'keke' },
+        { label: opt('okada'), value: 'okada' },
+        { label: 'Cancel', value: 'x', secondary: true }
+      ]
+    });
+    if (pick === 'guide') guide.set({ x: dest.x, z: dest.z, label: dest.label });
+    else if (pick === 'walk') startWalk(dest);
+    else if (pick === 'keke' || pick === 'okada') rideTo(dest, pick);
+  }
+
+  function startWalk(dest) {
+    if (inside) { toast('Step outside first.'); return; }
+    const path = findPath(navGrid, player.group.position, dest);
+    if (!path) { toast('There is no way through to there.'); return; }
+    autoWalk = { path, i: 0 };
+    toast(`🚶 Walking to ${dest.label}. Move the joystick to stop.`);
+  }
+
+  function rideTo(dest, modeId) {
+    if (inside) { toast('Step outside first.'); return false; }
+    const dist = Math.hypot(dest.x - player.group.position.x, dest.z - player.group.position.z);
+    const fare = fareFor(modeId, dist);
+    if (state.money < fare) { toast('Money no reach for that ride. Try walking!'); return false; }
+    state.money -= fare;
+    meta.ledger(`${MODES[modeId].name} ride`, -fare);
+    meta.track('rides');
+    const scare = modeId === 'okada' && okadaScare(Math.random());
+    consume({ minutes: minutesFor(modeId, dist), fx: { stress: scare ? 8 : modeId === 'okada' ? 2 : 0, energy: -1 } });
+    autoWalk = null;
+    fadeThrough(() => {
+      player.group.position.set(dest.x, 0, dest.z);
+      resolveCollisions(player.group.position, colliders);
+      engine.camera.position.set(dest.x, 15, dest.z + 17);
+    });
+    toast(scare ? '🛵 The rider zig-zagged through traffic. You arrived shaken!' : `${MODES[modeId].icon} You arrived at ${dest.label}.`);
+    save();
+    return true;
+  }
+
+  /** While auto-walking, steer the character toward the next waypoint. Moving the joystick cancels it. */
+  function driveAutoWalk(v) {
+    if (!autoWalk) return v;
+    if (inside || v.len > 0.08) { autoWalk = null; return v; }
+    const wp = autoWalk.path[autoWalk.i];
+    const dx = wp.x - player.group.position.x, dz = wp.z - player.group.position.z, d = Math.hypot(dx, dz);
+    if (d < 0.7) {
+      autoWalk.i += 1;
+      if (autoWalk.i >= autoWalk.path.length) { autoWalk = null; toast('📍 You have arrived.'); }
+      return { x: 0, y: 0, len: 0 };
+    }
+    return { x: dx / d, y: dz / d, len: 1 };
+  }
+
   function nearestPlace(p) {
     let best = null, bestD = REACH;
     for (const pl of places) {
@@ -634,7 +716,7 @@ async function main() {
     });
 
     // movement
-    const v = input.read();
+    const v = driveAutoWalk(input.read());
     if (v.len > 0.08) {
       player.group.position.x += v.x * SPEED * dt;
       player.group.position.z += v.y * SPEED * dt;
@@ -718,6 +800,7 @@ async function main() {
     }
 
     updateSigns(engine.camera.position);
+    minimap.update(performance.now());
 
     // follow camera
     if (inside) {
@@ -763,7 +846,8 @@ async function main() {
     start: events.start, setHour: dayNight.setHour, setDay: d => { dayNight.state.day = d; },
     state, places, player, npcs, guide, enter: enterPlace, leave: leavePlace, get inside() { return inside; },
     checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
-    openPhone: () => runModal(() => phone.open())
+    openPhone: () => runModal(() => phone.open()),
+    mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; }
   };
 }
 

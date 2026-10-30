@@ -11,6 +11,7 @@ export const DEFAULTS = {
   leftHanded: false,        // joystick on the right, action panel on the left
   reducedMotion: false,     // no UI animations
   hints: true,              // in-game tutorial hints
+  minimap: true,            // small map in the corner
   analytics: false          // anonymous usage and crash data (off until the player opts in)
 };
 
