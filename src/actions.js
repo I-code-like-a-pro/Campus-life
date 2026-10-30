@@ -39,7 +39,6 @@ export const ACTIONS = {
     { id: 'shopwork', label: '🧾 Help at the shop (2 hrs)', pay: 2000, minutes: 120, limit: 2, fx: { energy: -12, fun: -5, hunger: -6, stress: 2 }, needs: { energy: 20 }, msg: 'Oga paid you for the help.' }
   ],
   field: [
-    { id: 'football', label: '⚽ Play football', minutes: 90, fx: { fun: 28, energy: -20, hygiene: -18, hunger: -12, stress: -10 }, needs: { energy: 20 }, msg: 'What a match! You are sweaty but happy.' },
     { id: 'jog', label: '🏃 Go for a jog', minutes: 40, fx: { fun: 8, energy: -10, hygiene: -8, stress: -12 }, needs: { energy: 12 }, msg: 'Fresh air cleared your head.' }
   ],
   clinic: [

@@ -18,6 +18,7 @@ import { showStart, showJambForm } from './start.js';
 import { showModal } from './modal.js';
 import { BACKGROUNDS, rollScores, aggregate, decide, courseOf, cutoff } from './admissions.js';
 import { createGuide, describeWay } from './guide.js';
+import { createFootball } from './football.js';
 import { createNpcs, npcDefsFor, crowdDefs, interiorNpcDefs } from './npcs.js';
 import { DIALOGUES } from './dialogues.js';
 import { WORLD_DIALOGUES } from './worlddialogues.js';
@@ -112,11 +113,53 @@ async function main() {
   addXray(player.group);
   engine.scene.add(player.group);
 
-  const npcs = createNpcs(engine.scene, colliders);
+  const navGrid = buildGrid(colliders, BOUNDS);
+  const npcs = createNpcs(engine.scene, colliders, { grid: navGrid, findPath, places });
   [...npcDefsFor(campus, places), ...deskNpcs].forEach(npcs.add);
   const crowdCount = campus.id === 'home' ? 4 : CROWD_BY_QUALITY[settings.quality] ?? 8;
   crowdDefs(campus, crowdCount, state.name.length * 97 + 13).forEach(npcs.add);
-  const navGrid = buildGrid(colliders, BOUNDS);
+
+  /* ---- football (the pitch ball, the 3 v 3 matches and their HUD) ---- */
+  const MATES = ['Femi', 'Chidi', 'Ibrahim', 'Emeka', 'Tunde', 'Seyi', 'Dayo', 'Obinna'];
+  const football = campus.field ? createFootball({
+    scene: engine.scene, field: campus.field,
+    onGoal: g => {
+      if (!g.inMatch) { toast('⚽ GOAL!'); return; }
+      sfx(g.team === 0 ? 'coin' : 'click');
+      toast(g.team === 0 ? '⚽ GOAL! Your team scores!' : '😬 They scored.');
+    },
+    onMatchEnd: r => finishMatch(r)
+  }) : null;
+  const fbHud = document.getElementById('fbhud'), kickBtn = document.getElementById('kickbtn');
+  let kickHeld = null;
+  function releaseKick() {
+    if (kickHeld == null || !football) return;
+    const charge = Math.min(1, (performance.now() - kickHeld) / 700);
+    kickHeld = null;
+    football.kick(player.group.position, player.group.rotation.y, charge);
+  }
+  kickBtn.addEventListener('pointerdown', e => { e.preventDefault(); kickBtn.setPointerCapture(e.pointerId); if (kickHeld == null) kickHeld = performance.now(); });
+  kickBtn.addEventListener('pointerup', releaseKick);
+  kickBtn.addEventListener('pointercancel', () => { kickHeld = null; });
+  window.addEventListener('keydown', e => { if (e.code === 'Space' && !kickBtn.hidden && kickHeld == null) { e.preventDefault(); kickHeld = performance.now(); } });
+  window.addEventListener('keyup', e => { if (e.code === 'Space') releaseKick(); });
+
+  async function finishMatch(r) {
+    const [mine, theirs] = r.score, won = mine > theirs, draw = mine === theirs;
+    consume({ minutes: r.quit ? 20 : 45, fx: { fun: r.quit ? 8 : won ? 40 : 28, energy: r.quit ? -8 : -18, hygiene: r.quit ? -6 : -16, hunger: r.quit ? -4 : -10, stress: r.quit ? -3 : -10 } });
+    if (r.quit) { toast('You left the match. Your team played on without you.'); return; }
+    meta.track('footballMatches');
+    if (r.goals) meta.track('goalsScored', r.goals);
+    const d = dayNight.state.day;
+    const mates = [MATES[d % MATES.length], MATES[(d + 3) % MATES.length]];
+    mates.forEach(name => addRelation({ id: 'fb-' + name.toLowerCase(), name }, won ? 5 : 3));
+    sfx(won ? 'coin' : 'click');
+    runModal(() => showModal({
+      title: won ? '🏆 Full time: you won!' : draw ? '🤝 Full time: a draw' : '⚽ Full time: you lost',
+      lines: [`Your team ${mine} – ${theirs} Them`, r.goals ? `You were on the pitch for ${r.goals} goal${r.goals > 1 ? 's' : ''}.` : 'No goals for your side this time.', `${mates.join(' and ')} are now friendlier with you.`],
+      buttons: [{ label: 'OK', value: 'ok' }]
+    }));
+  }
 
   /* ---- progression, notifications, phone ---- */
   const meta = createMeta({
@@ -701,6 +744,8 @@ async function main() {
     if (a.id === 'exit') { leavePlace(false); return; }
     if (a.id === 'results') { checkResults(); return; }
     if (a.id === 'talk') { runTalk(a.npc); return; }
+    if (a.id === 'fbjoin') { if (canDo(a) && football?.startMatch()) toast('📣 Kick-off! 2 minutes 30. You are in blue, attacking east (right).'); else toast('You are too tired to play.'); return; }
+    if (a.id === 'fbquit') { football?.endMatch(true); return; }
     if (ACADEMIC_ACTIONS.has(a.id)) { runModal(() => academics.run(a)); return; }
     execute(a);
   }
@@ -879,6 +924,21 @@ async function main() {
     const where = inside ? inside.place.name : null;
     if (!inside) updateDoors(places, player.group.position, dt);
     npcs.update(dt, player.group.position, where, dayNight.state.minutes / 60);
+    let fb = null;
+    if (football) {
+      fb = football.update(dt, {
+        day: dayNight.state.day, hour: dayNight.state.minutes / 60, player: player.group.position, outdoors: !inside,
+        pvx: v.len > 0.08 ? v.x * SPEED : 0, pvz: v.len > 0.08 ? v.y * SPEED : 0
+      });
+      const showHud = fb.active;
+      fbHud.hidden = !showHud;
+      if (showHud) {
+        const t = Math.ceil(fb.timeLeft);
+        fbHud.textContent = `🔵 ${fb.score[0]} – ${fb.score[1]} 🔴   ⏱ ${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+        fbHud.classList.toggle('cheer', fb.cheer);
+      }
+      kickBtn.hidden = !(fb.onPitch && !inside);
+    }
     if (guide.update(player.group.position, !!inside)) toast('📍 You have arrived.');
 
     // what can I do here?
@@ -932,6 +992,11 @@ async function main() {
           const social = state.academic && state.academic.phase !== 'pre'
             ? socialActions({ venue: place.type, sd, hour: dayNight.state.minutes / 60, clubs: state.meta.clubs }) : [];
           actions = [...(ACTIONS[place.type] || []), ...social];
+          if (place.type === 'field' && fb) {
+            if (fb.active) actions = [{ id: 'fbquit', label: '🏳️ Leave the match' }, ...actions];
+            else if (fb.present) actions = [{ id: 'fbjoin', label: '⚽ Join the match (3 v 3)', needs: { energy: 25 } }, ...actions];
+            note = fb.active ? 'Kick the ball into the right-hand goal.' : fb.present ? 'Students are playing. Walk into the ball to dribble, hold ⚽ Kick to shoot.' : 'Nobody is here. Kick the ball around by yourself.';
+          }
           if (!actions.length) note = COMING_SOON[place.type] || '';
         }
       }
@@ -1004,7 +1069,7 @@ async function main() {
     state, places, player, npcs, guide, enter: enterPlace, leave: leavePlace, get inside() { return inside; },
     checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
-    mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
+    football, mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
     addRelation, relation, boostNearby, engine, colliders, resolveCollisions
   };
 }

@@ -15,8 +15,36 @@ const TROUSERS = [0x222a35, 0x2b3a55, 0x4a3b2a, 0x555b61];
 /** Is someone with these working hours [[from, to], ...] at their post at `hour`? No hours means always there. */
 export const isPresent = (hours, hour) => !hours || hours.some(([a, b]) => hour >= a && hour < b);
 
-export function createNpcs(scene, colliders) {
+// Where students head for at different times of day (building types).
+const ROUTINE = [
+  [[6, 8], ['canteen', 'hostel']],
+  [[8, 12], ['lecture', 'lecture', 'library', 'auditorium']],
+  [[12, 14], ['canteen', 'canteen', 'hostel']],
+  [[14, 18], ['lecture', 'library', 'field', 'auditorium']],
+  [[18, 22], ['hostel', 'canteen', 'field', 'library']]
+];
+
+/**
+ * `nav` (optional) = { grid, findPath, places }. With it, NPCs follow A* routes around poles and walls, and ambient students
+ * walk between real destinations (lectures in the morning, canteen at lunch, the field and hostels later) instead of
+ * pacing randomly.
+ */
+export function createNpcs(scene, colliders, nav = null) {
   const list = [];
+
+  function chooseGoal(n, hour) {
+    if (n.lite && nav?.places?.length) {
+      const row = ROUTINE.find(([[a, b]]) => hour >= a && hour < b);
+      const types = row ? row[1] : ['hostel'];
+      const options = nav.places.filter(p => p.door && types.includes(p.type));
+      if (options.length) {
+        const p = options[Math.floor(Math.random() * options.length)];
+        return { x: p.door.x + (Math.random() - 0.5) * 3, z: p.door.z + 1.5 + Math.random() * 2 };
+      }
+    }
+    const a = Math.random() * Math.PI * 2, r = Math.random() * n.wander;
+    return { x: n.home.x + Math.cos(a) * r, z: n.home.z + Math.sin(a) * r };
+  }
 
   function add(def) {
     const char = createCharacter({
@@ -60,22 +88,31 @@ export function createNpcs(scene, colliders) {
       if (near) {
         turnTo(g, Math.atan2(dxp, dzp), dt);               // look at the player
       } else if (n.wander) {
-        if (!n.target) {
+        if (!n.route) {
           n.wait -= dt;
           if (n.wait <= 0) {
-            const a = Math.random() * Math.PI * 2, r = Math.random() * n.wander;
-            n.target = { x: n.home.x + Math.cos(a) * r, z: n.home.z + Math.sin(a) * r };
+            const goal = chooseGoal(n, hour);
+            n.route = nav && goal ? nav.findPath(nav.grid, g.position, goal) : [goal];
+            if (!n.route || !n.route.length) { n.route = null; n.wait = 2; }
+            n.stuck = 0;
           }
         } else {
-          const dx = n.target.x - g.position.x, dz = n.target.z - g.position.z, d = Math.hypot(dx, dz);
-          if (d < 0.4) { n.target = null; n.wait = 1.5 + Math.random() * 3; }
-          else {
+          const t = n.route[0];
+          const dx = t.x - g.position.x, dz = t.z - g.position.z, d = Math.hypot(dx, dz);
+          if (d < 0.5) {
+            n.route.shift();
+            if (!n.route.length) { n.route = null; n.wait = 3 + Math.random() * 8; }   // arrived: linger a while
+          } else {
+            const before = { x: g.position.x, z: g.position.z };
             const step = Math.min(d, 2.4 * dt);
             g.position.x += dx / d * step;
             g.position.z += dz / d * step;
+            resolveCollisions(g.position, colliders, 0.6);
             turnTo(g, Math.atan2(dx, dz), dt);
             n.walking = 0.6;
-            resolveCollisions(g.position, colliders, 0.6);
+            // pushed back by something? after a moment give up on this trip and pick another
+            n.stuck = Math.hypot(g.position.x - before.x, g.position.z - before.z) < step * 0.3 ? (n.stuck || 0) + dt : 0;
+            if (n.stuck > 1.5) { n.route = null; n.wait = 0.5; }
           }
         }
       }

@@ -55,6 +55,8 @@ export const ACHIEVEMENTS = [
   { id: 'generous',      icon: '🎁', name: 'Generous',           text: 'Give 5 gifts',                            c: 'gifts',        n: 5 },
   { id: 'joiner',        icon: '🎪', name: 'Joiner',             text: 'Join a club',                             c: 'clubsJoined',  n: 1 },
   { id: 'club_regular',  icon: '📣', name: 'Club Regular',       text: 'Attend 5 club meetings',                  c: 'clubMeetings', n: 5 },
+  { id: 'footballer',    icon: '⚽', name: 'Footballer',         text: 'Finish a match on the pitch',             c: 'footballMatches', n: 1 },
+  { id: 'striker',       icon: '🥅', name: 'Striker',            text: 'Score 5 goals in matches',                c: 'goalsScored',  n: 5 },
   { id: 'party_animal',  icon: '🎉', name: 'Party Animal',       text: 'Attend 3 hostel nights',                  c: 'parties',      n: 3 },
   { id: 'first_ride',    icon: '🛺', name: 'First Ride',         text: 'Take a keke or okada',                    c: 'rides',        n: 1 },
   { id: 'rider',         icon: '🛵', name: 'Frequent Rider',     text: 'Take 10 rides',                           c: 'rides',        n: 10 },

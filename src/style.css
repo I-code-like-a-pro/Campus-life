@@ -151,3 +151,13 @@ h1 { margin:0; font-size:34px; letter-spacing:-.5px; }
 
 .legal-links { margin:18px 0 0; font-size:12px; opacity:.75; text-align:center; line-height:1.7; }
 .legal-links a { color:inherit; }
+
+#fbhud { position:fixed; top:max(64px,calc(env(safe-area-inset-top) + 56px)); left:50%; transform:translateX(-50%); z-index:6; padding:8px 16px;
+  background:var(--panel); backdrop-filter:blur(8px); border-radius:14px; font-weight:700; font-size:15px; white-space:nowrap; }
+#fbhud.cheer { background:#2f9e44; }
+#kickbtn { position:fixed; left:calc(max(18px,env(safe-area-inset-left)) + 150px); bottom:max(36px,calc(env(safe-area-inset-bottom) + 14px)); z-index:6;
+  width:84px; height:84px; border-radius:50%; border:3px solid rgba(255,255,255,.7); background:rgba(47,158,68,.85); color:#fff;
+  font-size:15px; font-weight:700; touch-action:none; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.15; }
+#kickbtn small { font-size:9px; font-weight:400; opacity:.85; }
+#kickbtn:active { background:rgba(47,158,68,1); transform:scale(.95); }
+.left-handed #kickbtn { left:auto; right:calc(max(18px,env(safe-area-inset-right)) + 150px); }
