@@ -11,7 +11,7 @@ const TIPS = [
   'Read small every day, not all at once the night before exam.',
   'Keep your receipts safe. Everybody needs them at one point or the other.',
   'Don\'t buy everything at once. Allowance must reach the end of the month!',
-  'Make friends in your department early. Handouts and past questions dey go round.',
+  'Make friends in your department early. Handouts and past questions are shared around.',
   'Sleep well. Nobody can read on an empty stomach and no sleep.',
   'Lecturers love people who sit in front. Just saying.'
 ];
@@ -39,14 +39,14 @@ async function mama(c, npc) {
   const s = c.state;
   const a = s.aspirant;
   let open;
-  if (s.admission) open = `Congratulations, my child! I knew it. Go to the Motor Park and travel to ${c.uniName(s.admission.uni)}. Take care of yourself o.`;
+  if (s.admission) open = `Congratulations, my child! I knew it. Go to the Motor Park and travel to ${c.uniName(s.admission.uni)}. Take care of yourself.`;
   else if (a && a.jambSeen && !a.admitSeen) open = 'The JAMB result is out. Now we wait for the admission list. Pray and rest small.';
-  else if (a && !a.jambSeen) open = 'Rest small, my child. JAMB result go soon come out. Bode at the cyber cafe will help you check.';
+  else if (a && !a.jambSeen) open = 'Rest a little, my child. The JAMB result will be out soon. Bode at the cyber cafe will help you check.';
   else open = 'My child, how far?';
   await converse(c, npc, open, () => [
     asks(c)(npc),
     { label: '💡 Any advice, Mama?', run: () => `Ehen. ${tip()}` },
-    { label: '🍲 I\'m hungry', run: () => 'Go inside and eat the jollof in the kitchen. Free of charge, my pikin.' }
+    { label: '🍲 I\'m hungry', run: () => 'Go inside and eat the jollof in the kitchen. Free of charge, my dear.' }
   ]);
 }
 
@@ -81,9 +81,9 @@ async function bode(c, npc) {
 }
 
 async function sade(c, npc) {
-  await converse(c, npc, 'Ah, my pikin! You are looking well. How is the waiting going?', () => [
+  await converse(c, npc, 'Ah, my dear! You are looking well. How is the waiting going?', () => [
     asks(c)(npc),
-    { label: '💬 Any gist?', run: () => ['They say the bus fare to school just went up o.', 'My nephew got into UNILAG last year. Na so e start for am: wahala!', 'Make sure you carry all your original documents when you go.'][Math.floor(Math.random() * 3)] },
+    { label: '💬 Any gist?', run: () => ['They say the bus fare to school just went up.', 'My nephew got into UNILAG last year. His first week was chaotic!', 'Make sure you carry all your original documents when you go.'][Math.floor(Math.random() * 3)] },
     { label: '🎒 What should I know about school?', run: () => 'When you get there, go to the registration desks near the gate. They will clear you step by step. Ask the senior student, he knows everything.' }
   ]);
 }
@@ -91,7 +91,7 @@ async function sade(c, npc) {
 async function bala(c, npc) {
   const adm = c.state.admission;
   if (!adm) {
-    await converse(c, npc, 'Where you dey go? No admission yet? Come back when you get one, I go carry you!', () => [
+    await converse(c, npc, 'Where are you going? No admission yet? Come back when you get one, I will take you!', () => [
       asks(c)(npc),
       { label: '🚌 Where do your buses go?', run: () => 'UNILAG, UI, OAU, everywhere! Once you have admission, tell me.' }
     ]);
@@ -99,9 +99,9 @@ async function bala(c, npc) {
   }
   const fare = c.FARE;
   const short = c.uniShort(adm.uni);
-  await converse(c, npc, `${short}! ${short}! Last seat! Na ${naira(fare)} only, oga!`, () => [
+  await converse(c, npc, `${short}! ${short}! Last seat! Only ${naira(fare)}, sir!`, () => [
     { label: `🚌 Board the bus (${naira(fare)})`, run: async () => (await c.travel()) },
-    { label: '⏱️ How far is it?', run: () => 'About five hours on the road, depending on traffic. Sit well, we go reach.' },
+    { label: '⏱️ How far is it?', run: () => 'About five hours on the road, depending on traffic. Sit well, we will get there.' },
     asks(c)(npc)
   ]);
 }
@@ -128,7 +128,7 @@ async function seun(c, npc) {
     ...(next ? [{ label: `📋 Where do I go next?`, run: () => c.tellWay(npc, { x: next.x, z: next.z + 3, label: next.name }) }] : []),
     asks(c)(npc),
     { label: '💡 Any advice?', run: () => `Sure. ${tip()}` },
-    { label: '😎 What is campus life like?', run: () => 'Lectures, hostel wahala, nice food at the canteen, parties, and plenty gist. You will love it. And hate it. Both.' }
+    { label: '😎 What is campus life like?', run: () => 'Lectures, hostel drama, nice food at the canteen, parties, and plenty of stories. You will love it. And hate it. Both.' }
   ]);
 }
 
@@ -172,7 +172,7 @@ async function admissions(c, npc) {
 async function bursary(c, npc) {
   await desk(c, npc, 'bursary', `Acceptance and registration fees are ${naira(CLEARANCE_FEE)}. Bring your receipt after you pay.`, async () => {
     if (!c.pay(CLEARANCE_FEE)) {
-      const call = await c.say(npc, `You have ${naira(c.state.money)}. The fee is ${naira(CLEARANCE_FEE)}. Not enough o.`, [
+      const call = await c.say(npc, `You have ${naira(c.state.money)}. The fee is ${naira(CLEARANCE_FEE)}. That is not enough.`, [
         { label: '📞 Call Mum for a transfer', value: 'mum' },
         { label: 'I\'ll come back later', value: 'later', secondary: true }
       ]);

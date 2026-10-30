@@ -2,10 +2,10 @@ import * as THREE from 'three';
 
 // duration is in real seconds. `weather` events are mutually exclusive.
 export const DEFS = {
-  nepa:      { icon: '💡', title: 'NEPA don take light!', msg: 'Total blackout across campus. Phone torch time 🔦', dur: 25, end: 'Light don come! UP NEPA! 🎉' },
-  rain:      { icon: '🌧️', title: 'Rain dey fall', msg: 'Run go shelter o, your hair go spoil!', dur: 35, end: 'Rain don stop. Sun don show face again ☀️', weather: true },
-  harmattan: { icon: '🌫️', title: 'Harmattan don land', msg: 'Dust everywhere, dry lips and cold morning!', dur: 40, end: 'Harmattan haze don clear small', weather: true },
-  strike:    { icon: '📢', title: 'ASUU strike!', msg: 'Lecturers don down tools. No lectures till further notice 😭', dur: 14 }
+  nepa:      { icon: '💡', title: 'Power cut!', msg: 'Total blackout across campus. Phone torch time 🔦', dur: 25, end: 'Power is back! 🎉' },
+  rain:      { icon: '🌧️', title: 'It is raining', msg: 'Run to a shelter before you get soaked!', dur: 35, end: 'The rain has stopped. The sun is out again ☀️', weather: true },
+  harmattan: { icon: '🌫️', title: 'Harmattan has arrived', msg: 'Dust everywhere, dry lips and cold morning!', dur: 40, end: 'The harmattan haze is clearing', weather: true },
+  strike:    { icon: '📢', title: 'ASUU strike!', msg: 'Lecturers have downed tools. No lectures until further notice 😭', dur: 14 }
 };
 
 /**

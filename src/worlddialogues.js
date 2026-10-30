@@ -22,19 +22,19 @@ export function situationLines(c) {
   const w = (c.world && c.world()) || {};
   const n = c.state.needs;
   const a = c.state.academic;
-  if (w.powerCut) lines.push('NEPA don take light again. This country sha!');
-  if (w.raining) lines.push('This rain no gree person waka. Find shelter o.');
-  if (w.season === 'harmattan' && !w.raining) lines.push('Harmattan dey wound me. My lips are drier than the Sahara.');
-  if (w.season === 'rainy' && !w.raining) lines.push('Rain dey come anytime this season. Carry umbrella.');
-  if (n.hunger < 30) lines.push('Ehn, you look hungry. Go and chop something before you faint.');
+  if (w.powerCut) lines.push('NEPA has taken the light again. This is exhausting!');
+  if (w.raining) lines.push('This rain will not let anyone walk. Find shelter.');
+  if (w.season === 'harmattan' && !w.raining) lines.push('The harmattan is wearing me out. My lips are drier than the Sahara.');
+  if (w.season === 'rainy' && !w.raining) lines.push('It can rain at any time this season. Carry an umbrella.');
+  if (n.hunger < 30) lines.push('You look hungry. Go and eat something before you faint.');
   if (n.energy < 25) lines.push('Your eyes are red. When last did you sleep?');
-  if (n.hygiene < 25) lines.push('Abeg, go and bathe first. I say this with love.');
-  if (n.stress > 75) lines.push('You dey too stress. Rest small, the work will wait.');
-  if (c.state.money < 1500) lines.push('Sapa don catch you? Look for small work. Everybody has been there.');
+  if (n.hygiene < 25) lines.push('Please go and bathe first. I say this with love.');
+  if (n.stress > 75) lines.push('You look very stressed. Rest a little, the work will wait.');
+  if (c.state.money < 1500) lines.push('Running out of money? Look for a small job. Everybody has been there.');
   if (a && a.phase === 'semester') {
     const sd = c.day() - a.startDay + 1;
-    if (a.strike && sd >= a.strike.from && sd <= a.strike.to) lines.push('ASUU don strike again. No lectures till Saturday!');
-    if (sd === 2) lines.push('CA tests are tomorrow. You don read?');
+    if (a.strike && sd >= a.strike.from && sd <= a.strike.to) lines.push('ASUU is on strike again. No lectures until Saturday!');
+    if (sd === 2) lines.push('CA tests are tomorrow. Have you read?');
     if (sd === 5) lines.push('Exams are tomorrow! Pray and revise.');
     if (sd === 6) lines.push('Exam day. May the odds be ever in your favour.');
   }
@@ -55,7 +55,7 @@ export const GIST = [
   'Carry a power bank. NEPA does not respect your assignment deadline.',
   'Football on the field at evening? Count me in, if my legs agree.',
   'Everybody is hustling something here. Even the guy who sells pens sells pens with passion.',
-  'Do not leave your phone charging in the lecture hall. People dey watch.',
+  'Do not leave your phone charging in the lecture hall. People are watching.',
   'The cyber cafe near the motor park is useful when your data finishes.',
   'I switched my study time to the morning. Now I am sleepy and informed.',
   'Group assignments are only fair when everybody shows up. Spoiler: they do not.',
@@ -120,7 +120,7 @@ export async function roommate(c, npc) {
   const open = sit.length ? pickLine(`room-${npc.id}`, sit) : 'Ah, my roommate! How was your day?';
   await converse(c, npc, open, () => [
     { label: '🍜 Share some noodles', run: () => {
-      const ok = c.doAction({ id: 'shareFood', label: 'Share noodles', minutes: 15, fx: { hunger: 12, fun: 8, stress: -4 }, limit: 1, msg: 'You shared noodles with your roommate. Good vibes.' });
+      const ok = c.doAction({ id: 'shareFood', label: 'Share noodles', minutes: 15, fx: { hunger: 12, fun: 8, stress: -4 }, limit: 1, msg: 'You shared noodles with your roommate. Good company.' });
       if (!ok) return 'You already shared today. Do not finish my food!';
       c.meta.track('friendly');
       return 'Haha, thanks! You are a real one.';
@@ -173,7 +173,7 @@ export async function librarian(c, npc) {
 export async function vendor(c, npc) {
   const sit = situationLines(c).filter(l => !l.includes('lectures'));
   const open = c.state.needs.hunger < 40 ? 'Ah, you look hungry! Come, come. I will give you something good.'
-    : sit.length ? pickLine('vendor', sit) : 'Welcome, my pikin. What will you eat?';
+    : sit.length ? pickLine('vendor', sit) : 'Welcome, my dear. What will you eat?';
   await converse(c, npc, open, () => [
     { label: '🍚 Student half-portion (₦1,200)', run: () => {
       const ok = c.doAction({ id: 'vendorhalf', label: 'Half portion', cost: 1200, minutes: 15, fx: { hunger: 30, fun: 3 }, limit: 1, msg: 'Mama Put gave you a student portion.' });

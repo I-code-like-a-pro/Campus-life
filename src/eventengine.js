@@ -61,10 +61,10 @@ export function createEventEngine({ events, meta, sound = () => {}, getContext }
 
   function announce(prev, now, ctx) {
     if (prev === null) return;                                               // first frame: just set the scene
-    if (now.powerCut && !prev.powerCut) { meta.notify({ icon: '💡', title: 'NEPA don take light!', text: 'No power: phones, laptops and browsing are off until it returns.' }); sound('power'); }
-    if (!now.powerCut && prev.powerCut) meta.notify({ icon: '🎉', title: 'Light don come! UP NEPA!', text: 'Power is back.' });
-    if (now.raining && !prev.raining) meta.notify({ icon: '🌧️', title: 'Rain dey fall', text: 'A shower for the next two hours.' });
-    if (!now.raining && prev.raining) meta.notify({ icon: '☀️', title: 'Rain don stop', text: 'The sky is clearing.' });
+    if (now.powerCut && !prev.powerCut) { meta.notify({ icon: '💡', title: 'Power cut!', text: 'No power: phones, laptops and browsing are off until it returns.' }); sound('power'); }
+    if (!now.powerCut && prev.powerCut) meta.notify({ icon: '🎉', title: 'Power is back!', text: 'Power is back.' });
+    if (now.raining && !prev.raining) meta.notify({ icon: '🌧️', title: 'It is raining', text: 'A shower for the next two hours.' });
+    if (!now.raining && prev.raining) meta.notify({ icon: '☀️', title: 'The rain has stopped', text: 'The sky is clearing.' });
     if (ctx && lastSeason && now.season !== lastSeason) {
       meta.notify({ icon: now.season === 'harmattan' ? '🌫️' : '🌧️', title: now.season === 'harmattan' ? 'Harmattan season' : 'Rainy season', text: now.season === 'harmattan' ? 'Dry and hazy mornings and evenings.' : 'Expect afternoon showers.' });
     }

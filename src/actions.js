@@ -3,11 +3,11 @@
 // needs: minimum requirements. `sleep` actions restore energy, so normal need decay is skipped while they run.
 
 const HOSTEL = [
-  { id: 'sleep', label: '😴 Sleep (8 hrs)', minutes: 480, sleep: true, fx: { energy: 85, stress: -15, hunger: -22, hygiene: -8 }, msg: 'You slept well. New day, new gist.' },
+  { id: 'sleep', label: '😴 Sleep (8 hrs)', minutes: 480, sleep: true, fx: { energy: 85, stress: -15, hunger: -22, hygiene: -8 }, msg: 'You slept well. New day, fresh start.' },
   { id: 'nap', label: '😪 Power nap (1 hr)', minutes: 60, sleep: true, fx: { energy: 16, stress: -2, hunger: -3 }, msg: 'A short nap. You feel a bit sharper.' },
   { id: 'bathe', label: '🚿 Bathe', minutes: 15, fx: { hygiene: 65, stress: -3 }, msg: 'Fresh and clean!' },
   { id: 'cook', label: '🍳 Cook a meal (uses 1 foodstuff)', minutes: 45, needsPantry: 1, fx: { hunger: 48, fun: 5, stress: -2 }, msg: 'You cooked a proper meal and saved money.' },
-  { id: 'phone', label: '📱 Scroll TikTok', minutes: 60, needsPower: true, fx: { fun: 22, energy: -4, stress: -4 }, msg: 'One hour don waka. Nice videos!' },
+  { id: 'phone', label: '📱 Scroll TikTok', minutes: 60, needsPower: true, fx: { fun: 22, energy: -4, stress: -4 }, msg: 'One hour gone. Nice videos!' },
   { id: 'freelance', label: '💻 Freelance gig (3 hrs)', pay: 6000, minutes: 180, needsPower: true, limit: 1, needs: { energy: 25 },
     fx: { energy: -18, fun: -10, stress: 6, hunger: -8 }, msg: 'Gig delivered. Client paid on time, for once!' }
 ];
@@ -23,7 +23,7 @@ export const ACTIONS = {
     { id: 'pie', label: '🥧 Meat pie', cost: 900, minutes: 5, fx: { hunger: 18 }, msg: 'Quick bite, quick mouth.' },
     { id: 'zobo', label: '🥤 Zobo drink', cost: 300, minutes: 5, fx: { hunger: 5, fun: 4, stress: -2 }, msg: 'Chilled zobo. Refreshing!' },
     { id: 'canteenjob', label: '🍽️ Serve food (2 hrs)', pay: 2500, minutes: 120, limit: 2, needs: { energy: 20 },
-      fx: { energy: -14, fun: -6, hunger: -6, hygiene: -6, stress: 3 }, msg: 'You served a long queue. Oga madam paid you.' }
+      fx: { energy: -14, fun: -6, hunger: -6, hygiene: -6, stress: 3 }, msg: 'You served a long queue. The madam paid you.' }
   ],
   cafe: [
     { id: 'browse', label: '🖥️ Browse & chill', cost: 200, minutes: 60, needsPower: true, fx: { fun: 15, energy: -3, stress: -3 }, msg: 'One hour of browsing. Network was okay.' }
@@ -36,7 +36,7 @@ export const ACTIONS = {
     { id: 'decor-plant', label: '🪴 Potted plant', cost: 2000, minutes: 5, decor: 'plant', msg: 'A little green plant for your room.' },
     { id: 'decor-lights', label: '✨ Fairy lights', cost: 3000, minutes: 5, decor: 'lights', msg: 'Fairy lights for your room. Cozy.' },
     { id: 'buynet', label: '🦟 Mosquito net', cost: 2500, minutes: 5, msg: 'You hung a mosquito net. Malaria will think twice.' },
-    { id: 'shopwork', label: '🧾 Help at the shop (2 hrs)', pay: 2000, minutes: 120, limit: 2, fx: { energy: -12, fun: -5, hunger: -6, stress: 2 }, needs: { energy: 20 }, msg: 'Oga paid you for the help.' }
+    { id: 'shopwork', label: '🧾 Help at the shop (2 hrs)', pay: 2000, minutes: 120, limit: 2, fx: { energy: -12, fun: -5, hunger: -6, stress: 2 }, needs: { energy: 20 }, msg: 'The shop owner paid you for the help.' }
   ],
   field: [
     { id: 'jog', label: '🏃 Go for a jog', minutes: 40, fx: { fun: 8, energy: -10, hygiene: -8, stress: -12 }, needs: { energy: 12 }, msg: 'Fresh air cleared your head.' }
@@ -56,7 +56,7 @@ export const ACTIONS = {
   lecture: [],
   library: [
     { id: 'shelve', label: '📚 Shelve books (2 hrs)', pay: 2000, minutes: 120, limit: 2, needs: { energy: 20 },
-      fx: { energy: -10, fun: -6, stress: 2, hunger: -5 }, msg: 'The shelves look neat. The librarian pays small money.' }
+      fx: { energy: -10, fun: -6, stress: 2, hunger: -5 }, msg: 'The shelves look neat. The librarian pays a little money.' }
   ],
   auditorium: []
 };

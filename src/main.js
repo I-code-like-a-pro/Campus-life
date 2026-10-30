@@ -326,7 +326,7 @@ async function main() {
       if ((d - 1) % 7 === 0) {
         state.money += ALLOWANCE;
         meta.ledger('Allowance from home', ALLOWANCE);
-        meta.notify({ icon: '💸', title: 'Allowance don land', text: `${naira(ALLOWANCE)} from home. Spend am well!` });
+        meta.notify({ icon: '💸', title: 'Allowance received', text: `${naira(ALLOWANCE)} from home. Spend it well!` });
         sfx('coin');
       }
     }
@@ -361,7 +361,7 @@ async function main() {
       if (!a.jambSeen) {
         a.jambSeen = true;
         meta.track('jambChecked');
-        const verdict = a.jamb >= 300 ? 'Excellent score! 🔥' : a.jamb >= 250 ? 'Good score. Let\'s hope the cut-off is kind.' : a.jamb >= 200 ? 'You made the 200 minimum. Pray for post-UTME.' : 'Below 200. This one na wahala.';
+        const verdict = a.jamb >= 300 ? 'Excellent score! 🔥' : a.jamb >= 250 ? 'Good score. Let\'s hope the cut-off is kind.' : a.jamb >= 200 ? 'You made the 200 minimum. Pray for post-UTME.' : 'Below 200. This is a difficult result.';
         await showModal({
           title: '📄 JAMB result',
           lines: [`Candidate: ${state.name}`, `UTME score: ${a.jamb} / 400`, verdict, `The admission list comes out on Day ${a.admitDay}. Check back at the cyber cafe.`],
@@ -529,7 +529,7 @@ async function main() {
       lines: ['Where do you want to go?'],
       buttons: [...dests.map((d, i) => ({ label: d.label, value: i })), { label: 'Never mind', value: -1, secondary: true }]
     });
-    if (pick < 0) return 'Okay, no wahala.';
+    if (pick < 0) return 'Okay, no problem.';
     return tellWay(npc, dests[pick].target);
   }
 
@@ -682,7 +682,7 @@ async function main() {
       a = { ...a, fx: { ...a.fx, hunger: 22, fun: -3 }, msg: 'You burnt the stew. You ate what you could.' };
     }
     if (!canDo(a)) {
-      toast(a.cost && state.money < a.cost ? 'Money no reach. Sapa dey!' : 'You are too tired for that.');
+      toast(a.cost && state.money < a.cost ? 'You do not have enough money.' : 'You are too tired for that.');
       return false;
     }
     if (a.needsPower && eventEngine.current?.powerCut) {
@@ -826,7 +826,7 @@ async function main() {
     if (inside) { toast('Step outside first.'); return false; }
     const dist = Math.hypot(dest.x - player.group.position.x, dest.z - player.group.position.z);
     const fare = fareFor(modeId, dist);
-    if (state.money < fare) { toast('Money no reach for that ride. Try walking!'); return false; }
+    if (state.money < fare) { toast('You do not have enough money for that ride. Try walking!'); return false; }
     state.money -= fare;
     meta.ledger(`${MODES[modeId].name} ride`, -fare);
     meta.track('rides');

@@ -66,12 +66,12 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
         if (m.savings >= SAVE_STEP) { m.savings -= SAVE_STEP; give(SAVE_STEP); meta.ledger('Withdrew from savings', SAVE_STEP, { count: false }); }
         else await showModal({ title: '🏦 Bank', lines: ['Not enough in savings.'], buttons: back });
       } else if (pick === 'mum') {
-        if (mumWait) await showModal({ title: '📞 Mum', lines: [`"My pikin, I just sent you something. Manage it, we go talk again in ${mumWait} day${mumWait > 1 ? 's' : ''}."`], buttons: back });
+        if (mumWait) await showModal({ title: '📞 Mum', lines: [`"My child, I just sent you something. Manage it, we will talk again in ${mumWait} day${mumWait > 1 ? 's' : ''}."`], buttons: back });
         else {
           m.counters.mumDay = day();
           give(MUM_GIFT);
           meta.ledger('Mum sent money', MUM_GIFT, { count: false });
-          await showModal({ title: '📞 Mum', lines: [`"Ah ah, again? Okay, I have sent ${naira(MUM_GIFT)}. Spend it well o!"`], buttons: back });
+          await showModal({ title: '📞 Mum', lines: [`"Again? Okay, I have sent ${naira(MUM_GIFT)}. Spend it well!"`], buttons: back });
         }
       }
     }

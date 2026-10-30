@@ -24,18 +24,18 @@ export function createAlerts({ state, dayNight, events, hud, stamp, restored }) 
 
     // most important first; only one alert per action
     if (action.id === 'phone' && n >= 3 && once('nepa')) {
-      events.start('nepa', { title: 'NEPA don take light!', msg: 'Too much TikTok! Everybody for the hostel don drain the light 🔦' });
+      events.start('nepa', { title: 'Power cut!', msg: 'Too much TikTok! Everybody in the hostel drained the power 🔦' });
     } else if (action.id === 'football' && n >= 2 && once('motm')) {
       applyEffects(state.needs, { fun: 10 });
-      say('🏆', 'Man of the match!', 'Everybody dey call your name after that second game. (+fun)');
+      say('🏆', 'Man of the match!', 'Everybody is calling your name after that second game. (+fun)');
     } else if (before.money >= 2000 && state.money < 2000 && once('sapa')) {
-      say('💸', 'Sapa don land', 'Your balance don almost finish. Allowance dey come, hold on.');
+      say('💸', 'Running low on money', 'Your balance is almost finished. Your allowance is coming, hold on.');
     } else if (action.fx && action.fx.hunger > 0 && before.hunger >= 90) {
-      say('🤢', 'Belle full!', 'You dey chop when you no dey hungry. Money wasted.');
+      say('🤢', 'Already full!', 'You ate when you were not hungry. Money wasted.');
     } else if (action.id === 'bathe' && before.hygiene >= 90) {
-      say('🧼', 'You dey too clean', 'You were already clean. Water wasted.');
+      say('🧼', 'Too clean', 'You were already clean. Water wasted.');
     } else if (action.id === 'sleep' && startHour >= 8 && startHour < 18) {
-      say('😴', 'Na day you dey sleep?', 'Hostel mates dey judge you. Make you sleep at night next time.');
+      say('😴', 'Sleeping in the day?', 'Your hostel mates are judging you. Sleep at night next time.');
     }
   }
 

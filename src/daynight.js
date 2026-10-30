@@ -10,10 +10,10 @@ const LIGHT = [[0, 0.08], [5, 0.08], [7, 0.6], [8.5, 1], [16.5, 1], [18.5, 0.5],
 
 // Fired once as the clock crosses the hour: [hour, icon, title, message]
 export const SCHEDULE = [
-  [8,  '🔔', 'Lecture bell', '8AM class don start. Run to the Lecture Hall!'],
-  [13, '🍛', 'Canteen is open', 'Jollof rice and plantain time. Queue long o!'],
-  [18, '🌆', 'Evening gist', 'Everybody dey gather for the field.'],
-  [22, '🔒', 'Hostel curfew', 'Go and sleep, tomorrow na another day.']
+  [8,  '🔔', 'Lecture bell', '8AM class has started. Run to the Lecture Hall!'],
+  [13, '🍛', 'Canteen is open', 'Jollof rice and plantain time. The queue is long!'],
+  [18, '🌆', 'Evening gathering', 'Everybody is gathering at the field.'],
+  [22, '🔒', 'Hostel curfew', 'Go and sleep, tomorrow is another day.']
 ];
 
 const GREY = new THREE.Color(0x6c7a86);

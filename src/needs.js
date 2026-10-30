@@ -36,7 +36,7 @@ export function applyEffects(needs, fx = {}) {
 export function mood(needs) {
   const score = (needs.hunger + needs.energy + needs.fun + needs.hygiene + (100 - needs.stress)) / 5;
   if (needs.energy < 8 || needs.hunger < 8) return { icon: '😫', label: 'Suffering', score };
-  if (score < 35) return { icon: '😩', label: 'Dull sef', score };
+  if (score < 35) return { icon: '😩', label: 'Dull', score };
   if (score < 55) return { icon: '😐', label: 'Okay-ish', score };
   if (score < 78) return { icon: '😎', label: 'Vibing', score };
   return { icon: '😄', label: 'Very happy', score };
