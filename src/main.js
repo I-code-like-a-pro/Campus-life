@@ -13,7 +13,7 @@ import { CAMPUSES } from './campuses.js';
 import { ACTIONS, COMING_SOON } from './actions.js';
 import { newNeeds, tickNeeds, applyEffects, naira, setSickness } from './needs.js';
 import { rollIllness, fallSick, dayPassed, rest, diagnose, recover, statusLabel, ILLNESSES } from './health.js';
-import { loadSave, writeSave, clearSave, newMeta } from './save.js';
+import { loadSave, writeSave, clearSave, newMeta, lastLoadNote } from './save.js';
 import { showStart, showJambForm } from './start.js';
 import { showModal } from './modal.js';
 import { BACKGROUNDS, rollScores, aggregate, decide, courseOf, cutoff } from './admissions.js';
@@ -229,15 +229,28 @@ async function main() {
 
   /* ---- saving ---- */
   let enrolling = false;                   // set once we travel, so unloading can't overwrite the new save
-  function save() {
-    if (enrolling) return;
+  function snapshot() {
     const p = inside ? { x: inside.place.door.x, z: inside.place.door.z } : player.group.position;
-    writeSave({
+    return {
       campusId: state.campusId, name: state.name, money: state.money, needs: state.needs,
       minutes: dayNight.state.minutes, day: dayNight.state.day, x: p.x, z: p.z,
       course: state.course, aspirant: state.aspirant, admission: state.admission,
       clearance: state.clearance, hostel: state.hostel, academic: state.academic, meta: state.meta
-    });
+    };
+  }
+  let lastSaveWarning = 0;
+  function save() {
+    if (enrolling) return;
+    if (!writeSave(snapshot()) && Date.now() - lastSaveWarning > 60000) {
+      lastSaveWarning = Date.now();
+      toast('⚠️ Could not save your game. Your browser storage may be full. Open the phone, Settings, Export my save.');
+    }
+  }
+  /** Replaces the game with an imported save and restarts (saving is blocked so the old game cannot overwrite it). */
+  function applyImportedSave(imported) {
+    enrolling = true;
+    writeSave({ ...imported, autoResume: false });
+    location.reload();
   }
   let saveTimer = 0;
   document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
@@ -578,6 +591,8 @@ async function main() {
     spend: n => { if (state.money < n) return false; state.money -= n; return true; },
     onSettingsChanged: () => { applySettings(engine); syncAudio(); minimap.setVisible(settings.minimap); },
     onOpenMap: () => mapUI.open(),
+    getSnapshot: () => snapshot(),
+    applyImportedSave,
     payBill: id => {
       const bill = state.meta.bills.find(b => b.id === id);
       const r = payHostelBill(state.meta.bills, id, state.money);
@@ -965,6 +980,7 @@ async function main() {
     const park = places.find(p => p.type === 'park');
     if (park) guide.set({ x: park.door.x, z: park.door.z, label: 'Motor Park' });
   }
+  if (lastLoadNote === 'damaged') toast('🛠️ Your save was damaged, so it was restored from a recent backup.');
   meta.refreshDay();
   meta.claimLogin();                          // daily login bonus and streak
   track('session_start', { student: !!state.academic });

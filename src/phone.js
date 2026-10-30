@@ -3,6 +3,7 @@ import { settings, setSetting } from './settings.js';
 import { ACHIEVEMENTS } from './meta.js';
 import { naira } from './needs.js';
 import { DECOR, owed } from './housing.js';
+import { exportCode, parseCode } from './save.js';
 import { levelOf, CLUBS, clubSchedule, joinClub, leaveClub, MAX_CLUBS, CLUB_DUES, clubById } from './social.js';
 
 const SAVE_STEP = 5000;
@@ -18,7 +19,7 @@ const next = (list, v) => list[(list.indexOf(v) + 1) % list.length];
  * The phone: one hub for the student portal, bank, messages, goals and settings (spec F-122, F-007, F-082).
  * deps: { state, meta, academics, day(), give(n), spend(n) -> boolean, onSettingsChanged() }
  */
-export function createPhone({ state, meta, academics, day, give, spend, onSettingsChanged, onOpenMap = () => {}, payBill = () => 'Not available.' }) {
+export function createPhone({ state, meta, academics, day, give, spend, onSettingsChanged, onOpenMap = () => {}, payBill = () => 'Not available.', getSnapshot = () => ({}), applyImportedSave = () => {} }) {
   const back = [{ label: '← Back', value: 'b' }];
 
   async function bank() {
@@ -133,6 +134,52 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
     });
   }
 
+  /** Shows the save code with options to copy it or download it as a file. */
+  async function exportSaveScreen() {
+    const code = exportCode(getSnapshot());
+    for (;;) {
+      const pick = await showModal({
+        title: '💾 Your save code',
+        lines: [
+          'This code is your whole game. Keep a copy somewhere safe. On any device, open Settings and choose Import a save to continue.',
+          `${code.slice(0, 90)}… (${code.length.toLocaleString('en-NG')} characters)`
+        ],
+        buttons: [
+          { label: '📋 Copy the code', value: 'copy' },
+          { label: '⬇️ Download as a file', value: 'file' },
+          { label: '← Back', value: 'b', secondary: true }
+        ]
+      });
+      if (pick === 'b') return;
+      if (pick === 'copy') {
+        let ok = false;
+        try { await navigator.clipboard.writeText(code); ok = true; } catch { /* blocked */ }
+        await showModal({ title: ok ? '📋 Copied!' : '📋 Could not copy', lines: [ok ? 'The code is on your clipboard. Paste it into a note or message to keep it.' : 'Copying is blocked here. Use Download as a file instead.'], buttons: back });
+      } else {
+        try {
+          const url = URL.createObjectURL(new Blob([code], { type: 'text/plain' }));
+          const a = document.createElement('a');
+          a.href = url; a.download = `campus-life-save-day${day()}.txt`;
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+        } catch { /* ignore */ }
+      }
+    }
+  }
+
+  async function importSaveScreen() {
+    const code = window.prompt('Paste your save code here:');
+    if (!code) return;
+    const r = parseCode(code);
+    if (!r.ok) { await showModal({ title: '📥 Import failed', lines: [r.message], buttons: back }); return; }
+    const pick = await showModal({
+      title: '📥 Import this save?',
+      lines: [`${r.save.name} · day ${r.save.day}`, 'This replaces the game currently on this device. Your current save is kept as a backup only until the next autosave, so export it first if you want to keep it.'],
+      buttons: [{ label: 'Replace my game with this save', value: 'yes' }, { label: 'Cancel', value: 'no', secondary: true }]
+    });
+    if (pick === 'yes') applyImportedSave(r.save);
+  }
+
   async function settingsMenu() {
     for (;;) {
       const pick = await showModal({
@@ -149,10 +196,14 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
           { label: `💡 Tutorial hints: ${onOff(settings.hints)}`, value: 'hints' },
           { label: `🗺️ Minimap: ${onOff(settings.minimap)}`, value: 'minimap' },
           { label: `📊 Share anonymous usage data: ${onOff(settings.analytics)}`, value: 'analytics' },
+          { label: '💾 Export my save', value: 'export' },
+          { label: '📥 Import a save', value: 'import' },
           { label: '← Back', value: 'b', secondary: true }
         ]
       });
       if (pick === 'b') return;
+      if (pick === 'export') { await exportSaveScreen(); continue; }
+      if (pick === 'import') { await importSaveScreen(); continue; }
       const v = settings[pick];
       setSetting(pick, pick === 'quality' ? next(QUALITY, v) : pick === 'textSize' ? next(TEXT_SIZES, v) : !v);
       onSettingsChanged();
