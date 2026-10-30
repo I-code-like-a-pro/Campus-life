@@ -1,8 +1,6 @@
 import { createCharacter } from './character.js';
 import { createSign, resolveCollisions } from './world.js';
 
-const FEMALE_NAMES = new Set(['Ada', 'Amina', 'Zainab', 'Ngozi', 'Bisi', 'Halima', 'Hauwa', 'Chioma', 'Yetunde', 'Fatima', 'Nkechi', 'Kemi', 'Ese', 'Mrs. Bello', 'Mrs. Eze', 'Aunty Sade', 'Mama']);
-const HAIRS = ['short', 'afro', 'short', 'bald', 'short'];
 const SKINS = [0x8d5a3b, 0x5a3a26, 0x3b2418, 0xb07a54, 0x6b4a2f];
 const SHIRTS = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf1c40f, 0x9b59b6, 0xe67e22, 0x1abc9c, 0xecf0f1, 0xff7aa8];
 const TROUSERS = [0x222a35, 0x2b3a55, 0x4a3b2a, 0x555b61];
@@ -54,9 +52,7 @@ export function createNpcs(scene, colliders, nav = null) {
       skin: def.skin ?? SKINS[list.length % SKINS.length],
       hair: def.hair ?? 0x1b1210,
       trousers: def.trousers ?? 0x2b3138,
-      lite: !!def.lite,
-      female: def.female ?? (/👩|👵/.test(def.emoji || '') || FEMALE_NAMES.has(def.name)),
-      hairStyle: def.hairStyle ?? ((def.female ?? (/👩|👵/.test(def.emoji || '') || FEMALE_NAMES.has(def.name))) ? 'long' : HAIRS[list.length % HAIRS.length])
+      lite: !!def.lite
     });
     char.group.position.set(def.x, 0, def.z);
     char.group.rotation.y = def.face ?? 0;

@@ -13,80 +13,42 @@ const lambert = c => new THREE.MeshLambertMaterial({ color: c });
  * `lite: true` builds a cheaper 4-mesh version for ambient crowds (keeps draw calls low on phones).
  */
 export function createCharacter(opts = {}) {
-  const { shirt = 0x2f6fd0, skin = 0x7a4a2c, trousers = 0x222a35, hair = 0x1b1210, modelUrl = null, height = 3.2, lite = false,
-    female = false, hairStyle = female ? 'long' : 'short', shoes = 0xf2f2f2 } = opts;
+  const { shirt = 0x2f6fd0, skin = 0x7a4a2c, trousers = 0x222a35, hair = 0x1b1210, modelUrl = null, height = 3.2, lite = false } = opts;
 
   const group = new THREE.Group();          // position / rotation are driven from outside
   const rig = new THREE.Group();            // everything visual lives here so it can be swapped
   group.add(rig);
 
-  const put = (geo, color, x, y, z, parent = rig) => {
-    const m = new THREE.Mesh(geo, lambert(color));
-    m.position.set(x, y, z);
-    parent.add(m);
-    return m;
-  };
-  const seg = lite ? 8 : 14;
-  // Figure about 7.5 heads tall: total 3.4 units before scaling to `height`.
-  const sh = female ? 0.46 : 0.54;                       // half shoulder width
-
-  // torso: chest, then a slimmer waist, then hips
-  put(new THREE.BoxGeometry(sh * 2, 0.62, 0.44), shirt, 0, 2.38, 0);
-  if (!lite) {
-    put(new THREE.BoxGeometry(sh * 2 - 0.16, 0.42, 0.4), shirt, 0, 1.95, 0);
-    put(new THREE.BoxGeometry(sh * 2 - 0.1 + (female ? 0.08 : 0), 0.3, 0.42), trousers, 0, 1.68, 0);
-    put(new THREE.CylinderGeometry(0.1, 0.12, 0.16, 8), skin, 0, 2.78, 0);            // neck
-  }
-
-  // head
-  const head = put(new THREE.SphereGeometry(0.27, seg, Math.max(6, seg - 2)), skin, 0, 3.04, 0);
-  head.scale.set(0.92, 1.08, 0.98);
-  if (!lite) {
-    put(new THREE.BoxGeometry(0.06, 0.05, 0.05), 0x14100e, -0.1, 3.08, 0.25);        // eyes
-    put(new THREE.BoxGeometry(0.06, 0.05, 0.05), 0x14100e, 0.1, 3.08, 0.25);
-    put(new THREE.BoxGeometry(0.07, 0.1, 0.08), skin, 0, 3.0, 0.27);                  // nose
-    put(new THREE.BoxGeometry(0.06, 0.1, 0.07), skin, -0.25, 3.02, 0);                // ears
-    put(new THREE.BoxGeometry(0.06, 0.1, 0.07), skin, 0.25, 3.02, 0);
-  }
-  // hair
-  const HAIR = {
-    short: () => put(new THREE.SphereGeometry(0.29, seg, 8, 0, Math.PI * 2, 0, Math.PI * 0.5), hair, 0, 3.08, -0.01),
-    afro: () => put(new THREE.SphereGeometry(0.36, seg, 10), hair, 0, 3.12, -0.04),
-    long: () => {
-      const cap = put(new THREE.SphereGeometry(0.29, seg, 8, 0, Math.PI * 2, 0, Math.PI * 0.55), hair, 0, 3.08, -0.01);
-      if (!lite) put(new THREE.BoxGeometry(0.5, 0.7, 0.16), hair, 0, 2.78, -0.2);
-      return cap;
-    },
-    bald: () => null
-  };
-  (HAIR[hairStyle] || HAIR.short)();
-
-  // arms: sleeve + forearm + hand hang from the shoulder pivot
-  const arm = side => {
+  const limb = (x, y, w, h, color) => {     // pivot at the joint, mesh hangs below it
     const pivot = new THREE.Group();
-    pivot.position.set(side * (sh + 0.1), 2.6, 0);
-    put(new THREE.CylinderGeometry(0.11, 0.1, 0.5, 8), shirt, 0, -0.25, 0, pivot);
-    if (!lite) {
-      put(new THREE.CylinderGeometry(0.085, 0.07, 0.5, 8), skin, 0, -0.72, 0, pivot);
-      put(new THREE.SphereGeometry(0.08, 8, 6), skin, 0, -1.0, 0, pivot);
-    } else {
-      put(new THREE.CylinderGeometry(0.085, 0.07, 0.5, 6), skin, 0, -0.72, 0, pivot);
-    }
+    pivot.position.set(x, y, 0);
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, w), lambert(color));
+    m.position.y = -h / 2;
+    pivot.add(m);
     rig.add(pivot);
     return pivot;
   };
-  const armL = lite ? null : arm(-1), armR = lite ? null : arm(1);
 
-  // legs: trousers, then shoes
-  const leg = side => {
-    const pivot = new THREE.Group();
-    pivot.position.set(side * 0.2, 1.62, 0);
-    put(new THREE.CylinderGeometry(0.16, 0.115, 1.48, lite ? 6 : 8), trousers, 0, -0.74, 0, pivot);
-    put(new THREE.BoxGeometry(0.27, 0.14, 0.46), shoes, 0, -1.55, 0.08, pivot);
-    rig.add(pivot);
-    return pivot;
-  };
-  const legL = leg(-1), legR = leg(1);
+  const torso = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.2, 0.6), lambert(shirt));
+  torso.position.y = 1.9;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.42, lite ? 8 : 16, lite ? 6 : 12), lambert(skin));
+  head.position.y = 2.95;
+  rig.add(torso, head);
+
+  let armL = null, armR = null;
+  if (!lite) {
+    const hairCap = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.55), lambert(hair));
+    hairCap.position.y = 3.0;
+    const nose = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.12), lambert(skin));
+    nose.position.set(0, 2.92, 0.42);
+    rig.add(hairCap, nose);
+    armL = limb(-0.72, 2.45, 0.3, 1.05, skin);
+    armR = limb(0.72, 2.45, 0.3, 1.05, skin);
+    const sleeveL = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.4, 0.34), lambert(shirt)); sleeveL.position.y = -0.2; armL.add(sleeveL);
+    const sleeveR = sleeveL.clone(); armR.add(sleeveR);
+  }
+  const legL = limb(-0.28, 1.3, 0.42, 1.3, trousers);
+  const legR = limb(0.28, 1.3, 0.42, 1.3, trousers);
 
   rig.scale.setScalar(height / 3.4);
 
