@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { createEngine } from './engine.js';
 import { buildCampus, resolveCollisions, updateDoors, updateSigns, SPAWN, BOUNDS } from './world.js';
-import { buildInterior, ENTERABLE } from './interiors.js';
+import { buildInterior, addDecor, ENTERABLE } from './interiors.js';
+import { newBill, addBill, dailyBillCheck, payBill as payHostelBill, cookBurns, restBonus, owed, HOSTEL_DUES } from './housing.js';
 import { createCharacter } from './character.js';
 import { createInput } from './input.js';
 import { createDayNight } from './daynight.js';
@@ -45,7 +46,7 @@ const ADMISSION_GAP = 1;      // admission list: one day later, Day 3 (about 20.
 const FARE = 3500;            // bus fare to school
 const TRANSPORT_GIFT = 10000; // Mum's gift when you get admission
 const ARRIVAL = { x: 0, z: 48 };   // where the bus drops you: just inside the main gate
-const MEAL_IDS = new Set(['jollof', 'pie', 'zobo', 'momfood', 'snack', 'vendorhalf']);
+const MEAL_IDS = new Set(['jollof', 'pie', 'zobo', 'momfood', 'snack', 'vendorhalf', 'cook']);
 const CROWD_BY_QUALITY = { low: 4, medium: 8, high: 12 };
 
 installErrorHandlers();
@@ -142,6 +143,11 @@ async function main() {
         case 'ca': meta.track('caTests'); break;
         case 'exam': meta.track('exams'); break;
         case 'graduated': meta.track('graduated'); break;
+        case 'semesterStart':
+          if (state.hostel && addBill(state.meta.bills, newBill(info.year, info.term, info.startDay))) {
+            meta.notify({ icon: '🏠', title: 'Hostel dues', text: `Hostel dues of ${naira(HOSTEL_DUES)} are due on Friday. Pay in your phone under My room and bills.` });
+          }
+          break;
         case 'results': {
           meta.track('semesters');
           meta.track('gradeA', info.rows.filter(r => r.grade === 'A').length);
@@ -194,6 +200,7 @@ async function main() {
         it = buildInterior(engine.scene, place, 400 + interiors.size * 60);   // far from the campus
         interiors.set(place.name, it);
         interiorNpcDefs(place, it).forEach(npcs.add);                          // staff, lecturers, roommates
+        if (place.type === 'hostel' || place.type === 'home') Object.keys(state.meta.room).forEach(id => addDecor(it, id));
       }
       inside = { place, interior: it };
       player.group.position.set(it.spawn.x, 0, it.spawn.z);
@@ -253,6 +260,10 @@ async function main() {
   function afterTime(_crossed, prevDay) {
     for (let d = prevDay + 1; d <= dayNight.state.day; d++) {
       dailyHealth(d);
+      for (const ev of dailyBillCheck(state.meta.bills, d)) {
+        if (ev.type === 'reminder') meta.notify({ icon: '💳', title: 'Hostel dues tomorrow', text: `${naira(owed(ev.bill))} is due tomorrow. Pay in your phone.` });
+        else meta.notify({ icon: '⚠️', title: 'Late fee added', text: `Your hostel dues are overdue. A late fee was added: ${naira(owed(ev.bill))} now.` });
+      }
       if ((d - 1) % 7 === 0) {
         state.money += ALLOWANCE;
         meta.ledger('Allowance from home', ALLOWANCE);
@@ -510,7 +521,12 @@ async function main() {
     give: n => { state.money += n; },
     spend: n => { if (state.money < n) return false; state.money -= n; return true; },
     onSettingsChanged: () => { applySettings(engine); syncAudio(); minimap.setVisible(settings.minimap); },
-    onOpenMap: () => mapUI.open()
+    onOpenMap: () => mapUI.open(),
+    payBill: id => {
+      const r = payHostelBill(state.meta.bills, id, state.money);
+      if (r.ok) { state.money -= r.cost; meta.ledger('Hostel dues', -r.cost); meta.track('billsPaid'); sfx('coin'); }
+      return r.message;
+    }
   });
   onSettingChange(() => { applySettings(engine); syncAudio(); });
   document.getElementById('portalbtn').addEventListener('click', () => { sfx('click'); runModal(() => phone.open()); });
@@ -537,6 +553,11 @@ async function main() {
 
   /** Runs a building action (jobs, food, sleep...). Returns true if it happened. */
   function execute(a) {
+    if (a.needsPantry && state.meta.pantry < a.needsPantry) { toast('No foodstuff left. Buy some at a market or provision store.'); return false; }
+    if (a.decor && state.meta.room[a.decor]) { toast('You already have that in your room.'); return false; }
+    if (a.id === 'cook' && cookBurns(Math.random())) {
+      a = { ...a, fx: { ...a.fx, hunger: 22, fun: -3 }, msg: 'You burnt the stew. You ate what you could.' };
+    }
     if (!canDo(a)) {
       toast(a.cost && state.money < a.cost ? 'Money no reach. Sapa dey!' : 'You are too tired for that.');
       return false;
@@ -566,7 +587,14 @@ async function main() {
     if (MEAL_IDS.has(a.id)) meta.track('meals');
     if (a.id === 'sleep') meta.track('sleeps');
     if (a.id === 'bathe') meta.track('bathes');
-    if (a.id === 'sleep') rest(health, 8);
+    if (a.id === 'sleep') { rest(health, 8); applyEffects(state.needs, { stress: -restBonus(state.meta.room) }); }
+    if (a.id === 'foodstuff') state.meta.pantry += 4;
+    if (a.id === 'cook') { state.meta.pantry -= 1; meta.track('cooked'); }
+    if (a.decor) {
+      state.meta.room[a.decor] = true;
+      meta.track('decorBought');
+      for (const it of interiors.values()) addDecor(it, a.decor);
+    }
     if (a.id === 'buynet') { health.net = true; meta.track('netBought'); }
     if (a.id === 'consult') {
       meta.track('doctorVisits');
@@ -762,7 +790,7 @@ async function main() {
     player.update(dt, v.len);
     const where = inside ? inside.place.name : null;
     if (!inside) updateDoors(places, player.group.position, dt);
-    npcs.update(dt, player.group.position, where);
+    npcs.update(dt, player.group.position, where, dayNight.state.minutes / 60);
     if (guide.update(player.group.position, !!inside)) toast('📍 You have arrived.');
 
     // what can I do here?

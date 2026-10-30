@@ -5,6 +5,7 @@
 const HOSTEL = [
   { id: 'sleep', label: '😴 Sleep (8 hrs)', minutes: 480, sleep: true, fx: { energy: 85, stress: -15, hunger: -22, hygiene: -8 }, msg: 'You slept well. New day, new gist.' },
   { id: 'bathe', label: '🚿 Bathe', minutes: 15, fx: { hygiene: 65, stress: -3 }, msg: 'Fresh and clean!' },
+  { id: 'cook', label: '🍳 Cook a meal (uses 1 foodstuff)', minutes: 45, needsPantry: 1, fx: { hunger: 48, fun: 5, stress: -2 }, msg: 'You cooked a proper meal and saved money.' },
   { id: 'phone', label: '📱 Scroll TikTok', minutes: 60, needsPower: true, fx: { fun: 22, energy: -4, stress: -4 }, msg: 'One hour don waka. Nice videos!' },
   { id: 'freelance', label: '💻 Freelance gig (3 hrs)', pay: 6000, minutes: 180, needsPower: true, limit: 1, needs: { energy: 25 },
     fx: { energy: -18, fun: -10, stress: 6, hunger: -8 }, msg: 'Gig delivered. Client paid on time, for once!' }
@@ -29,6 +30,10 @@ export const ACTIONS = {
   ],
   shop: [
     { id: 'snack', label: '🍪 Buy snacks', cost: 500, minutes: 5, fx: { hunger: 14, fun: 3 }, msg: 'Biscuit and sweet. Small belle fill.' },
+    { id: 'foodstuff', label: '🥘 Foodstuff (4 meals)', cost: 3000, minutes: 15, msg: 'You bought rice, tomatoes and ingredients for four meals.' },
+    { id: 'decor-poster', label: '🖼️ Room poster', cost: 1500, minutes: 5, decor: 'poster', msg: 'A poster for your room. Instant personality!' },
+    { id: 'decor-plant', label: '🪴 Potted plant', cost: 2000, minutes: 5, decor: 'plant', msg: 'A little green plant for your room.' },
+    { id: 'decor-lights', label: '✨ Fairy lights', cost: 3000, minutes: 5, decor: 'lights', msg: 'Fairy lights for your room. Cozy.' },
     { id: 'buynet', label: '🦟 Mosquito net', cost: 2500, minutes: 5, msg: 'You hung a mosquito net. Malaria will think twice.' },
     { id: 'shopwork', label: '🧾 Help at the shop (2 hrs)', pay: 2000, minutes: 120, limit: 2, fx: { energy: -12, fun: -5, hunger: -6, stress: 2 }, needs: { energy: 20 }, msg: 'Oga paid you for the help.' }
   ],

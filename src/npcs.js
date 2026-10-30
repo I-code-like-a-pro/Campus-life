@@ -12,6 +12,9 @@ const TROUSERS = [0x222a35, 0x2b3a55, 0x4a3b2a, 0x555b61];
  * `where` is the name of the building an NPC works inside (null = outdoors); NPCs only act while the player is in
  * the same place, so indoor and outdoor NPCs never mix.
  */
+/** Is someone with these working hours [[from, to], ...] at their post at `hour`? No hours means always there. */
+export const isPresent = (hours, hour) => !hours || hours.some(([a, b]) => hour >= a && hour < b);
+
 export function createNpcs(scene, colliders) {
   const list = [];
 
@@ -32,7 +35,7 @@ export function createNpcs(scene, colliders) {
     char.group.add(tag);
     scene.add(char.group);
 
-    const npc = { ...def, where: def.where ?? null, char, home: { x: def.x, z: def.z }, target: null, wait: Math.random() * 2, walking: 0 };
+    const npc = { ...def, where: def.where ?? null, present: true, char, home: { x: def.x, z: def.z }, target: null, wait: Math.random() * 2, walking: 0 };
     list.push(npc);
     return npc;
   }
@@ -44,9 +47,11 @@ export function createNpcs(scene, colliders) {
   }
 
   /** `where`: the building the player is in right now (null outdoors). Only NPCs of that place are updated. */
-  function update(dt, player, where = null) {
+  function update(dt, player, where = null, hour = 12) {
     for (const n of list) {
-      if (n.where !== where) continue;
+      n.present = isPresent(n.hours, hour);
+      n.char.group.visible = n.present;
+      if (n.where !== where || !n.present) continue;
       const g = n.char.group;
       const dxp = player.x - g.position.x, dzp = player.z - g.position.z;
       const near = Math.hypot(dxp, dzp) < 5;
@@ -81,7 +86,7 @@ export function createNpcs(scene, colliders) {
   function nearest(pos, radius, where = null) {
     let best = null, bestD = radius;
     for (const n of list) {
-      if (n.where !== where) continue;
+      if (n.where !== where || !n.present) continue;
       const d = Math.hypot(pos.x - n.char.group.position.x, pos.z - n.char.group.position.z);
       if (d < bestD) { bestD = d; best = n; }
     }
@@ -108,8 +113,8 @@ export function npcDefsFor(campus, places) {
   if (campus.id === 'home') {
     put({ id: 'mama',   name: 'Mama',             role: 'Your mum',            emoji: '👩🏾', dialogue: 'mama',   shirt: 0xc2694a, face: 0 }, at('Family House', 4, -2));
     put({ id: 'tobi',   name: 'Tobi',             role: 'Your little brother', emoji: '🧒🏾', dialogue: 'tobi',   shirt: 0xe5a52a, wander: 5 }, at('Family House', -3, -4));
-    put({ id: 'ade',    name: 'Mr. Ade',          role: 'Shopkeeper',          emoji: '🛒', dialogue: 'shopkeeper', shirt: 0x27ae60, face: 0 }, at('Provision Store', 4, 0));
-    put({ id: 'bode',   name: 'Bode',             role: 'Cyber cafe attendant', emoji: '🖥️', dialogue: 'bode',  shirt: 0x2f6fd0, face: 0 }, at('Cyber Cafe', 4, 0));
+    put({ id: 'ade',    name: 'Mr. Ade',          role: 'Shopkeeper',          emoji: '🛒', dialogue: 'shopkeeper', shirt: 0x27ae60, face: 0, hours: [[7, 21]] }, at('Provision Store', 4, 0));
+    put({ id: 'bode',   name: 'Bode',             role: 'Cyber cafe attendant', emoji: '🖥️', dialogue: 'bode',  shirt: 0x2f6fd0, face: 0, hours: [[8, 21]] }, at('Cyber Cafe', 4, 0));
     put({ id: 'sade',   name: 'Aunty Sade',       role: 'Neighbour',           emoji: '👵🏾', dialogue: 'sade',   shirt: 0x8e44ad, wander: 9 }, { x: 8, z: 10 });
     put({ id: 'bala',   name: 'Conductor Bala',   role: 'Bus conductor',       emoji: '🚌', dialogue: 'bala',   shirt: 0xf1c40f, trousers: 0x222a35, face: 0 }, at('Motor Park', 5, 0));
   } else {
@@ -151,17 +156,17 @@ export function interiorNpcDefs(place, interior) {
   const base = { x: a.x, z: a.z, where: place.name, face: 0 };
   switch (place.type) {
     case 'lecture':
-      return [{ ...base, id: `lect-${place.name}`, name: pickFrom(['Dr. Okonkwo', 'Prof. Adebayo', 'Dr. Bello', 'Mrs. Eze'], place.name.length), role: 'Lecturer', emoji: '👨🏾‍🏫', dialogue: 'lecturer', shirt: 0x6b4a2f, skin: 0x5a3a26 }];
+      return [{ ...base, id: `lect-${place.name}`, name: pickFrom(['Dr. Okonkwo', 'Prof. Adebayo', 'Dr. Bello', 'Mrs. Eze'], place.name.length), hours: [[8, 18]], role: 'Lecturer', emoji: '👨🏾‍🏫', dialogue: 'lecturer', shirt: 0x6b4a2f, skin: 0x5a3a26 }];
     case 'library':
-      return [{ ...base, id: `lib-${place.name}`, name: 'Mrs. Bello', role: 'Librarian', emoji: '📚', dialogue: 'librarian', shirt: 0x8e44ad, skin: 0x6b4a2f }];
+      return [{ ...base, id: `lib-${place.name}`, name: 'Mrs. Bello', hours: [[8, 20]], role: 'Librarian', emoji: '📚', dialogue: 'librarian', shirt: 0x8e44ad, skin: 0x6b4a2f }];
     case 'canteen':
-      return [{ ...base, id: `vend-${place.name}`, name: 'Mama Put', role: 'Canteen owner', emoji: '🍛', dialogue: 'vendor', shirt: 0xe67e22, skin: 0x3b2418 }];
+      return [{ ...base, id: `vend-${place.name}`, name: 'Mama Put', hours: [[7, 21]], role: 'Canteen owner', emoji: '🍛', dialogue: 'vendor', shirt: 0xe67e22, skin: 0x3b2418 }];
     case 'clinic':
-      return [{ ...base, id: `nurse-${place.name}`, name: 'Nurse Amaka', role: 'Nurse', emoji: '🩺', dialogue: 'nurse', shirt: 0xf4f7f5, skin: 0x5a3a26 }];
+      return [{ ...base, id: `nurse-${place.name}`, name: 'Nurse Amaka', hours: [[8, 22]], role: 'Nurse', emoji: '🩺', dialogue: 'nurse', shirt: 0xf4f7f5, skin: 0x5a3a26 }];
     case 'biz':
-      return [{ ...base, id: `biz-${place.name}`, name: 'Madam Ify', role: 'Business Centre manager', emoji: '💼', dialogue: 'bizmanager', shirt: 0x16a085, skin: 0x8d5a3b }];
+      return [{ ...base, id: `biz-${place.name}`, name: 'Madam Ify', hours: [[8, 20]], role: 'Business Centre manager', emoji: '💼', dialogue: 'bizmanager', shirt: 0x16a085, skin: 0x8d5a3b }];
     case 'hostel':
-      return [{ ...base, id: `room-${place.name}`, name: pickFrom(['Emeka', 'Dami', 'Kunle', 'Chuka'], place.name.length), role: 'Roommate', emoji: '🛏️', dialogue: 'roommate', shirt: 0x34495e, skin: 0x8d5a3b }];
+      return [{ ...base, id: `room-${place.name}`, name: pickFrom(['Emeka', 'Dami', 'Kunle', 'Chuka'], place.name.length), hours: [[0, 9], [16, 24]], role: 'Roommate', emoji: '🛏️', dialogue: 'roommate', shirt: 0x34495e, skin: 0x8d5a3b }];
     default:
       return [];
   }

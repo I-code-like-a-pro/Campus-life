@@ -45,6 +45,9 @@ export const ACHIEVEMENTS = [
   { id: 'checkup',       icon: '🩺', name: 'Check-up',           text: 'See a doctor',                            c: 'doctorVisits', n: 1 },
   { id: 'back_on_feet',  icon: '💪', name: 'Back on Your Feet',  text: 'Recover from an illness',                 c: 'recoveries',   n: 1 },
   { id: 'netted',        icon: '🦟', name: 'Netted',             text: 'Buy a mosquito net',                      c: 'netBought',    n: 1 },
+  { id: 'chef',          icon: '👩🏾‍🍳', name: 'Home Chef',          text: 'Cook 5 meals',                            c: 'cooked',       n: 5 },
+  { id: 'decorator',     icon: '🪴', name: 'Home Sweet Home',    text: 'Buy 3 room decorations',                  c: 'decorBought',  n: 3 },
+  { id: 'responsible',   icon: '💳', name: 'Responsible',        text: 'Pay 2 hostel bills',                      c: 'billsPaid',    n: 2 },
   { id: 'first_ride',    icon: '🛺', name: 'First Ride',         text: 'Take a keke or okada',                    c: 'rides',        n: 1 },
   { id: 'rider',         icon: '🛵', name: 'Frequent Rider',     text: 'Take 10 rides',                           c: 'rides',        n: 10 },
   { id: 'weeks',         icon: '📅', name: 'Settling In',        text: 'Play for 14 game days',                   c: 'daysPlayed',   n: 14 }

@@ -88,13 +88,17 @@ export function buildInterior(scene, place, ox) {
       box(5, 0.04, 3, 0xc2694a, 1, 0.02, 1);
       spot('Bed', '🛏️', -6.5, -2.4, 3.8, ['sleep']);
       spot('Desk & phone', '📱', 4.5, -4.8, 3.4, ['phone', 'freelance']);
+      // kitchenette on the right wall
+      solid(2.4, 1.2, 3.6, 0xdfe5e8, 8.4, 0.6, 0.8);
+      [-0.4, 1.6].forEach(z => { const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.08, 16), lam(0x222a35)); ring.position.set(8.4, 1.24, z); g.add(ring); });
+      spot('Kitchenette', '🍳', 6.9, 0.8, 3.0, ['cook']);
       spot('Shower', '🚿', -7.6, 3.4, 3.2, ['bathe']);
     },
     home() {
       build.hostel();                                        // same layout, plus a kitchen corner
       solid(3.2, 1.1, 1.6, 0xd6a96a, 6.6, 0.55, 3.4);
       solid(1.6, 4.2, 1.4, 0xe8edf0, 8.6, 2.1, -3.4);       // fridge
-      spot('Kitchen', '🍲', 6.6, 1.2, 3.6, ['momfood']);
+      spot('Kitchen', '🍲', 6.6, 1.2, 3.6, ['momfood', 'cook']);
     },
     cafe() {
       [[-6, -2.4], [0, -2.4], [6, -2.4], [-6, 1.6], [0, 1.6], [6, 1.6]].forEach(([x, z]) => {
@@ -199,8 +203,35 @@ export function buildInterior(scene, place, ox) {
   };
   const bounds = { minX: ox - W / 2 + 0.9, maxX: ox + W / 2 - 0.9, minZ: -D / 2 + 0.9, maxZ: D / 2 - 0.4 };
   return {
+    group: g, ox, decor: new Set(),
     colliders, bounds, spots, npcAnchor: npcAnchors[place.type] || null,
     spawn: { x: ox, z: D / 2 - 3.6 },
     exit: { x: ox, z: D / 2 - 1.1, r: 1.7 }
   };
+}
+
+/**
+ * Adds a decoration the player bought to a hostel/home interior (idempotent).
+ * Items: poster, plant, lights.
+ */
+export function addDecor(interior, id) {
+  if (!interior?.group || interior.decor.has(id)) return;
+  const g = interior.group;
+  const mesh = (geo, color, x, y, z) => { const m = new THREE.Mesh(geo, lam(color)); m.position.set(x, y, z); g.add(m); return m; };
+  if (id === 'poster') {
+    mesh(new THREE.BoxGeometry(2.6, 3.2, 0.08), 0xf6f1e4, -1.5, 3.6, -7.9);
+    mesh(new THREE.BoxGeometry(2.2, 1.4, 0.1), 0x0a8f4f, -1.5, 4.3, -7.85);
+    mesh(new THREE.BoxGeometry(2.2, 1.2, 0.1), 0xe5a52a, -1.5, 2.9, -7.85);
+  } else if (id === 'plant') {
+    mesh(new THREE.CylinderGeometry(0.5, 0.4, 0.7, 12), 0xb5481f, -9.0, 0.35, -2.2);
+    mesh(new THREE.SphereGeometry(0.75, 12, 10), 0x2f8f3a, -9.0, 1.3, -2.2);
+  } else if (id === 'lights') {
+    const mat = new THREE.MeshBasicMaterial({ color: 0xffe9a8 });
+    for (let i = 0; i < 12; i++) {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(0.14, 8, 6), mat);
+      m.position.set(-8.5 + i * 1.55, 5.6 + Math.sin(i * 0.9) * 0.25, -7.8);
+      g.add(m);
+    }
+  } else return;
+  interior.decor.add(id);
 }

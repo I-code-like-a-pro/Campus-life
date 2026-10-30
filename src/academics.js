@@ -119,6 +119,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     a.startDay += 7;
     a.phase = 'semester';
     buildSemester(a);
+    onEvent('semesterStart', { year: a.year, term: a.term, startDay: a.startDay });
   }
 
   /** Advances the calendar. Returns events: 'results', 'graduated'. */
@@ -127,7 +128,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     if (!a || a.graduated && a.phase === 'break') return [];
     const events = [];
     if (a.phase === 'pre') {
-      if (day() >= a.startDay) a.phase = 'semester'; else return events;
+      if (day() >= a.startDay) { a.phase = 'semester'; onEvent('semesterStart', { year: a.year, term: a.term, startDay: a.startDay }); } else return events;
     }
     const sd = semDay();
     if (a.phase === 'semester' && sd >= 7) {

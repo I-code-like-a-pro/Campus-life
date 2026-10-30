@@ -2,6 +2,7 @@ import { showModal } from './modal.js';
 import { settings, setSetting } from './settings.js';
 import { ACHIEVEMENTS } from './meta.js';
 import { naira } from './needs.js';
+import { DECOR, owed } from './housing.js';
 
 const SAVE_STEP = 5000;
 const MUM_GIFT = 3000;
@@ -16,7 +17,7 @@ const next = (list, v) => list[(list.indexOf(v) + 1) % list.length];
  * The phone: one hub for the student portal, bank, messages, goals and settings (spec F-122, F-007, F-082).
  * deps: { state, meta, academics, day(), give(n), spend(n) -> boolean, onSettingsChanged() }
  */
-export function createPhone({ state, meta, academics, day, give, spend, onSettingsChanged, onOpenMap = () => {} }) {
+export function createPhone({ state, meta, academics, day, give, spend, onSettingsChanged, onOpenMap = () => {}, payBill = () => 'Not available.' }) {
   const back = [{ label: '← Back', value: 'b' }];
 
   async function bank() {
@@ -50,6 +51,27 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
           await showModal({ title: '📞 Mum', lines: [`"Ah ah, again? Okay, I have sent ${naira(MUM_GIFT)}. Spend it well o!"`], buttons: back });
         }
       }
+    }
+  }
+
+  async function roomApp() {
+    for (;;) {
+      const m = state.meta;
+      const unpaid = m.bills.filter(b => !b.paid);
+      const decor = Object.keys(m.room).map(k => `${DECOR[k].icon} ${DECOR[k].name}`);
+      const pick = await showModal({
+        title: '🏠 My room and bills',
+        lines: [
+          state.hostel ? `Hostel: ${state.hostel}` : 'You have not been allocated a room yet.',
+          `🍲 Pantry: ${m.pantry} meal${m.pantry === 1 ? '' : 's'} of foodstuff (cook in your room's kitchenette)`,
+          decor.length ? `Room: ${decor.join(', ')}` : 'Room: no decorations yet. The market sells posters, plants and fairy lights.',
+          unpaid.length ? 'Unpaid bills:' : 'No unpaid bills. 🎉',
+          ...unpaid.map(b => `• ${b.label}: ${naira(owed(b))}, due Day ${b.due}${b.late ? ' (late fee added)' : ''}`)
+        ],
+        buttons: [...unpaid.map(b => ({ label: `💳 Pay: ${b.label} (${naira(owed(b))})`, value: b.id })), { label: '← Back', value: 'b', secondary: true }]
+      });
+      if (pick === 'b') return;
+      await showModal({ title: '💳 Payment', lines: [payBill(pick)], buttons: back });
     }
   }
 
@@ -113,6 +135,7 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
       const buttons = [
         ...(state.academic ? [{ label: '🎓 Student portal', value: 'portal' }] : []),
         { label: '🗺️ Map and travel', value: 'map' },
+        ...(state.hostel || state.meta.bills.length ? [{ label: '🏠 My room and bills', value: 'room' }] : []),
         { label: '🏦 Bank', value: 'bank' },
         { label: `💬 Messages${u ? ` (${u} new)` : ''}`, value: 'messages' },
         { label: '🏆 Goals and achievements', value: 'goals' },
@@ -123,6 +146,7 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
       if (pick === 'x') return;
       if (pick === 'map') { onOpenMap(); return; }
       if (pick === 'portal') await academics.openPortal();
+      else if (pick === 'room') await roomApp();
       else if (pick === 'bank') await bank();
       else if (pick === 'messages') await messages();
       else if (pick === 'goals') await goals();
