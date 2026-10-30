@@ -56,7 +56,7 @@ Without any setup the in-game **Send feedback** button (menu `☰`) lets reviewe
    - How likely are you to recommend this game? (1 to 5)
    - Your phone model (optional)
 2. Click **Send > link** and copy the link.
-3. In your host's dashboard, add an **environment variable** named `VITE_FEEDBACK_URL` with that link. Optionally add `VITE_FEEDBACK_EMAIL` with your email address.
+3. In your host's dashboard, add an **environment variable** named `VITE_FEEDBACK_URL` with that link. Optionally add `VITE_FEEDBACK_EMAIL` with your email address. Also set `VITE_CONTACT_EMAIL` so your address appears on the privacy policy, terms and About pages.
 4. **Redeploy.** These values are baked in when the site is built, so a new deploy is needed after changing them.
 
 ## 4. Check it works (5 minutes)

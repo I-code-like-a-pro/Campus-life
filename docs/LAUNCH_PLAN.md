@@ -6,14 +6,17 @@
 
 **Out of scope for launch** (planned for after): shared multiplayer worlds, live chat, trading, payments and ads, romance, off-campus housing, new campuses beyond the three.
 
-## Week 1: stability, speed and safety nets
+## Progress
+**Week 1 is done on the code side** (1.1 to 1.5 below). What remains for week 1 needs a real phone: measure the frame rate and run the 🧪 items in [QA_CHECKLIST.md](QA_CHECKLIST.md).
+
+## Week 1: stability, speed and safety nets (done)
 | # | Task | Done when |
 |---|---|---|
-| 1.1 | Measure and cut rendering cost (draw calls, triangles) with instancing and merged static geometry | Draw calls under 150 on every campus; frame rate measured on a real phone |
-| 1.2 | Save safety: export and import a save code, storage-full handling, corrupted-save recovery, backup of the last good save | A player can move progress between devices and never loses a save to a bug |
-| 1.3 | Legal pages in the game: disclaimer (fan-made, not affiliated), privacy policy, terms, credits | Reachable from the menu and the start screen |
-| 1.4 | Economy and difficulty balance using a bot that plays full semesters | A careful player passes comfortably, a careless one struggles, nobody is stuck broke |
-| 1.5 | Bug sweep: soft-locks, edge cases (sleeping through exams, results while indoors, retake loops) | A written list of tested scenarios all pass |
+| 1.1 | Measure and cut rendering cost (draw calls, triangles) with instancing and merged static geometry | ✅ Worst case went from 130 to 87 draw calls (target 150) and the frame's CPU cost fell about 40%. Phone frame rate still to measure |
+| 1.2 | Save safety: export and import a save code, storage-full handling, corrupted-save recovery, backup of the last good save | ✅ Rolling backup, automatic repair, export/import with a checksum, warning when saving fails |
+| 1.3 | Legal pages in the game: disclaimer (fan-made, not affiliated), privacy policy, terms, credits | ✅ About, privacy and terms pages, linked from the menu and the start screen. Set `VITE_CONTACT_EMAIL` so your address appears on them. Have a lawyer read them before launch |
+| 1.4 | Economy and difficulty balance using a bot that plays full semesters | ✅ Simulator and regression tests. Diligent about 4.5 CGPA, average about 3.5, careless about 2.0 with failures. Added a power nap, harder later years, an exam curve and tighter costs |
+| 1.5 | Bug sweep: soft-locks, edge cases (sleeping through exams, results while indoors, retake loops) | ✅ [QA_CHECKLIST.md](QA_CHECKLIST.md); a scripted run of the whole journey finished with no errors |
 
 ## Week 2: content and gameplay depth
 | # | Task | Done when |

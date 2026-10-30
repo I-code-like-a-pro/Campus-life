@@ -1,6 +1,6 @@
 # Implementation status
 
-Companion to [GAME_SPEC.md](GAME_SPEC.md). Last updated after the second pass (map and travel, health, hostel life, social life).
+Companion to [GAME_SPEC.md](GAME_SPEC.md). Last updated after the first week of the launch plan (performance, save safety, legal pages, balance).
 
 **Legend:** ✅ done · 🟡 partly done (what exists and what is missing is noted) · ⬜ not started · 🔒 blocked on something outside the code (an owner decision, assets, a backend, or a third party)
 
@@ -14,13 +14,13 @@ performance testing and legal sign-off. Those are listed as 🔒 below, with wha
 | Item | Status | Notes |
 |---|---|---|
 | Save versioning and migrations (F-004) | ✅ | `src/save.js`, schema v2, v1 saves upgrade automatically, tested |
-| Automated tests | ✅ | 98 unit tests (admissions, academics, saves, needs, progression, events, content, dialogue, pathfinding, health, housing, social) |
+| Automated tests | ✅ | 117 tests (admissions, academics, saves and backups, needs, progression, events, content, dialogue, pathfinding, health, housing, social, and a bot-driven balance simulation) |
 | CI | 🟡 | `.github/workflows/ci.yml` runs tests and build; it has not run on GitHub yet because the project is not in a repository |
 | End-to-end tests | ⬜ | Needs Playwright and a stable headless setup |
 | Error tracking | 🟡 | Errors are logged locally (last 20); sending is opt-in and needs an endpoint (`VITE_TELEMETRY_URL`) |
 | Analytics and KPIs | 🟡 | Consent-based event tracking exists; no dashboard or endpoint yet |
 | TypeScript migration | ⬜ | Large mechanical change; best done as its own pass with the tests as a safety net |
-| Performance baseline on a real phone | ⬜ | Not measured. Bundle is 206 KB gzipped. Draw-call and FPS budgets in the spec are unverified |
+| Performance baseline on a real phone | 🟡 | Trees, lamps and windows are instanced: worst case 87 draw calls (was 130), interiors about 40. Bundle is 208 KB gzipped. Not yet measured on a phone. Draw-call and FPS budgets in the spec are unverified |
 | Content in data files | 🟡 | Courses, questions, campuses, actions, achievements are already data; dialogue is still code |
 
 ## 4.1 Accounts, onboarding and saves
