@@ -30,7 +30,7 @@ New game → JAMB form → home → JAMB result → admission list → Mum's gif
 ## Needs a real phone (🧪)
 | Check | Notes |
 |---|---|
-| Frame rate on a mid-range Android on mobile data | Worst case is now 87 draw calls and about 2 ms of CPU render time on a desktop; the phone number is unknown |
+| Frame rate on a mid-range Android on mobile data | Worst case measured on UNILAG is now 88 draw calls (it was 115 before static scenery was baked into one mesh); the phone number is unknown |
 | iPhone Safari: audio starts after the first tap, joystick works, safe areas respected | 🧪 |
 | Samsung Internet and Chrome on Android | 🧪 |
 | Low-end phone with the Low graphics setting | 🧪 |
@@ -38,6 +38,10 @@ New game → JAMB form → home → JAMB result → admission list → Mum's gif
 | Installing to the home screen (PWA) and playing offline | 🧪 |
 | One-thumb reach of all buttons, text readable outdoors | 🧪 |
 | A full playthrough by a first-time player, without help | 🧪 |
+| Guided first day: five tap-through steps (walk, talk, enter, phone, sleep at night), Skip tour works, tour never shows over a dialog, the phone, the map or the start screen, and does not return after a reload once finished | 🧪 |
+| Landmark badges: far buildings show only their emoji badge, names appear when you get close, nothing flickers at the switch distance, badges stay readable in rain and haze | 🧪 |
+| Neighbourhood props (stepping stones, flower beds, benches, noticeboards, washing lines, Family House fence, Sports Centre benches and scoreboard): none of them block a doorway or trap an NPC | 🧪 |
+| Warm light at sunrise and sunset, bluish night, rooms stay warm at night | 🧪 |
 
 ## How to run the checks yourself
 ```bash

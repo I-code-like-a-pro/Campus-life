@@ -86,6 +86,14 @@ export function buildInterior(scene, place, ox) {
       box(1, 0.2, 0.6, 0xb0b8c0, -8.8, 4.2, 4.6);
       // rug
       box(5, 0.04, 3, 0xc2694a, 1, 0.02, 1);
+      // noticeboard on the left wall with pinned papers, and a waste bin by the desk
+      box(0.12, 1.7, 2.8, 0x6b4a2b, -W / 2 + 0.06, 3.4, -1);
+      box(0.08, 1.4, 2.4, 0xd9a864, -W / 2 + 0.12, 3.4, -1);
+      [[-1.5, 3.7, 0xffffff], [-0.7, 3.1, 0xbfe3ff], [0.1, 3.7, 0xffe9a8], [0.8, 3.1, 0xffffff]]
+        .forEach(([dz, y, c]) => box(0.05, 0.5, 0.45, c, -W / 2 + 0.17, y, -1 + dz));
+      const bin = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.38, 0.9, 12), lam(0x5c6670));
+      bin.position.set(0.6, 0.45, -6.6);
+      g.add(bin);
       spot('Bed', '🛏️', -6.5, -2.4, 3.8, ['sleep', 'nap']);
       spot('Desk & phone', '📱', 4.5, -4.8, 3.4, ['phone', 'freelance']);
       // kitchenette on the right wall

@@ -49,7 +49,7 @@ export function createTour({ meta }) {
   const $ = id => document.getElementById(id);
   const el = $('tour');
   if (!el) return { update() {}, skip() {} };
-  const text = $('tourText'), count = $('tourCount'), next = $('tourNext'), skipBtn = $('tourSkip');
+  const text = $('tourText'), next = $('tourNext'), skipBtn = $('tourSkip');
 
   // brand-new players only: if any hint was already shown this is an older save, so no tour
   const t = meta.tutorial.tour ??= Object.keys(meta.tutorial).length ? { done: true } : { i: 0 };
@@ -88,8 +88,7 @@ export function createTour({ meta }) {
     if (show && shownStep !== t.i) {
       shownStep = t.i;
       text.textContent = TOUR[t.i].text;
-      count.textContent = `Tour ${t.i + 1}/${TOUR.length}`;
-      next.textContent = t.i === TOUR.length - 1 ? 'Got it' : 'Next';
+      next.textContent = t.i === TOUR.length - 1 ? 'Got it' : `Next (${t.i + 1}/${TOUR.length})`;
     }
   }
 
