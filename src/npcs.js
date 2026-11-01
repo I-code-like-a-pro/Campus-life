@@ -1,5 +1,8 @@
 import { createCharacter } from './character.js';
 import { createSign, resolveCollisions } from './world.js';
+import { DESKS } from './clearance.js';
+import { OFFICE_HOURS } from './documents.js';
+import { REGISTRY_SLOTS } from './interiors.js';
 
 const SKINS = [0x8d5a3b, 0x5a3a26, 0x3b2418, 0xb07a54, 0x6b4a2f];
 const SHIRTS = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf1c40f, 0x9b59b6, 0xe67e22, 0x1abc9c, 0xecf0f1, 0xff7aa8];
@@ -130,7 +133,15 @@ export function createNpcs(scene, colliders, nav = null) {
     return best;
   }
 
-  return { add, update, nearest, list };
+  /** Takes a character out of the world (used for one-off scene crowds). */
+  function remove(id) {
+    const i = list.findIndex(n => n.id === id);
+    if (i < 0) return;
+    scene.remove(list[i].char.group);
+    list.splice(i, 1);
+  }
+
+  return { add, remove, update, nearest, list };
 }
 
 /* ------------------------------------------------------------------------------------------------ */
@@ -202,6 +213,9 @@ export function interiorNpcDefs(place, interior) {
       return [{ ...base, id: `nurse-${place.name}`, name: 'Nurse Amaka', hours: [[8, 22]], role: 'Nurse', emoji: '🩺', dialogue: 'nurse', shirt: 0xf4f7f5, skin: 0x5a3a26 }];
     case 'biz':
       return [{ ...base, id: `biz-${place.name}`, name: 'Madam Ify', hours: [[8, 20]], role: 'Business Centre manager', emoji: '💼', dialogue: 'bizmanager', shirt: 0x16a085, skin: 0x8d5a3b }];
+    case 'registry':
+      // the four clearance officers, one behind each counter, working office hours
+      return DESKS.map((d, i) => ({ ...d.npc, ...base, x: interior.ox + REGISTRY_SLOTS[i], z: -6.4, hours: [OFFICE_HOURS] }));
     case 'hostel':
       return [{ ...base, id: `room-${place.name}`, name: pickFrom(['Emeka', 'Dami', 'Kunle', 'Chuka'], place.name.length), hours: [[0, 9], [16, 24]], role: 'Roommate', emoji: '🛏️', dialogue: 'roommate', shirt: 0x34495e, skin: 0x8d5a3b }];
     default:

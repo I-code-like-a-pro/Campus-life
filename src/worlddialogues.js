@@ -1,5 +1,6 @@
 import { converse, asks, tip } from './dialogues.js';
 import { townOf, townGist, townPlace } from './towns.js';
+import { allMissing, fixDoc } from './documents.js';
 import { traitOf, levelOf, TONES, toneDelta, toneReply, GIFTS, giftDelta, FAVOURS, canAsk } from './social.js';
 
 /*
@@ -196,7 +197,20 @@ export async function vendor(c, npc) {
 }
 
 export async function bizmanager(c, npc) {
-  await converse(c, npc, 'Welcome to the Business Centre! We print, we scan, we help with POS. Need work or handouts?', () => [
+  const cl = c.state.clearance;
+  const papers = cl && !cl.done ? allMissing(cl).filter(d => d.fix) : [];
+  await converse(c, npc, papers.length ? 'Welcome! Freshers always forget something. Do you need photocopies, photographs or a printout for clearance?' : 'Welcome to the Business Centre! We print, we scan, we help with POS. Need work or handouts?', () => [
+    ...(cl && !cl.done ? allMissing(cl).filter(d => d.fix).map(d => ({ label: `📄 ${d.fix.label} (₦${d.fix.cost})`, run: async () => {
+      if (!c.pay(d.fix.cost)) {
+        const call = await c.say(npc, `That is ₦${d.fix.cost}, and you have ₦${Math.floor(c.state.money)}.`, [{ label: '📞 Call Mum for a small transfer', value: 'mum' }, { label: 'I will come back', value: 'later', secondary: true }]);
+        if (call !== 'mum') return 'No problem. Come back when you have it.';
+        c.give(d.fix.cost);
+        c.pay(d.fix.cost);
+      }
+      fixDoc(cl, d.id);
+      return `${d.fix.done} Take it back to the Registry.`;
+    } }))
+      : []),
     { label: '💼 Is there work for me?', run: () => 'Yes! The printing desk pays ₦3,000 for 2 hours (up to twice a day). A POS shift pays ₦4,500 for 3 hours. The printers need light, so no work during a NEPA cut.' },
     { label: '📖 What handouts do you have?', run: () => 'Past questions and handouts for all courses: ₦1,500 and your preparation improves. Use the counter.' },
     asks(c)(npc)

@@ -25,7 +25,9 @@ import { buildStory, honoursText, shareCard } from './ending.js';
 import { createNpcs, npcDefsFor, crowdDefs, interiorNpcDefs } from './npcs.js';
 import { DIALOGUES } from './dialogues.js';
 import { WORLD_DIALOGUES } from './worlddialogues.js';
-import { DESKS, DESK_RESERVED, buildDesks, nextStep } from './clearance.js';
+import { DESKS, nextStep } from './clearance.js';
+import { clearanceFacts } from './documents.js';
+import { createScenes } from './scenes.js';
 import { createAcademics } from './academics.js';
 import { createMeta } from './meta.js';
 import { ALLOWANCE, FARE, TRANSPORT_GIFT } from './economy.js';
@@ -101,9 +103,7 @@ async function main() {
 
   const engine = createEngine();
   applySettings(engine);
-  const clearing = !!state.clearance && !state.clearance.done;     // registration desks are set up
-  const { colliders, places } = buildCampus(engine.scene, campus, clearing ? DESK_RESERVED : []);
-  const deskNpcs = clearing ? buildDesks(engine.scene, colliders) : [];
+  const { colliders, places } = buildCampus(engine.scene, campus, []);
   const input = createInput();
   const hud = createHud();
   const dayNight = createDayNight();
@@ -121,7 +121,7 @@ async function main() {
 
   const navGrid = buildGrid(colliders, BOUNDS);
   const npcs = createNpcs(engine.scene, colliders, { grid: navGrid, findPath, places });
-  [...npcDefsFor(campus, places), ...deskNpcs].forEach(npcs.add);
+  npcDefsFor(campus, places).forEach(npcs.add);
   const crowdCount = campus.id === 'home' ? 4 : CROWD_BY_QUALITY[settings.quality] ?? 8;
   crowdDefs(campus, crowdCount, state.name.length * 97 + 13).forEach(npcs.add);
 
@@ -275,6 +275,15 @@ async function main() {
     give: n => { state.money += n; }, campusName: campus.name, courseName: () => courseOf(state.course).name
   });
 
+  // --- scenes: orientation, hall meeting and matriculation happen at real places and times; the player may attend or skip ---
+  const payQuiet = n => { if (state.money < n) return false; state.money -= n; meta.ledger('Payment', -n); return true; };
+  const scenes = createScenes({
+    state, meta, npcs, day, minutes: () => dayNight.state.minutes, consume: a => consume(a), pay: payQuiet,
+    met: id => campusStory.met(id), name: () => state.name || 'Fresher', campusName: campus.name, courseName: () => courseOf(state.course).name,
+    hostelName: () => state.hostel || '', venuePlace: type => places.find(p => p.type === type)?.name || '',
+    rhythm: () => academics.facts().find(l => l.startsWith('Weekly rhythm'))?.replace(/^Weekly rhythm: /, 'Every semester week runs on this rhythm: ') || ''
+  });
+
   const events = createEvents(engine.scene, () => {});
   const eventEngine = createEventEngine({
     events, meta, sound: sfx,
@@ -317,6 +326,7 @@ async function main() {
       meta.track('enters');
       meta.trackOnce('place', place.name, 'placesSeen');
       campusStory.visited(place.type);                  // group B: orientation week goals
+      scenes.entered(place, it);                        // a scene may be on here: fills the room
     });
   }
   function leavePlace(instant) {
@@ -324,6 +334,7 @@ async function main() {
     const place = inside.place;
     const out = () => {
       inside = null;
+      scenes.left();
       player.group.position.set(place.door.x, 0, place.door.z);
       player.group.rotation.y = 0;
       events.setIndoors(false);
@@ -409,8 +420,8 @@ async function main() {
   }
   function goalText() {
     if (state.admission) return `🚌 Go to the Motor Park and take a bus to ${CAMPUSES[state.admission.uni].short}`;
-    if (state.clearance && !state.clearance.done) return `📋 Clearance: ${nextStep(state.clearance).name}`;
-    if (state.academic) return academics.goal();
+    if (state.clearance && !state.clearance.done) return `📋 Registry (8:00–17:00): ${nextStep(state.clearance).name} counter`;
+    if (state.academic) return scenes.goalLine() || academics.goal();
     const a = state.aspirant;
     if (!a) return state.course ? `🎓 ${courseOf(state.course).name} · ${campus.short}` : '';
     if (!a.jambSeen) return day() < a.jambDay ? `📅 JAMB result: Day ${a.jambDay}` : '📄 JAMB result is out! Check the cyber cafe';
@@ -596,16 +607,13 @@ async function main() {
   });
 
   function tellWay(npc, target, lead = '') {
-    const w = describeWay(player.group.position, target);
+    const w = describeWay(inside ? inside.place.door : player.group.position, target);      // indoors, measure from the door of the building
     guide.set(target);
     return `${lead ? lead + ' ' : ''}${target.label} is about ${w.dist} metres ${w.dir}. I've marked it for you 📍`;
   }
 
   async function directions(npc) {
     const dests = places.map(p => ({ label: `${p.emoji} ${p.name}`, target: { x: p.door.x, z: p.door.z, label: p.name } }));
-    if (state.clearance && !state.clearance.done) {
-      DESKS.slice().reverse().forEach(d => dests.unshift({ label: `${d.emoji} ${d.name}`, target: { x: d.x, z: d.z + 3, label: d.name } }));
-    }
     const pick = await showModal({
       title: `${npc.emoji} ${npc.name}`,
       lines: ['Where do you want to go?'],
@@ -671,7 +679,8 @@ async function main() {
         when: `Day ${day()}, ${String(Math.floor(t / 60)).padStart(2, '0')}:${String(Math.floor(t % 60)).padStart(2, '0')}`,
         place: inside ? inside.place.name : campus.name,
         mood: `${m.label}; energy ${Math.round(state.needs.energy)}/100, stress ${Math.round(state.needs.stress)}/100`,
-        facts: a ? academics.facts() : state.aspirant
+        facts: state.clearance && !state.clearance.done ? clearanceFacts(state.clearance, { hour: dayNight.state.minutes / 60 })
+          : a ? [...academics.facts(), ...scenes.facts()] : state.aspirant
           ? [`The player is a JAMB aspirant. Result day is ${state.aspirant.jambDay}, admission list day ${state.aspirant.admitDay}. Today is day ${day()}.`]
           : ['The player is preparing to travel to university.']
       };
@@ -701,10 +710,12 @@ async function main() {
       const p = places.find(x => x.name === name);
       return p ? tellWay(null, { x: p.door.x, z: p.door.z, label: p.name }) : 'I am not sure where that is on this campus.';
     },
+    courseName: () => (state.course ? courseOf(state.course).name : ''),
+    hometownName: () => townOf(state.hometown).name,
     uniName: id => CAMPUSES[id].name,
     uniShort: id => CAMPUSES[id].short,
     guideTo: t => guide.set(t),
-    pay: n => { if (state.money < n) return false; state.money -= n; meta.ledger('Payment', -n); return true; },
+    pay: payQuiet,
     give: n => { state.money += n; meta.ledger('Money received', n); }
   };
 
@@ -718,7 +729,7 @@ async function main() {
     campusStory.met(npc.id);                            // group B: orientation week goal
     const gain = dailyChat(relation(npc), day());
     if (gain) addRelation(npc, gain);
-    try { await campusStory.clearanceHiccup(npc); await run(talkContext, npc); }   // group B: hiccup first
+    try { await run(talkContext, npc); }
     finally { paused = false; save(); }
   }
 
@@ -902,7 +913,7 @@ async function main() {
   const getMapScene = () => ({
     campus,
     places,
-    desks: state.clearance && !state.clearance.done ? DESKS : [],
+    desks: [],
     player: player.group.position,
     npcs: npcs.list.filter(n => n.where === null).map(n => ({ x: n.char.group.position.x, z: n.char.group.position.z })),
     target: guide.target,
@@ -1024,7 +1035,8 @@ async function main() {
       if (ev === 'graduated') runModal(() => runEnding('graduated'));
       if (ev === 'withdrawn') runModal(() => runEnding('withdrawn'));
     }
-    if (state.academic && !paused && !transitioning && !inside && campusStory.matricPending()) runModal(() => campusStory.matriculation());   // group B: one-time ceremony
+    if (state.academic) scenes.tick();
+    if (inside && !paused && !transitioning && scenes.shouldOffer(inside.place.name)) runModal(() => scenes.offer(inside.place));
     storyBtn.hidden = !(state.academic && (state.academic.graduated || state.academic.withdrawn));
     const unread = meta.unread();
     badge.hidden = !unread;
@@ -1198,7 +1210,7 @@ async function main() {
   window.__campus = {
     start: events.start, setHour: dayNight.setHour, setDay: d => { dayNight.state.day = d; },
     state, places, player, npcs, guide, enter: enterPlace, leave: leavePlace, get inside() { return inside; },
-    checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
+    scenes, checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
     football, runEnding, mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
     addRelation, relation, boostNearby, engine, colliders, resolveCollisions

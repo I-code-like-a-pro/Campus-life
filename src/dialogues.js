@@ -1,5 +1,6 @@
 import { durationText, townGist, townPlace } from './towns.js';
-import { DESKS, CLEARANCE_FEE, nextStep } from './clearance.js';
+import { DESKS, CLEARANCE_FEE, nextStep, seedOf } from './clearance.js';
+import { docsFor, checkDesk, ensureDocs, detailsCard } from './documents.js';
 import { naira } from './needs.js';
 
 /*
@@ -118,16 +119,18 @@ async function bala(c, npc) {
 
 /* ------------------------------ campus: gate guides ------------------------------ */
 
+const REGISTRY_TIPS = `Go to the Registry. It opens from 8 in the morning to 5 in the evening. Bring your admission letter, O'level result, two photocopies of your JAMB slip, a birth certificate or declaration of age, and four passport photographs. There are four counters in order: Admissions, Bursary (fee ${naira(CLEARANCE_FEE)}), Medical and Hostel.`;
+
 async function musa(c, npc) {
   const cl = c.state.clearance;
   const next = cl && !cl.done ? nextStep(cl) : null;
   const open = next
-    ? `Welcome, fresh student! Clearance is done at the registration desks, just up the path. Start with the ${next.name}.`
+    ? `Welcome, fresh student! Clearance is done at the Registry, just up the path on your left. It opens at 8 and closes at 5.`
     : 'Good day. How can I help you?';
   await converse(c, npc, open, () => [
-    ...(next ? [{ label: `📋 Take me to the ${next.name}`, run: () => c.tellWay(npc, { x: next.x, z: next.z + 3, label: next.name }) }] : []),
+    ...(next ? [{ label: '📋 Take me to the Registry', run: () => c.directionsTo('Registry') }] : []),
     asks(c)(npc),
-    { label: '🪪 What do I need for clearance?', run: () => `You will go through four desks: Admissions, Bursary (fee ${naira(CLEARANCE_FEE)}), Medical and Hostel Allocation. In that order.` }
+    ...(next ? [{ label: '🪪 What do I need for clearance?', run: () => REGISTRY_TIPS }] : [])
   ]);
 }
 
@@ -135,32 +138,84 @@ async function seun(c, npc) {
   const cl = c.state.clearance;
   const next = cl && !cl.done ? nextStep(cl) : null;
   await converse(c, npc, next ? `Hey, fresher! I'm Seun, 300 level. Don't worry, I'll help you find your way.` : 'Hey! How is school treating you?', () => [
-    ...(next ? [{ label: `📋 Where do I go next?`, run: () => c.tellWay(npc, { x: next.x, z: next.z + 3, label: next.name }) }] : []),
+    ...(next ? [{ label: '📋 Where do I go for clearance?', run: () => c.directionsTo('Registry') }] : []),
     asks(c)(npc),
     { label: '💡 Any advice?', run: () => `Sure. ${tip()}` },
     { label: '😎 What is campus life like?', run: () => 'Lectures, hostel drama, nice food at the canteen, parties, and plenty of stories. You will love it. And hate it. Both.' }
   ]);
 }
 
-/* ------------------------------ campus: clearance desks ------------------------------ */
+/** Visiting officials at scenes (orientation, matriculation). */
+async function dean(c, npc) {
+  await converse(c, npc, 'Welcome, young scholar. I hope you are settling in well.', () => [
+    asks(c)(npc),
+    { label: '💡 Any advice for a fresher?', run: () => `Of course. ${tip()}` },
+    { label: '🎓 What do you expect of students?', run: () => 'Punctuality, honesty and curiosity. Attend lectures, hand in your assignments, and never copy in an exam.' }
+  ]);
+}
+async function registrar(c, npc) {
+  await converse(c, npc, 'The university welcomes you. Please keep your matriculation number safe.', () => [
+    asks(c)(npc),
+    { label: '🪪 What is a matriculation number?', run: () => 'It is your identity as a student. You will need it for your portal, your exams and your results.' },
+    { label: '💡 Any advice?', run: () => `Yes. ${tip()}` }
+  ]);
+}
+
+/* ------------------------------ campus: the Registry (clearance) ------------------------------ */
+
+const seedFor = c => seedOf(`${c.state.name || ''}|${c.state.course || ''}`);
+const listDocs = items => items.map(i => `${i.have ? '✅' : '❌'} ${i.doc.name}`).join('  ');
 
 function previous(id) {
   const i = DESKS.findIndex(d => d.id === id);
   return i > 0 ? DESKS[i - 1] : null;
 }
 
+/** What the officer says when asked "what is missing?", worked out by the game so it is always true. */
+function whatsMissing(c, id) {
+  const cl = c.state.clearance;
+  const here = checkDesk(cl, id);
+  if (here.items.length) {
+    if (here.ok) return `Nothing is missing for this counter. ${listDocs(here.items)}`;
+    const fixable = here.missing.filter(d => d.fix).map(d => `${d.name} (about ${naira(d.fix.cost)} at the Business Centre)`);
+    return `For this counter you still need: ${here.missing.map(d => d.name).join(', ')}. ${fixable.length ? `You can get it sorted at the Business Centre: ${fixable.join('; ')}.` : ''}`;
+  }
+  if (id === 'bursary') return `Only the fee, ${naira(CLEARANCE_FEE)}. Pay it here and I will give you a receipt.`;
+  return 'I need your slips from the other counters. Once the Admissions, Bursary and Medical counters are done, I can give you a room.';
+}
+
+/** The player hands over details and documents; the officer checks them against the counter's list. */
+async function presentDocs(c, npc, id, doIt) {
+  const cl = c.state.clearance;
+  const card = detailsCard({ name: c.state.name, course: c.courseName(), uni: c.campus.name, hometown: c.hometownName() });
+  await c.say(npc, `Let me confirm your details: ${card.join(' · ')}`, [{ label: '👍 Yes, that is correct', value: 1 }]);
+  const check = checkDesk(cl, id);
+  if (!check.ok) {
+    const pick = await c.say(npc, `I cannot process you yet. ${listDocs(check.items)}  You are missing: ${check.missing.map(d => d.name).join(', ')}.`, [
+      { label: '📍 Where can I get this?', value: 'way' },
+      { label: 'I will come back', value: 'ok', secondary: true }
+    ]);
+    return pick === 'way' ? `Try the Business Centre. ${await c.directionsTo('Business Centre')}` : 'Come back with them. I will be here until five.';
+  }
+  await c.say(npc, `${listDocs(check.items)}  Everything is in order.`, [{ label: 'Continue', value: 1 }]);
+  return doIt();
+}
+
 async function desk(c, npc, id, greeting, doIt) {
   const cl = c.state.clearance;
-  const me = DESKS.find(d => d.id === id);
+  ensureDocs(cl, seedFor(c));
   const prev = previous(id);
   await converse(c, npc, greeting, () => {
     const opts = [];
     if (!cl || cl.done || cl[id]) {
-      opts.push({ label: '✅ My step here is done', run: () => 'Yes, you are cleared at this desk.' });
+      opts.push({ label: '✅ My step here is done', run: () => 'Yes, you are cleared at this counter.' });
     } else if (prev && !cl[prev.id]) {
-      opts.push({ label: '📝 Process my clearance', run: () => c.tellWay(npc, { x: prev.x, z: prev.z + 3, label: prev.name }, `You have to start from the ${prev.name} first.`) });
+      opts.push({ label: '📝 Process my clearance', run: () => `Please start from the ${prev.name} counter first, ${DESKS.indexOf(prev) < DESKS.indexOf(DESKS.find(d => d.id === id)) ? 'to my left' : 'to my right'}.` });
     } else {
-      opts.push({ label: '📝 Process my clearance', run: () => doIt() });
+      opts.push(docsFor(id).length
+        ? { label: '📄 Present my details and documents', run: () => presentDocs(c, npc, id, doIt) }
+        : { label: '📝 Process my clearance', run: () => doIt() });
+      opts.push({ label: '❓ What is missing?', run: () => whatsMissing(c, id) });
     }
     opts.push(asks(c)(npc));
     return opts;
@@ -169,13 +224,13 @@ async function desk(c, npc, id, greeting, doIt) {
 
 const advance = c => {
   const n = nextStep(c.state.clearance);
-  return n ? c.tellWay(null, { x: n.x, z: n.z + 3, label: n.name }, '') : null;
+  return n ? `Next, go to the ${n.name} counter.` : '';
 };
 
 async function admissions(c, npc) {
-  await desk(c, npc, 'admissions', 'Good day. Admission letter and JAMB result slip, please.', async () => {
+  await desk(c, npc, 'admissions', 'Good day. Admission letter and result slips, please.', async () => {
     c.completeStep('admissions');
-    return `Your documents are verified. Next, go to the Bursary to pay your fees. ${await advance(c) ?? ''}`;
+    return `Your documents are verified. ${advance(c)}`;
   });
 }
 
@@ -190,17 +245,17 @@ async function bursary(c, npc) {
       c.give(CLEARANCE_FEE);
       c.pay(CLEARANCE_FEE);
       c.completeStep('bursary');
-      return `Mum sent the money and you paid ${naira(CLEARANCE_FEE)}. Receipt issued. Next is Medical Screening. ${await advance(c) ?? ''}`;
+      return `Mum sent the money and you paid ${naira(CLEARANCE_FEE)}. Receipt issued. ${advance(c)}`;
     }
     c.completeStep('bursary');
-    return `Paid ${naira(CLEARANCE_FEE)}. Here is your receipt. Next is Medical Screening. ${await advance(c) ?? ''}`;
+    return `Paid ${naira(CLEARANCE_FEE)}. Here is your receipt. ${advance(c)}`;
   });
 }
 
 async function medical(c, npc) {
-  await desk(c, npc, 'medical', 'Medical screening for fresh students. Sit down, let me check you.', async () => {
+  await desk(c, npc, 'medical', 'Medical screening for fresh students. I need your photographs for the card.', async () => {
     c.completeStep('medical');
-    return `You are fit and healthy. Cleared! Next is Hostel Allocation. ${await advance(c) ?? ''}`;
+    return `You are fit and healthy. Cleared! ${advance(c)}`;
   });
 }
 
@@ -211,7 +266,7 @@ async function porter(c, npc) {
   });
 }
 
-export const DIALOGUES = { mama, tobi, shopkeeper, bode, sade, bala, musa, seun, admissions, bursary, medical, porter };
+export const DIALOGUES = { mama, tobi, shopkeeper, bode, sade, bala, musa, seun, dean, registrar, admissions, bursary, medical, porter };
 
 // shared helpers for other dialogue modules
 export { converse, asks, tip };

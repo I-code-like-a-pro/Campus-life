@@ -25,8 +25,20 @@ const PERSONAS = {
   student: 'A friendly fellow student with relatable campus stories about classes, food, NEPA and exams.',
   roommate: 'The player\'s hostel roommate: funny, a bit lazy, loyal.',
   nurse: 'A caring campus nurse who gives simple health advice and tells the player to see a doctor for anything serious.',
-  officer: 'A tired but polite university staff member at a clearance desk.'
+  officer: 'A tired but polite university staff member at a clearance desk.',
+  admissions: 'A tired but polite admissions officer at the Registry. Checks documents carefully and explains what is missing in simple words.',
+  bursary: 'A busy bursary officer at the Registry who handles fees and receipts. Patient with confused freshers.',
+  medical: 'A kind but brisk nurse doing medical screening for freshers at the Registry.',
+  porter: 'Baba Sule, a friendly hostel porter who allocates rooms and knows every hall.',
+  dean: 'The Dean of Student Affairs: dignified, warm and firm about honesty and attendance.',
+  registrar: 'The Registrar: formal and proud of the university, concerned about records and matriculation numbers.'
 };
+
+const REGISTRY_CHIPS = ['What am I missing?', 'What documents do I need?', 'What is the next counter?'];
+const chipsFor = npc => (npc.dialogue === 'lecturer' ? ['When are the tests and exams?', 'How should I prepare?', 'What is my timetable?']
+  : ['admissions', 'bursary', 'medical', 'porter'].includes(npc.dialogue) ? REGISTRY_CHIPS
+  : ['dean', 'registrar'].includes(npc.dialogue) ? ['When is matriculation?', 'What should a fresher do first?', 'What are the rules?']
+  : ['Any advice for me?', 'What is campus like?', 'How is your day?']);
 
 export const personaFor = npc => PERSONAS[npc.dialogue] || PERSONAS[npc.role?.toLowerCase()] || `A ${npc.role || 'friendly person'} who lives nearby.`;
 
@@ -60,7 +72,7 @@ export function createAi({ getContext, isOn, fetchImpl = (...a) => fetch(...a) }
       title: `✍️ Ask ${npc.name}`,
       lines: [left ? `${left} AI chat${left === 1 ? '' : 's'} left today.` : 'You have used all AI chats for today. Come back tomorrow!'],
       placeholder: 'Type your question…',
-      chips: npc.dialogue === 'lecturer' ? ['When are the tests and exams?', 'How should I prepare?', 'What is my timetable?'] : ['Any advice for me?', 'What is campus like?', 'How is your day?'],
+      chips: chipsFor(npc),
       maxLength: 160,
       disabled: left === 0
     });

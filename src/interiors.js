@@ -3,7 +3,10 @@ import { createSign } from './world.js';
 
 const lam = c => new THREE.MeshLambertMaterial({ color: c });
 
-export const ENTERABLE = new Set(['hostel', 'home', 'cafe', 'canteen', 'library', 'lecture', 'biz', 'clinic']);
+export const ENTERABLE = new Set(['hostel', 'home', 'cafe', 'canteen', 'library', 'lecture', 'biz', 'clinic', 'registry', 'auditorium']);
+
+/** Where the four clearance counters stand inside the Registry (x offsets from the room centre). */
+export const REGISTRY_SLOTS = [-7.5, -2.5, 2.5, 7.5];
 
 const W = 20;      // room width (x)
 const D = 16;      // room depth (z): back wall at z = -8, open front edge at z = +8
@@ -185,6 +188,36 @@ export function buildInterior(scene, place, ox) {
       });
       spot('Study desks', '📚', 0, 0.6, 5.5, ['library'], '');   // actions come from academics.js
     },
+    registry() {
+      // four counters in a row, each with a sign; officers stand behind them (see interiorNpcDefs)
+      REGISTRY_SLOTS.forEach((x, i) => {
+        solid(3.6, 1.2, 1.2, 0xd6a96a, x, 0.6, -4.8);
+        box(2.6, 0.1, 0.7, 0xffffff, x, 1.28, -4.8);            // papers on the counter
+        box(0.12, 2.6, 0.12, 0x555b61, x - 1.8, 1.3, -4.2);
+        box(0.12, 2.6, 0.12, 0x555b61, x + 1.8, 1.3, -4.2);
+        box(3.6, 0.5, 0.12, [0x2f6fd0, 0xc0392b, 0x27ae60, 0xe5a52a][i], x, 2.7, -4.2);   // counter header in the desk colour
+        tag(['📋', '💳', '🩺', '🛏️'][i], ['Admissions', 'Bursary', 'Medical', 'Hostel'][i], x, 3.9, -4.1);
+      });
+      // waiting bench and a notice board with the opening hours
+      solid(7, 0.5, 1.2, 0x6b4a2b, -4, 0.25, 3.6);
+      solid(7, 0.5, 1.2, 0x6b4a2b, 5, 0.25, 3.6);
+      box(5, 2.6, 0.12, 0x6b4a2b, 0, 3.6, -D / 2 + 0.15);
+      box(4.6, 2.2, 0.08, 0xf6f1e4, 0, 3.6, -D / 2 + 0.22);
+      tag('🕗', 'Open 8:00 to 17:00', 0, 5.6, -D / 2 + 0.6);
+    },
+    auditorium() {
+      // stage with a podium and banner, and rows of seats either side of a central aisle (seats are walk-through, so a crowd fits)
+      box(15, 0.7, 4.4, 0x7a5a38, 0, 0.35, -D / 2 + 2.2);
+      solid(2.2, 1.6, 1.0, 0x5a4636, 0, 1.5, -6.4);
+      box(11, 2.6, 0.12, 0x0a8f4f, 0, 4.6, -D / 2 + 0.15);
+      for (let r = 0; r < 4; r++) {
+        [-5.4, 5.4].forEach(x => {
+          box(7, 0.7, 0.9, 0x8a3b2b, x, 0.35, -1.6 + r * 2.4);
+          box(7, 0.9, 0.2, 0x6a2b1f, x, 0.9, -2.0 + r * 2.4);
+        });
+      }
+      tag('🎭', 'Main Hall', 0, 6, -D / 2 + 0.6);
+    },
     lecture() {
       box(10, 3.2, 0.15, 0x1f4d33, 0, 3.6, -D / 2 + 0.15);   // board
       box(10.4, 0.2, 0.2, 0xcfc6b4, 0, 1.95, -D / 2 + 0.2);
@@ -206,6 +239,8 @@ export function buildInterior(scene, place, ox) {
     canteen: { x: ox + 5.5, z: -3.0 },
     biz:     { x: ox + 7, z: -3.5 },
     clinic:  { x: ox + 0.5, z: -3.0 },
+    registry: { x: ox, z: -6.4 },
+    auditorium: { x: ox, z: -6.4 },
     hostel:  { x: ox + 1.5, z: -2.5 },
     home:    { x: ox + 1.5, z: -2.5 }
   };
