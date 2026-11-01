@@ -13,6 +13,53 @@ export const TOWNS = [
   { id: 'kano',       name: 'Kano',          emoji: '🕌', blurb: 'The old trading city of the north.',      km: { unilag: 1050, ui: 900, oau: 800 } }
 ];
 
+/*
+ * Local flavour. `places` are landmarks or favourite spots; `gist` are short, light-hearted lines
+ * a neighbour might say about the town (food, transport, weather). Kept kind and factual.
+ */
+const FLAVOUR = {
+  lagos: {
+    places: ['the Third Mainland Bridge', 'Tarkwa Bay beach', 'the Lekki Conservation Centre'],
+    gist: ['Yellow danfo buses in Lagos have conductors who announce every stop at full volume.', 'The Third Mainland Bridge is one of the longest bridges in Africa. Traffic on it is a test of patience.', 'In Lagos, "I am on my way" can mean you have not left the house yet.']
+  },
+  ibadan: {
+    places: ['Cocoa House', 'Bower\'s Tower on Oke Are hill', 'Dugbe market'],
+    gist: ['From Bower\'s Tower you can see Ibadan\'s rusty brown rooftops spread out like a blanket.', 'Amala and gbegiri in Ibadan is a Sunday tradition in many homes.', 'Cocoa House was one of the first skyscrapers in Africa.']
+  },
+  ife: {
+    places: ['the Oranmiyan Staff', 'the Ife Museum with its ancient bronze heads', 'the Ooni\'s palace'],
+    gist: ['Ile-Ife is famous for its ancient bronze and terracotta heads, some made more than 600 years ago.', 'Many Yoruba people trace their origin story to Ile-Ife.', 'Ife is a university town. Half the people on the road have a textbook in their hands.']
+  },
+  uyo: {
+    places: ['Ibom Plaza', 'the Godswill Akpabio Stadium', 'Ibom Air at the airport'],
+    gist: ['Uyo is known for being clean and calm, and for its afang and edikang ikong soups.', 'Ibom Air is a homegrown airline based in Uyo, and the town is proud of it.', 'The rain in Uyo arrives early and stays for a long visit.']
+  },
+  abuja: {
+    places: ['Aso Rock', 'Millennium Park', 'the National Mosque and the National Christian Centre'],
+    gist: ['Abuja has wide, well-planned roads. Getting lost on them is still possible.', 'Zuma Rock, the big rock beside the road to Abuja, is a landmark everyone photographs.', 'During harmattan, Abuja mornings are dry and surprisingly cool.']
+  },
+  portharcourt: {
+    places: ['the Isaac Boro Park', 'Pleasure Park', 'the Port Harcourt waterfront'],
+    gist: ['Port Harcourt is called the Garden City, and its pepper soup and roasted fish are famous.', 'When it rains in Port Harcourt, it really rains. Umbrellas are a basic need there.', 'Port Harcourt is the centre of the oil industry in the Niger Delta.']
+  },
+  kano: {
+    places: ['the Kurmi Market', 'the Kofar Mata dye pits', 'Dala Hill'],
+    gist: ['Kano\'s Kurmi Market is one of the oldest markets in West Africa.', 'Kano is known for kilishi, tuwo and a very hot afternoon sun.', 'The Kofar Mata dye pits have been colouring cloth in Kano for centuries.']
+  }
+};
+TOWNS.forEach(t => Object.assign(t, FLAVOUR[t.id]));
+
+/** A flavour line for a town. `roll` is 0 to 1 (use Math.random()). */
+export const townGist = (id, roll = Math.random()) => {
+  const g = townOf(id).gist;
+  return g[Math.min(g.length - 1, Math.floor(roll * g.length))];
+};
+/** A favourite local place, as a phrase such as "the Third Mainland Bridge". */
+export const townPlace = (id, roll = Math.random()) => {
+  const p = townOf(id).places;
+  return p[Math.min(p.length - 1, Math.floor(roll * p.length))];
+};
+
 export const townOf = id => TOWNS.find(t => t.id === id) || TOWNS[0];
 export const distanceKm = (townId, uni) => townOf(townId).km[uni] ?? 100;
 

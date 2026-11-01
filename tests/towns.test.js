@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { TOWNS, distanceKm, travelOptions, giftFor, roadEvent, durationText } from '../src/towns.js';
+import { TOWNS, distanceKm, travelOptions, giftFor, roadEvent, durationText, townGist, townPlace } from '../src/towns.js';
+
+import { homeGist } from '../src/dialogues.js';
+import { hometownLines } from '../src/worlddialogues.js';
 
 const UNIS = ['unilag', 'ui', 'oau'];
 
@@ -38,6 +41,29 @@ describe('home towns and travel', () => {
     expect(roadEvent('bus', 0.0).text.length).toBeGreaterThan(10);
     expect(roadEvent('bus', 0.999).text.length).toBeGreaterThan(10);
     expect(roadEvent('flight', 0.5).text).toMatch(/flight/i);
+  });
+
+  it('gives every town local places and gist, free of Pidgin', () => {
+    const banned = /\b(dey|wahala|abeg|oga|sef|pikin|na)\b/i;
+    for (const t of TOWNS) {
+      expect(t.places?.length, t.id).toBeGreaterThanOrEqual(2);
+      expect(t.gist?.length, t.id).toBeGreaterThanOrEqual(2);
+      for (const line of [...t.places, ...t.gist]) {
+        expect(line.length, t.id).toBeGreaterThan(5);
+        expect(banned.test(line), line).toBe(false);
+      }
+      expect(t.gist).toContain(townGist(t.id, 0));
+      expect(t.places).toContain(townPlace(t.id, 0.99));
+    }
+  });
+
+  it('home dialogue mentions the home town', () => {
+    for (const t of TOWNS) {
+      const c = { state: { hometown: t.id } };
+      expect(homeGist(c)).toMatch(/Do you remember/);
+      expect(hometownLines(c)[0]).toContain(t.name);
+    }
+    expect(hometownLines({ state: {} })).toEqual([]);
   });
 
   it('reads durations naturally', () => {

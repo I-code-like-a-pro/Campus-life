@@ -61,7 +61,15 @@ export const UPPER_QUESTIONS = {
     ['Which logic gate outputs 1 only when both inputs are 1?', 'AND', 'OR', 'XOR', 'NOT'],
     ['The time complexity of reading an array element by index is…', 'O(1)', 'O(n)', 'O(log n)', 'O(n²)'],
     ['Which of these is an object-oriented language?', 'Java', 'HTML', 'SQL', 'CSS'],
-    ['The CPU component that does arithmetic is the…', 'ALU', 'RAM', 'BIOS', 'Hard disk']
+    ['The CPU component that does arithmetic is the…', 'ALU', 'RAM', 'BIOS', 'Hard disk'],
+    ['A linked list node contains data and a…', 'Pointer to the next node', 'Compiler flag', 'Sort key', 'Index table'],
+    ['Which algorithm repeatedly swaps adjacent items that are out of order?', 'Bubble sort', 'Binary search', 'Depth-first search', 'Hashing'],
+    ['Binary 1111 in decimal is…', '15', '16', '14', '12'],
+    ['Which loop always runs its body at least once?', 'do-while', 'for', 'while', 'foreach'],
+    ['Hiding the internal details of a class is called…', 'Encapsulation', 'Inheritance', 'Polymorphism', 'Recursion'],
+    ['A function that calls itself is…', 'Recursive', 'Static', 'Abstract', 'Compiled'],
+    ['In a relational table, a row is also called a…', 'Record (tuple)', 'Field', 'Schema', 'Index'],
+    ['Which gate outputs 1 only when its two inputs differ?', 'XOR', 'AND', 'OR', 'NOR']
   ],
   'cs@3': [
     ['SQL stands for…', 'Structured Query Language', 'Simple Question Logic', 'Sequential Query Layer', 'Stored Query List'],
@@ -71,7 +79,15 @@ export const UPPER_QUESTIONS = {
     ['Which OSI layer handles routing?', 'Network layer', 'Physical layer', 'Session layer', 'Application layer'],
     ['An IPv4 address has how many bits?', '32', '64', '128', '16'],
     ['Translating source code to machine code is done by a…', 'Compiler', 'Browser', 'Router', 'Debugger'],
-    ['Which of these is NOT a phase of software development?', 'Mining', 'Design', 'Testing', 'Maintenance']
+    ['Which of these is NOT a phase of software development?', 'Mining', 'Design', 'Testing', 'Maintenance'],
+    ['Which normal form removes partial dependencies on a composite key?', 'Second normal form', 'First normal form', 'Third normal form', 'Fourth normal form'],
+    ['Which scheduling algorithm gives each process a fixed time slice in turn?', 'Round robin', 'First come, first served', 'Shortest job first', 'Priority scheduling'],
+    ['A deadlock occurs when processes…', 'Wait forever for resources held by each other', 'Run too fast', 'Share the same memory', 'Finish early'],
+    ['The default port for HTTPS is…', '443', '80', '21', '25'],
+    ['Binary search on a sorted list has time complexity…', 'O(log n)', 'O(n)', 'O(n²)', 'O(1)'],
+    ['Which SQL command retrieves data from a table?', 'SELECT', 'INSERT', 'UPDATE', 'DROP'],
+    ['DNS translates…', 'Domain names into IP addresses', 'IP addresses into MAC addresses', 'Files into folders', 'Passwords into hashes'],
+    ['Virtual memory lets a computer use…', 'Disk space as an extension of RAM', 'The monitor\'s memory', 'Only the cloud', 'Only the cache']
   ],
   'cs@4': [
     ['Overfitting in machine learning means the model…', 'Memorises training data and generalises poorly', 'Is too simple', 'Has no data', 'Trains too fast'],
@@ -81,7 +97,15 @@ export const UPPER_QUESTIONS = {
     ['In supervised learning the training data is…', 'Labelled', 'Unlabelled', 'Random noise', 'Encrypted'],
     ['A distributed system consists of…', 'Several computers working together', 'A single computer', 'Only one network cable', 'One database table'],
     ['Agile development favours…', 'Short iterations with feedback', 'One long delivery', 'No customer contact', 'No testing'],
-    ['Which of these is a mobile operating system?', 'Android', 'Oracle', 'Excel', 'Photoshop']
+    ['Which of these is a mobile operating system?', 'Android', 'Oracle', 'Excel', 'Photoshop'],
+    ['The CAP theorem says a distributed system cannot guarantee consistency, availability and…', 'Partition tolerance', 'Portability', 'Performance', 'Privacy'],
+    ['Public-key cryptography uses…', 'A pair of keys, one public and one private', 'One shared key only', 'No keys', 'Only passwords'],
+    ['Which data structure is used for breadth-first search?', 'Queue', 'Stack', 'Heap', 'Hash table'],
+    ['A neural network learns by adjusting its…', 'Weights', 'Pixels', 'Ports', 'Fonts'],
+    ['Big O notation describes…', 'How running time grows with input size', 'The exact time in seconds', 'The brand of the processor', 'The length of the code'],
+    ['In version control, "git commit" does what?', 'Records a snapshot of your changes', 'Deletes the repository', 'Downloads the internet', 'Compiles the code'],
+    ['"IaaS" in cloud computing stands for…', 'Infrastructure as a Service', 'Internet as a Server', 'Integration and Security', 'Information as a System'],
+    ['A denial-of-service attack aims to…', 'Make a service unavailable', 'Quietly steal passwords', 'Install updates', 'Encrypt backups']
   ],
 
   'medicine@2': [
@@ -92,7 +116,15 @@ export const UPPER_QUESTIONS = {
     ['The main positive ion outside cells is…', 'Sodium', 'Potassium', 'Iron', 'Magnesium'],
     ['Insulin lowers…', 'Blood glucose', 'Blood pressure', 'Body temperature', 'Heart rate'],
     ['The cranial nerve responsible for vision is the…', 'Optic nerve', 'Vagus nerve', 'Facial nerve', 'Olfactory nerve'],
-    ['Deficiency of which vitamin causes scurvy?', 'Vitamin C', 'Vitamin A', 'Vitamin D', 'Vitamin B1']
+    ['Deficiency of which vitamin causes scurvy?', 'Vitamin C', 'Vitamin A', 'Vitamin D', 'Vitamin B1'],
+    ['The functional cell of the nervous system is the…', 'Neuron', 'Nephron', 'Alveolus', 'Osteon'],
+    ['Which heart chamber pumps oxygenated blood to the body?', 'Left ventricle', 'Right ventricle', 'Left atrium', 'Right atrium'],
+    ['Bile is produced by the…', 'Liver', 'Gallbladder', 'Pancreas', 'Stomach'],
+    ['Which hormone raises blood glucose?', 'Glucagon', 'Insulin', 'Oxytocin', 'Thyroxine'],
+    ['The muscle that separates the chest from the abdomen is the…', 'Diaphragm', 'Biceps', 'Deltoid', 'Sartorius'],
+    ['Haemoglobin is a protein that carries…', 'Oxygen', 'Glucose', 'Fat', 'Calcium'],
+    ['The knee is an example of a…', 'Hinge joint', 'Ball-and-socket joint', 'Pivot joint', 'Gliding joint'],
+    ['Which cells produce antibodies?', 'B lymphocytes (plasma cells)', 'Platelets', 'Red blood cells', 'Neurons']
   ],
   'medicine@3': [
     ['Which mosquito transmits malaria?', 'Female Anopheles', 'Male Culex', 'Female Aedes', 'Tsetse fly'],
@@ -102,7 +134,15 @@ export const UPPER_QUESTIONS = {
     ['Paracetamol is mainly used as…', 'A pain reliever and fever reducer', 'An antibiotic', 'A blood thinner', 'A diuretic'],
     ['The study of disease patterns in populations is…', 'Epidemiology', 'Anatomy', 'Histology', 'Embryology'],
     ['Typhoid fever is caused by…', 'Salmonella typhi', 'Plasmodium', 'Vibrio cholerae', 'Staphylococcus aureus'],
-    ['A 95% confidence interval is…', 'A range likely to contain the true value', 'The exact mean', 'The sample size', 'The p-value']
+    ['A 95% confidence interval is…', 'A range likely to contain the true value', 'The exact mean', 'The sample size', 'The p-value'],
+    ['Cholera is caused by…', 'Vibrio cholerae', 'Salmonella typhi', 'Plasmodium', 'Mycobacterium'],
+    ['HIV is a…', 'Virus', 'Bacterium', 'Fungus', 'Parasite'],
+    ['Which laboratory test is used to find malaria parasites?', 'Blood film', 'Chest X-ray', 'ECG', 'Stool culture'],
+    ['Oral rehydration salts are used mainly to treat…', 'Dehydration from diarrhoea', 'Fractures', 'Malaria', 'Cough'],
+    ['Which vaccine protects against tuberculosis?', 'BCG', 'MMR', 'OPV', 'HPV'],
+    ['Hepatitis B mainly affects the…', 'Liver', 'Kidneys', 'Lungs', 'Skin'],
+    ['The incubation period is the time between…', 'Infection and the first symptoms', 'Symptoms and recovery', 'Birth and infection', 'Treatment and cure'],
+    ['Anaemia is a low level of…', 'Haemoglobin', 'Platelets', 'Sodium', 'Glucose']
   ],
   'medicine@4': [
     ['A normal adult blood pressure is about…', '120/80 mmHg', '200/150 mmHg', '60/40 mmHg', '90/180 mmHg'],
@@ -112,7 +152,15 @@ export const UPPER_QUESTIONS = {
     ['Which drug class lowers blood pressure by blocking ACE?', 'ACE inhibitors', 'Antihistamines', 'Opioids', 'Statins'],
     ['The first step in the ABC of resuscitation is…', 'Airway', 'Bleeding', 'Cough', 'Dressing'],
     ['Vaccination provides…', 'Active immunity', 'Passive immunity only', 'No immunity', 'An instant cure'],
-    ['Hypoglycaemia means low…', 'Blood sugar', 'Blood pressure', 'Body temperature', 'Oxygen']
+    ['Hypoglycaemia means low…', 'Blood sugar', 'Blood pressure', 'Body temperature', 'Oxygen'],
+    ['Normal fasting blood glucose is about…', '70 to 100 mg/dL', '200 to 300 mg/dL', '10 to 30 mg/dL', '150 to 180 mg/dL'],
+    ['An ECG records the heart\'s…', 'Electrical activity', 'Sounds', 'Blood flow speed', 'Valve size'],
+    ['The first-line drug for anaphylaxis is…', 'Adrenaline', 'Paracetamol', 'Amoxicillin', 'Insulin'],
+    ['Pre-eclampsia features high blood pressure and…', 'Protein in the urine', 'Low blood sugar', 'Fever', 'A rash'],
+    ['A myocardial infarction is commonly called a…', 'Heart attack', 'Stroke', 'Seizure', 'Asthma attack'],
+    ['The Apgar score assesses…', 'The condition of a newborn baby', 'Elderly cognition', 'Kidney function', 'Pain level'],
+    ['A stroke is caused by interrupted blood supply to the…', 'Brain', 'Heart', 'Liver', 'Lungs'],
+    ['Adult chest compressions in CPR are given at about…', '100 to 120 per minute', '30 to 50 per minute', '60 to 80 per minute', '200 to 220 per minute']
   ],
 
   'law@2': [
@@ -123,7 +171,15 @@ export const UPPER_QUESTIONS = {
     ['Murder under Nigerian criminal law requires…', 'Intention to cause death or grievous harm', 'Only accidental death', 'Property damage', 'Theft'],
     ['Chapter IV of the 1999 Constitution deals with…', 'Fundamental rights', 'Taxation', 'Local councils', 'Elections'],
     ['The tort of defamation protects a person\'s…', 'Reputation', 'Land', 'Contract', 'Copyright'],
-    ['A void contract is…', 'Without legal effect from the start', 'Fully enforceable', 'Only oral', 'Signed by minors only']
+    ['A void contract is…', 'Without legal effect from the start', 'Fully enforceable', 'Only oral', 'Signed by minors only'],
+    ['A criminal attempt requires intent plus…', 'An act beyond mere preparation', 'Only a thought', 'Completion of the crime', 'A witness'],
+    ['"Pacta sunt servanda" means…', 'Agreements must be kept', 'Let the buyer beware', 'The thing speaks for itself', 'No one is above the law'],
+    ['"Res ipsa loquitur" means…', 'The thing speaks for itself', 'The matter is decided', 'Let the buyer beware', 'A guilty mind'],
+    ['Section 33 of the 1999 Constitution protects the right to…', 'Life', 'Fair hearing', 'Private life', 'Freedom of movement'],
+    ['Which case established the "neighbour principle" in negligence?', 'Donoghue v Stevenson', 'Carlill v Carbolic Smoke Ball', 'Salomon v Salomon', 'Rylands v Fletcher'],
+    ['Carlill v Carbolic Smoke Ball Co is known for…', 'An offer made to the whole world', 'Corporate personality', 'The duty of care', 'Frustration of contract'],
+    ['An invitation to treat is…', 'Not an offer', 'A binding offer', 'An acceptance', 'A counter-offer'],
+    ['Theft involves dishonestly taking property with intent to…', 'Permanently deprive the owner', 'Return it next day', 'Share it', 'Display it']
   ],
   'law@3': [
     ['Equity developed mainly in the Court of…', 'Chancery', 'Appeal', 'Assizes', 'Magistrates'],
@@ -133,7 +189,15 @@ export const UPPER_QUESTIONS = {
     ['Hearsay evidence is generally…', 'Inadmissible', 'Always preferred', 'Required', 'Written only'],
     ['The standard of proof in criminal cases is…', 'Beyond reasonable doubt', 'Balance of probabilities', 'Possible doubt', 'Any suspicion'],
     ['Judicial review examines whether a public body acted…', 'Lawfully', 'Quickly', 'Cheaply', 'Publicly'],
-    ['Jurisprudence is the study of…', 'The philosophy of law', 'Taxes', 'Medicine', 'Contracts only']
+    ['Jurisprudence is the study of…', 'The philosophy of law', 'Taxes', 'Medicine', 'Contracts only'],
+    ['Land tenure in Nigeria is governed mainly by the…', 'Land Use Act', 'Evidence Act', 'Police Act', 'Arbitration Act'],
+    ['The Evidence Act deals with…', 'What proof courts may accept', 'Land tenure', 'Taxation', 'Elections'],
+    ['A fiduciary owes a duty of…', 'Loyalty', 'Profit', 'Silence', 'Haste'],
+    ['Specific performance is a remedy that orders a party to…', 'Perform the contract', 'Pay a fine', 'Go to prison', 'Cancel the contract'],
+    ['"Nemo judex in causa sua" means…', 'No one should be a judge in their own cause', 'Hear the other side', 'Let justice be done', 'Justice delayed is justice denied'],
+    ['"Audi alteram partem" means…', 'Hear the other side', 'No one is a judge in their own cause', 'Beyond one\'s powers', 'A guilty mind'],
+    ['An injunction is an order to…', 'Do or refrain from doing something', 'Pay a fine only', 'Release a prisoner', 'Dissolve a company'],
+    ['A company is formed by registering with the…', 'Corporate Affairs Commission', 'Federal Inland Revenue Service', 'NAFDAC', 'Police']
   ],
   'law@4': [
     ['A writ of summons starts a…', 'Civil action', 'Criminal arrest', 'Marriage', 'Tax audit'],
@@ -143,7 +207,15 @@ export const UPPER_QUESTIONS = {
     ['A contract of employment is governed by…', 'Labour law', 'Land law', 'Maritime law', 'Tax law'],
     ['Arbitration is a way of…', 'Settling disputes outside the court', 'Passing laws', 'Arresting suspects', 'Registering companies'],
     ['The International Court of Justice sits in…', 'The Hague', 'Geneva', 'Lagos', 'Abuja'],
-    ['A lawyer must act with…', 'Honesty and professional ethics', 'Secrecy from the court', 'Bias for the client always', 'No preparation']
+    ['A lawyer must act with…', 'Honesty and professional ethics', 'Secrecy from the court', 'Bias for the client always', 'No preparation'],
+    ['The Rules of Professional Conduct apply to…', 'Legal practitioners', 'Doctors', 'Teachers', 'Police officers'],
+    ['"Locus standi" means…', 'The right to bring an action', 'The place of the crime', 'A guilty plea', 'The time to appeal'],
+    ['Bail is…', 'Temporary release of an accused person pending trial', 'A fine', 'A sentence', 'An appeal'],
+    ['Appeals from the Court of Appeal generally go to the…', 'Supreme Court', 'High Court', 'Magistrate Court', 'Customary Court'],
+    ['A conveyance transfers…', 'An interest in land', 'A prisoner', 'Citizenship', 'A court order'],
+    ['The principle of non-refoulement protects…', 'Refugees from being returned to danger', 'Tenants', 'Debtors', 'Witnesses'],
+    ['In international law, a treaty is…', 'A written agreement between states', 'A national statute', 'A local custom', 'A court order'],
+    ['Legal aid exists to help people who…', 'Cannot afford a lawyer', 'Wish to avoid trial', 'Are judges', 'Own law firms']
   ],
 
   'engineering@2': [
@@ -154,7 +226,15 @@ export const UPPER_QUESTIONS = {
     ['Stress is force divided by…', 'Area', 'Time', 'Volume', 'Mass'],
     ['The derivative of x² is…', '2x', 'x', 'x²', '2'],
     ['Resistors in series add up to…', 'The sum of their resistances', 'The product', 'The smallest value', 'Zero'],
-    ['The SI unit of power is the…', 'Watt', 'Joule', 'Volt', 'Ampere']
+    ['The SI unit of power is the…', 'Watt', 'Joule', 'Volt', 'Ampere'],
+    ['Kirchhoff\'s current law says the current entering a junction…', 'Equals the current leaving it', 'Is always zero', 'Doubles', 'Is lost as heat'],
+    ['The moment of a force is the force multiplied by…', 'The perpendicular distance', 'The time', 'The mass', 'The area'],
+    ['The SI unit of capacitance is the…', 'Farad', 'Henry', 'Ohm', 'Tesla'],
+    ['Strain is…', 'Change in length divided by original length', 'Force per unit area', 'Mass per unit volume', 'Work per unit time'],
+    ['∫ x dx =', 'x²/2 + C', 'x² + C', '2x + C', 'x + C'],
+    ['In a right-angled triangle, the longest side is the…', 'Hypotenuse', 'Adjacent', 'Opposite', 'Base'],
+    ['Density equals…', 'Mass divided by volume', 'Volume divided by mass', 'Mass times volume', 'Force divided by area'],
+    ['An object in uniform circular motion has acceleration directed…', 'Towards the centre', 'Away from the centre', 'Along the tangent', 'Nowhere (it is zero)']
   ],
   'engineering@3': [
     ['Bernoulli\'s principle relates fluid speed and…', 'Pressure', 'Colour', 'Mass only', 'Charge'],
@@ -164,7 +244,15 @@ export const UPPER_QUESTIONS = {
     ['Heat transfer by direct contact is…', 'Conduction', 'Convection', 'Radiation', 'Evaporation'],
     ['Young\'s modulus measures…', 'Stiffness of a material', 'Electric charge', 'Fluid viscosity', 'Sound speed'],
     ['Which of these is a renewable energy source?', 'Solar', 'Coal', 'Diesel', 'Natural gas'],
-    ['The unit of electrical resistance is the…', 'Ohm', 'Farad', 'Henry', 'Tesla']
+    ['The unit of electrical resistance is the…', 'Ohm', 'Farad', 'Henry', 'Tesla'],
+    ['The Reynolds number helps predict whether fluid flow is…', 'Laminar or turbulent', 'Hot or cold', 'Acidic or basic', 'Fast or slow'],
+    ['The second law of thermodynamics says the entropy of an isolated system…', 'Never decreases', 'Always decreases', 'Stays at zero', 'Equals its energy'],
+    ['A diode allows current to flow mainly in…', 'One direction', 'Both directions equally', 'No direction', 'A circle'],
+    ['The Laplace transform is used to…', 'Solve differential equations', 'Measure mass', 'Print circuits', 'Weld metals'],
+    ['The RMS value of a sine wave with a peak of 10 V is about…', '7.07 V', '10 V', '5 V', '14.14 V'],
+    ['Steel is mostly iron with a small amount of…', 'Carbon', 'Lead', 'Helium', 'Sodium'],
+    ['A beam bends because of a…', 'Bending moment', 'Voltage', 'Frequency', 'Colour change'],
+    ['The Carnot efficiency depends on the…', 'Hot and cold reservoir temperatures', 'Colour of the engine', 'Brand of fuel', 'Length of the engine']
   ],
   'engineering@4': [
     ['A safety factor is the ratio of…', 'Failure load to working load', 'Cost to profit', 'Speed to power', 'Mass to volume'],
@@ -174,7 +262,15 @@ export const UPPER_QUESTIONS = {
     ['Engineering management involves planning, organising and…', 'Controlling resources', 'Ignoring risk', 'Skipping tests', 'Only drawing'],
     ['The efficiency of a machine is output divided by…', 'Input', 'Time', 'Weight', 'Voltage'],
     ['Photovoltaic cells convert sunlight into…', 'Electricity', 'Heat only', 'Sound', 'Wind'],
-    ['The fire triangle needs heat, fuel and…', 'Oxygen', 'Water', 'Smoke', 'Carbon dioxide']
+    ['The fire triangle needs heat, fuel and…', 'Oxygen', 'Water', 'Smoke', 'Carbon dioxide'],
+    ['The critical path of a project is the…', 'Longest sequence of dependent tasks', 'Cheapest route', 'Shortest task', 'Least risky task'],
+    ['COREN regulates the practice of…', 'Engineering in Nigeria', 'Medicine in Nigeria', 'Law in Nigeria', 'Banking in Nigeria'],
+    ['Corrosion of iron needs oxygen and…', 'Water', 'Helium', 'Oil', 'A vacuum'],
+    ['A PLC (programmable logic controller) is used in industry for…', 'Automated control', 'Typing documents', 'Painting walls', 'Cooking'],
+    ['Sustainable engineering aims to meet today\'s needs without…', 'Harming the ability of future generations to meet theirs', 'Using any material', 'Ignoring cost', 'Using automation'],
+    ['A risk assessment identifies…', 'Hazards and ways to control them', 'Salaries', 'Profits', 'Clients'],
+    ['In a three-phase power system, the phases are separated by…', '120°', '90°', '180°', '60°'],
+    ['Value engineering seeks to…', 'Keep the function while lowering cost', 'Raise cost', 'Reduce safety', 'Stop work']
   ],
 
   'accounting@2': [
@@ -185,7 +281,15 @@ export const UPPER_QUESTIONS = {
     ['The mean of 2, 4 and 6 is…', '4', '6', '3', '12'],
     ['Value Added Tax in Nigeria is charged at…', '7.5%', '15%', '2%', '20%'],
     ['Depreciation spreads the cost of an asset over its…', 'Useful life', 'Purchase date', 'Resale only', 'Tax year only'],
-    ['A valid contract needs offer, acceptance and…', 'Consideration', 'A witness', 'A receipt', 'An invoice']
+    ['A valid contract needs offer, acceptance and…', 'Consideration', 'A witness', 'A receipt', 'An invoice'],
+    ['Straight-line depreciation charges…', 'The same amount each year', 'More each year', 'Less each year', 'A random amount'],
+    ['Gross profit divided by sales gives the…', 'Gross profit margin', 'Current ratio', 'Gearing ratio', 'Return on capital'],
+    ['A bank reconciliation compares the cash book with the…', 'Bank statement', 'Trial balance', 'Payroll', 'Tax return'],
+    ['Accruals are expenses that are…', 'Incurred but not yet paid', 'Paid in advance', 'Never incurred', 'Written off'],
+    ['A credit balance on a creditor\'s account means the business…', 'Owes money', 'Is owed money', 'Has cash in the bank', 'Has prepaid'],
+    ['The petty cash book records…', 'Small day-to-day payments', 'Large loans', 'Share sales', 'Company taxes'],
+    ['Working capital equals…', 'Current assets minus current liabilities', 'Fixed assets minus liabilities', 'Sales minus costs', 'Equity plus loans'],
+    ['Valuing stock at the lower of cost and net realisable value follows the…', 'Prudence concept', 'Entity concept', 'Money measurement concept', 'Going concern concept']
   ],
   'accounting@3': [
     ['An auditor\'s main duty is to…', 'Give an opinion on the financial statements', 'Prepare the budget', 'Sell products', 'Hire staff'],
@@ -195,7 +299,15 @@ export const UPPER_QUESTIONS = {
     ['Marginal costing treats fixed costs as…', 'Period costs', 'Product costs', 'Revenue', 'Liabilities'],
     ['IFRS stands for…', 'International Financial Reporting Standards', 'Internal Fiscal Report System', 'International Fund Revenue Scheme', 'Integrated Financial Ratio Standard'],
     ['Public sector accounting is mostly concerned with…', 'Accountability for public funds', 'Maximising profit', 'Stock trading', 'Private loans'],
-    ['Company income tax is charged on a company\'s…', 'Taxable profits', 'Total revenue only', 'Number of staff', 'Shares issued']
+    ['Company income tax is charged on a company\'s…', 'Taxable profits', 'Total revenue only', 'Number of staff', 'Shares issued'],
+    ['The break-even point is where total revenue equals…', 'Total cost', 'Fixed cost', 'Variable cost', 'Profit'],
+    ['Contribution per unit is the selling price minus…', 'Variable cost per unit', 'Fixed cost', 'Tax', 'Interest'],
+    ['The FIFO method assumes the…', 'Oldest stock is sold first', 'Newest stock is sold first', 'Average stock is sold', 'Stock is sold at random'],
+    ['Partnership profits are shared according to…', 'The partnership agreement', 'The age of partners', 'Alphabetical order', 'The Constitution'],
+    ['A rights issue offers new shares to…', 'Existing shareholders', 'The public only', 'Employees only', 'Creditors'],
+    ['A cash flow statement groups cash flows as operating, investing and…', 'Financing', 'Trading', 'Marketing', 'Auditing'],
+    ['Standard costing compares actual costs with…', 'Predetermined costs', 'Last year\'s tax', 'Competitors\' prices', 'Market share'],
+    ['Zero-based budgeting starts each budget from…', 'Zero, so every expense is justified', 'Last year\'s figures', 'The average', 'A loan']
   ],
   'accounting@4': [
     ['Forensic accounting investigates…', 'Fraud and financial irregularities', 'Weather patterns', 'Sports results', 'Road safety'],
@@ -205,7 +317,15 @@ export const UPPER_QUESTIONS = {
     ['Professional ethics requires an accountant to be…', 'Independent and honest', 'Loyal to any client', 'Secretive about errors', 'Paid in advance'],
     ['A bank that holds deposits and gives loans is a…', 'Commercial bank', 'Central bank', 'Stock exchange', 'Insurance firm'],
     ['Return on investment measures…', 'Profit relative to cost', 'Total staff', 'Market share only', 'Tax paid'],
-    ['The Central Bank of Nigeria is responsible for…', 'Monetary policy', 'Collecting income tax', 'Running courts', 'Building roads']
+    ['The Central Bank of Nigeria is responsible for…', 'Monetary policy', 'Collecting income tax', 'Running courts', 'Building roads'],
+    ['Net present value discounts future cash flows to…', 'Their present value', 'Their future value', 'Zero', 'Their tax value'],
+    ['A doubt about going concern is reported by the…', 'Auditor', 'Cashier', 'Customer', 'Bank teller'],
+    ['The gearing ratio compares…', 'Debt with equity', 'Sales with costs', 'Stock with sales', 'Tax with profit'],
+    ['Nigeria\'s professional accounting bodies include ICAN and…', 'ANAN', 'NBA', 'NMA', 'COREN'],
+    ['Consolidated accounts combine a parent company with its…', 'Subsidiaries', 'Customers', 'Suppliers', 'Banks'],
+    ['Inflation accounting adjusts figures for…', 'Changes in price levels', 'Staff turnover', 'Weather', 'Tax rates'],
+    ['Due diligence is an investigation done before…', 'An acquisition or investment', 'A birth', 'An office party', 'A holiday'],
+    ['Internal controls help to…', 'Prevent and detect fraud and errors', 'Hide losses', 'Raise salaries', 'Close branches']
   ],
 
   'masscomm@2': [
@@ -216,7 +336,15 @@ export const UPPER_QUESTIONS = {
     ['Public relations aims to build…', 'Goodwill with the public', 'Taxes', 'Roads', 'Software'],
     ['A shot showing a whole scene is a…', 'Wide shot', 'Close-up', 'Cut-away', 'Insert'],
     ['A feature article differs from a news report because it is…', 'More in-depth and descriptive', 'Shorter and unsigned', 'Only about sport', 'Always an advert'],
-    ['Iwe Irohin, the first Nigerian newspaper, began in…', '1859', '1960', '1900', '1999']
+    ['Iwe Irohin, the first Nigerian newspaper, began in…', '1859', '1960', '1900', '1999'],
+    ['Which theory says media messages act directly on passive audiences?', 'Hypodermic needle theory', 'Agenda-setting theory', 'Two-step flow theory', 'Uses and gratifications theory'],
+    ['Agenda-setting theory says the media tell us…', 'What to think about', 'What to feel', 'Whom to marry', 'Where to live'],
+    ['A close-up shot shows…', 'A tight view of a face or object', 'A wide landscape', 'The sky', 'A large crowd'],
+    ['The NUJ is the union for…', 'Journalists', 'Teachers', 'Lawyers', 'Doctors'],
+    ['An editor\'s main job is to…', 'Decide and check what is published', 'Drive delivery vans', 'Sell adverts', 'Cook for staff'],
+    ['A news angle is the…', 'Particular focus of a story', 'Tilt of the camera', 'Size of the paper', 'Speed of printing'],
+    ['Verification in journalism means…', 'Checking facts before publishing', 'Hiding sources', 'Copying others', 'Adding opinion'],
+    ['Which is a function of the mass media?', 'To inform, educate and entertain', 'To collect taxes', 'To make laws', 'To run courts']
   ],
   'masscomm@3': [
     ['Investigative journalism involves…', 'In-depth research to uncover hidden facts', 'Rewriting press releases', 'Only live reports', 'Social media posting'],
@@ -226,7 +354,15 @@ export const UPPER_QUESTIONS = {
     ['Digital media includes…', 'Websites and social media', 'Only newspapers', 'Only radio', 'Only posters'],
     ['Development communication focuses on…', 'Social and economic progress', 'Entertainment only', 'Sports', 'Fashion'],
     ['A headline is…', 'The title of a story', 'The author\'s note', 'A photograph credit', 'The final paragraph'],
-    ['Layout in a newspaper refers to…', 'The arrangement of text and images on pages', 'The cost of paper', 'The delivery route', 'The staff list']
+    ['Layout in a newspaper refers to…', 'The arrangement of text and images on pages', 'The cost of paper', 'The delivery route', 'The staff list'],
+    ['Uses and gratifications theory focuses on…', 'What audiences do with media', 'What media do to audiences', 'Press ownership', 'Printing methods'],
+    ['Two-step flow theory says media influence reaches people through…', 'Opinion leaders', 'Direct injection', 'The police', 'Advertisers'],
+    ['A target audience is…', 'The group a message is designed for', 'All people everywhere', 'Only critics', 'The sponsors'],
+    ['Content analysis studies…', 'The content of media messages', 'The readers\' health', 'Printing costs', 'Camera brands'],
+    ['Brand positioning means…', 'How a brand is seen in customers\' minds', 'Where the shop is located', 'The price list', 'The logo colour only'],
+    ['Nigeria\'s Freedom of Information Act was signed in…', '2011', '1999', '2005', '2019'],
+    ['Airtime refers to…', 'A time slot on radio or television', 'The weather', 'A flight booking', 'The cost of internet data'],
+    ['Ethics in journalism requires…', 'Accuracy, fairness and protecting sources', 'Speed at any cost', 'Paid stories only', 'Gossip']
   ],
   'masscomm@4': [
     ['Concentrated media ownership can reduce…', 'Diversity of views', 'Rainfall', 'Road quality', 'Exchange rates only'],
@@ -236,7 +372,15 @@ export const UPPER_QUESTIONS = {
     ['Media entrepreneurship means…', 'Starting and running a media business', 'Reading the news', 'Printing only', 'Editing only'],
     ['International communication involves…', 'Information flows across countries', 'Local weather only', 'School timetables', 'Road signs'],
     ['Which is a main source of income for a TV station?', 'Advertising', 'Rainfall', 'Tax refunds only', 'Gifts only'],
-    ['A research hypothesis is…', 'A testable statement', 'A final result', 'A headline', 'An advert']
+    ['A research hypothesis is…', 'A testable statement', 'A final result', 'A headline', 'An advert'],
+    ['Media convergence refers to…', 'The merging of print, broadcast and online platforms', 'The closing of media houses', 'Radio waves', 'A journalists\' strike'],
+    ['Cultural imperialism is the…', 'Dominance of one culture\'s media over others', 'Staging of a cultural festival', 'Trade in museum pieces', 'Teaching of languages'],
+    ['Fake news is…', 'False information presented as news', 'A labelled satire', 'A weather forecast', 'An editorial'],
+    ['Media literacy is the ability to…', 'Analyse and evaluate media messages', 'Repair televisions', 'Print newspapers', 'Type quickly'],
+    ['The concept of the "public sphere" was developed by…', 'Jürgen Habermas', 'Marshall McLuhan', 'Wilbur Schramm', 'Harold Lasswell'],
+    ['"The medium is the message" is associated with…', 'Marshall McLuhan', 'Jürgen Habermas', 'Harold Lasswell', 'George Gerbner'],
+    ['Lasswell\'s model asks: who says what, in which channel, to whom, with what…', 'Effect', 'Cost', 'Colour', 'Motive'],
+    ['In research, a variable is…', 'Something that can take different values', 'A fixed fact', 'A title', 'A footnote']
   ],
 
   'pharmacy@2': [
@@ -247,7 +391,15 @@ export const UPPER_QUESTIONS = {
     ['The pH scale measures…', 'Acidity or alkalinity', 'Temperature', 'Pressure', 'Weight'],
     ['A tablet is a…', 'Solid dosage form', 'Liquid dosage form', 'Gas', 'Plant fibre'],
     ['Enzymes are biological…', 'Catalysts', 'Fuels', 'Vitamins only', 'Hormones only'],
-    ['Which vitamin dissolves in fat?', 'Vitamin A', 'Vitamin C', 'Vitamin B2', 'Vitamin B12']
+    ['Which vitamin dissolves in fat?', 'Vitamin A', 'Vitamin C', 'Vitamin B2', 'Vitamin B12'],
+    ['The –COOH group is called the…', 'Carboxylic acid group', 'Alcohol group', 'Amine group', 'Ketone group'],
+    ['The SI unit of amount of substance is the…', 'Mole', 'Gram', 'Litre', 'Kelvin'],
+    ['Avogadro\'s number is about…', '6.02 × 10²³', '3 × 10⁸', '9.8', '1.6 × 10⁻¹⁹'],
+    ['Gram-positive bacteria stain…', 'Purple', 'Pink', 'Green', 'Colourless'],
+    ['Which organ is the main site of drug metabolism?', 'Liver', 'Heart', 'Eye', 'Spleen'],
+    ['An emulsion is a mixture of…', 'Two liquids that do not mix', 'A gas in a solid', 'Two solids', 'Alcohol only'],
+    ['An acid has a pH…', 'Below 7', 'Above 7', 'Exactly 7', 'Above 14'],
+    ['Distillation separates substances by differences in…', 'Boiling point', 'Colour', 'Taste', 'Smell']
   ],
   'pharmacy@3': [
     ['Antibiotics are used against…', 'Bacterial infections', 'Viral infections only', 'Fractures', 'Allergies only'],
@@ -257,7 +409,15 @@ export const UPPER_QUESTIONS = {
     ['Pharmacy law regulates…', 'The sale and supply of medicines', 'Football rules', 'Road tax', 'Building permits'],
     ['Which agency regulates food and drugs in Nigeria?', 'NAFDAC', 'WAEC', 'NNPC', 'JAMB'],
     ['Clinical pharmacy focuses on…', 'Safe and effective use of medicines by patients', 'Making furniture', 'Drug packaging art only', 'Farming'],
-    ['Titration is used to find…', 'The concentration of a solution', 'The colour of a drug', 'The weight of a person', 'The age of a plant']
+    ['Titration is used to find…', 'The concentration of a solution', 'The colour of a drug', 'The weight of a person', 'The age of a plant'],
+    ['Artemether belongs to which antimalarial group?', 'Artemisinin derivatives', 'Penicillins', 'Macrolides', 'Statins'],
+    ['Statins are used to lower…', 'Cholesterol', 'Blood sugar', 'Fever', 'Cough'],
+    ['Which drug is used to treat high blood pressure?', 'Amlodipine', 'Metformin', 'Amoxicillin', 'Salbutamol'],
+    ['Metformin is used in…', 'Type 2 diabetes', 'Asthma', 'Epilepsy', 'Malaria'],
+    ['Salbutamol is used to treat…', 'Asthma', 'Hypertension', 'Diabetes', 'Ulcers'],
+    ['A drug that blocks a receptor is an…', 'Antagonist', 'Agonist', 'Excipient', 'Isotope'],
+    ['A drug interaction happens when…', 'One drug changes the effect of another', 'One drug is expensive', 'Two bottles look alike', 'A drug is stored in a cool place'],
+    ['Excipients are…', 'Inactive ingredients in a formulation', 'Active ingredients', 'Side effects', 'Doses']
   ],
   'pharmacy@4': [
     ['Toxicology studies…', 'Harmful effects of substances', 'Plant growth', 'Bone structure', 'Sound waves'],
@@ -267,7 +427,15 @@ export const UPPER_QUESTIONS = {
     ['A placebo is…', 'A substance with no active drug', 'A strong antibiotic', 'A vaccine only', 'A poison'],
     ['Counterfeit drugs are…', 'Fake medicines', 'Cheaper brands', 'Expired labels only', 'Herbal teas'],
     ['Drug formulation includes choosing…', 'The active ingredient and excipients', 'The patient\'s name', 'The shop colour', 'Transport routes'],
-    ['Pharmacoepidemiology studies drug use in…', 'Populations', 'Single molecules', 'Plants', 'Buildings']
+    ['Pharmacoepidemiology studies drug use in…', 'Populations', 'Single molecules', 'Plants', 'Buildings'],
+    ['Pharmacovigilance monitors…', 'The safety of drugs after they are marketed', 'Drug prices', 'Sales figures', 'Hospital wards'],
+    ['Good Manufacturing Practice ensures medicines are…', 'Consistently made to quality standards', 'Sold quickly', 'Made cheaply', 'Heavily advertised'],
+    ['The antidote for paracetamol overdose is…', 'N-acetylcysteine', 'Naloxone', 'Atropine', 'Vitamin K'],
+    ['Naloxone reverses an overdose of…', 'Opioids', 'Paracetamol', 'Insulin', 'Aspirin'],
+    ['Therapeutic drug monitoring measures…', 'Drug levels in the blood', 'Drug prices', 'Patient height', 'Shop stock'],
+    ['Antimicrobial resistance happens when microbes…', 'Become less affected by drugs', 'Die faster', 'Cannot reproduce', 'Turn into viruses'],
+    ['A cold chain is needed to store…', 'Vaccines', 'Paracetamol tablets', 'Soap', 'Bandages'],
+    ['Warfarin is an…', 'Anticoagulant', 'Antibiotic', 'Analgesic', 'Antacid']
   ],
 
   'economics@2': [
@@ -278,7 +446,15 @@ export const UPPER_QUESTIONS = {
     ['A monopoly is a market with…', 'One seller', 'Many sellers', 'No buyers', 'Free goods'],
     ['Public finance deals with…', 'Government taxation and spending', 'Private loans only', 'Stock trading only', 'Charity work'],
     ['The median of 1, 3 and 5 is…', '3', '5', '1', '9'],
-    ['Elasticity measures…', 'How responsive demand or supply is to change', 'Price only', 'Profit', 'Population']
+    ['Elasticity measures…', 'How responsive demand or supply is to change', 'Price only', 'Profit', 'Population'],
+    ['A price ceiling set below the equilibrium price causes…', 'A shortage', 'A surplus', 'Equilibrium', 'Immediate deflation'],
+    ['Marginal cost is the cost of producing…', 'One extra unit', 'All units', 'Only fixed items', 'Nothing'],
+    ['Perfect competition features…', 'Many sellers of identical products', 'One seller', 'Two sellers', 'Differentiated products'],
+    ['The multiplier effect means an initial change in spending leads to…', 'A larger total change in income', 'No change in income', 'A smaller change', 'A change in tax only'],
+    ['GNP differs from GDP by including…', 'Net income from abroad', 'Taxes', 'Inflation', 'Imports'],
+    ['Cross elasticity of demand between two substitutes is…', 'Positive', 'Negative', 'Zero', 'Infinite'],
+    ['The Gini coefficient measures…', 'Income inequality', 'Inflation', 'Trade', 'Unemployment'],
+    ['Real GDP is adjusted for…', 'Inflation', 'Population', 'Exchange rates only', 'Taxes']
   ],
   'economics@3': [
     ['Econometrics uses statistics to…', 'Test economic relationships', 'Print money', 'Build roads', 'Sell goods'],
@@ -288,7 +464,15 @@ export const UPPER_QUESTIONS = {
     ['Unemployment of people who are between jobs is…', 'Frictional', 'Structural', 'Cyclical', 'Seasonal only'],
     ['Which commodity dominates Nigeria\'s exports?', 'Crude oil', 'Cocoa only', 'Textiles', 'Cars'],
     ['A tariff is a…', 'Tax on imports', 'Subsidy', 'Wage', 'Loan'],
-    ['Economic planning means…', 'Setting goals and policies for the economy', 'Printing money', 'Random spending', 'Ignoring markets']
+    ['Economic planning means…', 'Setting goals and policies for the economy', 'Printing money', 'Random spending', 'Ignoring markets'],
+    ['The IS-LM model analyses equilibrium in…', 'The goods and money markets', 'The labour market only', 'Foreign trade only', 'Mining'],
+    ['The balance of payments records transactions between…', 'A country and the rest of the world', 'Government departments', 'Banks and savers', 'Workers and firms'],
+    ['Purchasing power parity compares…', 'Price levels across countries', 'Wages within a firm', 'Land values', 'Government debts'],
+    ['"Dutch disease" describes how a resource boom can…', 'Hurt other export sectors', 'Spread a plant illness', 'Cause an epidemic', 'Cut taxes'],
+    ['The Phillips curve links inflation and…', 'Unemployment', 'Interest rates', 'Exports', 'Rainfall'],
+    ['Heteroscedasticity means the variance of the errors is…', 'Not constant', 'Constant', 'Missing', 'Rounded'],
+    ['An R-squared of 0.9 means the model explains…', 'About 90% of the variation', 'About 90% error', 'Nothing', 'Ten variables'],
+    ['The Consumer Price Index measures changes in…', 'The prices of a basket of goods', 'Wages', 'GDP', 'Trade']
   ],
   'economics@4': [
     ['A subsidy is…', 'A government payment that lowers prices', 'A tax on exports', 'Interest on loans', 'A fine'],
@@ -298,7 +482,15 @@ export const UPPER_QUESTIONS = {
     ['Petroleum economics studies…', 'Oil and gas markets and policy', 'Farming', 'Fashion', 'Football'],
     ['Money serves as a medium of exchange and a…', 'Store of value', 'Source of fuel', 'Type of food', 'Law'],
     ['Cost-benefit analysis compares…', 'The gains and losses of a decision', 'Two currencies', 'Two cities', 'Two taxes'],
-    ['A budget deficit occurs when spending is…', 'Greater than revenue', 'Less than revenue', 'Equal to savings', 'Zero']
+    ['A budget deficit occurs when spending is…', 'Greater than revenue', 'Less than revenue', 'Equal to savings', 'Zero'],
+    ['Devaluation tends to make a country\'s exports…', 'Cheaper for foreign buyers', 'Dearer for foreign buyers', 'Free', 'Banned'],
+    ['Quantitative easing involves a central bank…', 'Buying assets to increase the money supply', 'Selling its land', 'Raising taxes', 'Banning cash'],
+    ['Structural adjustment programmes were promoted by the…', 'IMF and the World Bank', 'OPEC', 'WAEC', 'Red Cross'],
+    ['Foreign direct investment is…', 'A foreign firm investing in business operations in the country', 'Remittances from relatives', 'Aid grants', 'Savings'],
+    ['Stagflation combines inflation with…', 'Stagnant growth and high unemployment', 'A boom', 'A budget surplus', 'Falling prices'],
+    ['The Lorenz curve illustrates…', 'Income distribution', 'Price levels', 'Demand', 'Business cycles'],
+    ['The main aim of the World Bank is…', 'Reducing poverty and supporting development', 'Selling oil', 'Regulating football', 'Space research'],
+    ['A sovereign wealth fund is a…', 'State-owned investment fund', 'Private bank', 'Tax', 'Charity']
   ],
 
   'maths@2': [
@@ -309,7 +501,15 @@ export const UPPER_QUESTIONS = {
     ['The probability of a certain event is…', '1', '0', '0.5', '2'],
     ['Every group must contain an…', 'Identity element', 'Zero divisor', 'Infinite set', 'Random element'],
     ['The square root of −1 is denoted…', 'i', 'e', 'π', '0'],
-    ['A first-order differential equation involves the…', 'First derivative', 'Third derivative', 'No derivative', 'Fourth derivative']
+    ['A first-order differential equation involves the…', 'First derivative', 'Third derivative', 'No derivative', 'Fourth derivative'],
+    ['The determinant of the matrix with rows (1, 2) and (3, 4) is…', '−2', '2', '10', '−10'],
+    ['The derivative of eˣ is…', 'eˣ', 'xeˣ⁻¹', '1', 'ln x'],
+    ['The limit of sin x / x as x → 0 is…', '1', '0', '∞', '−1'],
+    ['The sum of the first n natural numbers is…', 'n(n + 1)/2', 'n²', 'n(n − 1)', '2n'],
+    ['The magnitude of the vector (3, 4) is…', '5', '7', '12', '25'],
+    ['ln(e) =', '1', '0', 'e', 'Undefined'],
+    ['The number of ways to arrange 3 different objects in a row is…', '6', '3', '9', '8'],
+    ['The mode of 2, 3, 3, 5, 7 is…', '3', '5', '2', '4']
   ],
   'maths@3': [
     ['The Intermediate Value Theorem applies to…', 'Continuous functions', 'All functions', 'Discrete data only', 'Random sets'],
@@ -319,7 +519,15 @@ export const UPPER_QUESTIONS = {
     ['A topological space is defined using…', 'Open sets', 'Prime numbers', 'Matrices', 'Curves only'],
     ['In linear programming, the aim is to…', 'Optimise an objective subject to constraints', 'Solve any equation', 'Draw graphs', 'Sort data'],
     ['The variance is the square of the…', 'Standard deviation', 'Mean', 'Mode', 'Range'],
-    ['Force in mechanics is measured in…', 'Newtons', 'Joules', 'Watts', 'Pascals']
+    ['Force in mechanics is measured in…', 'Newtons', 'Joules', 'Watts', 'Pascals'],
+    ['The eigenvalues of a matrix A satisfy…', 'det(A − λI) = 0', 'A = 0', 'det A = 1', 'A² = I'],
+    ['A function is injective if…', 'Different inputs give different outputs', 'Every output is reached', 'It is continuous', 'It is even'],
+    ['A Taylor series expresses a function as…', 'An infinite sum built from its derivatives', 'A single constant', 'A matrix', 'A vector'],
+    ['The Central Limit Theorem says sample means tend towards a…', 'Normal distribution', 'Uniform distribution', 'Binomial distribution', 'Poisson distribution'],
+    ['The order of the symmetric group S₃ is…', '6', '3', '9', '12'],
+    ['A function f is odd if…', 'f(−x) = −f(x)', 'f(−x) = f(x)', 'f(x) = 0', 'f(x) = x²'],
+    ['Laplace\'s equation is…', '∇²u = 0', '∇²u = 1', '∇²u = u', '∇²u = x'],
+    ['In hypothesis testing, a Type I error is…', 'Rejecting a true null hypothesis', 'Accepting a false null hypothesis', 'A sampling method', 'A rounding error']
   ],
   'maths@4': [
     ['A Hilbert space is a complete…', 'Inner product space', 'Group', 'Graph', 'Ring only'],
@@ -329,6 +537,14 @@ export const UPPER_QUESTIONS = {
     ['Mathematical modelling turns…', 'Real problems into mathematical form', 'Numbers into colours', 'Proofs into stories', 'Data into verses'],
     ['The distance between two points in a plane comes from…', 'Pythagoras\' theorem', 'Newton\'s law', 'Ohm\'s law', 'Boyle\'s law'],
     ['The curvature of a curve measures how…', 'Sharply it bends', 'Long it is', 'Heavy it is', 'Fast it moves'],
-    ['The number of edges in a complete graph on 4 vertices is…', '6', '4', '8', '10']
+    ['The number of edges in a complete graph on 4 vertices is…', '6', '4', '8', '10'],
+    ['The dimension of a vector space is the number of vectors in a…', 'Basis', 'Subset', 'Matrix', 'Series'],
+    ['Every Cauchy sequence of real numbers…', 'Converges', 'Diverges', 'Alternates', 'Is constant'],
+    ['Lagrange\'s theorem says the order of a subgroup…', 'Divides the order of the finite group', 'Equals it', 'Exceeds it', 'Is always prime'],
+    ['The Cauchy-Riemann equations are conditions for a function to be…', 'Analytic (holomorphic)', 'Odd', 'Linear', 'Periodic'],
+    ['The Euler characteristic of a sphere is…', '2', '0', '1', '3'],
+    ['A group in which ab = ba for all elements is called…', 'Abelian', 'Cyclic', 'Trivial', 'Simple'],
+    ['A Fourier series represents a periodic function as a sum of…', 'Sines and cosines', 'Primes', 'Matrices', 'Polynomials only'],
+    ['The rank-nullity theorem relates rank and nullity to the…', 'Dimension of the domain', 'Determinant', 'Trace', 'Eigenvalues']
   ]
 };

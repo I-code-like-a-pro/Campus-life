@@ -1,4 +1,4 @@
-import { durationText } from './towns.js';
+import { durationText, townGist, townPlace } from './towns.js';
 import { DESKS, CLEARANCE_FEE, nextStep } from './clearance.js';
 import { naira } from './needs.js';
 
@@ -7,6 +7,12 @@ import { naira } from './needs.js';
  *   c.state, c.campus, c.say(npc, text, choices) -> value, c.directions(npc) -> reply text,
  *   c.guideTo({x, z, label}), c.pay(amount) -> boolean, c.give(amount), c.travel(), c.completeStep(id), c.day()
  */
+
+/** A line about the player's own home town, for family and neighbours. */
+export function homeGist(c) {
+  const id = c.state.hometown || 'lagos';
+  return `${townGist(id)} Do you remember ${townPlace(id)}?`;
+}
 
 const TIPS = [
   'Read small every day, not all at once the night before exam.',
@@ -47,6 +53,7 @@ async function mama(c, npc) {
   await converse(c, npc, open, () => [
     asks(c)(npc),
     { label: '💡 Any advice, Mama?', run: () => `Ehen. ${tip()}` },
+    { label: '🏡 Tell me about home', run: () => homeGist(c) },
     { label: '🍲 I\'m hungry', run: () => 'Go inside and eat the jollof in the kitchen. Free of charge, my dear.' }
   ]);
 }
@@ -84,7 +91,7 @@ async function bode(c, npc) {
 async function sade(c, npc) {
   await converse(c, npc, 'Ah, my dear! You are looking well. How is the waiting going?', () => [
     asks(c)(npc),
-    { label: '💬 Any gist?', run: () => ['They say the bus fare to school just went up.', 'My nephew got into UNILAG last year. His first week was chaotic!', 'Make sure you carry all your original documents when you go.'][Math.floor(Math.random() * 3)] },
+    { label: '💬 Any gist?', run: () => ['They say the bus fare to school just went up.', 'My nephew got into UNILAG last year. His first week was chaotic!', 'Make sure you carry all your original documents when you go.', homeGist(c), homeGist(c)][Math.floor(Math.random() * 5)] },
     { label: '🎒 What should I know about school?', run: () => 'When you get there, go to the registration desks near the gate. They will clear you step by step. Ask the senior student, he knows everything.' }
   ]);
 }

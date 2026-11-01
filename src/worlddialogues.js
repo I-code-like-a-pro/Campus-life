@@ -1,4 +1,5 @@
 import { converse, asks, tip } from './dialogues.js';
+import { townOf, townGist, townPlace } from './towns.js';
 import { traitOf, levelOf, TONES, toneDelta, toneReply, GIFTS, giftDelta, FAVOURS, canAsk } from './social.js';
 
 /*
@@ -64,7 +65,18 @@ export const GIST = [
   'I borrowed money from my friend. Now I dodge him like a bad exam question.'
 ];
 
-const gistOrSituation = c => pickLine('gist-or-sit', [...situationLines(c), ...GIST]);
+/** Crowd chat that mentions the player's home town, so people seem to know where you come from. */
+export function hometownLines(c) {
+  const id = c.state.hometown;
+  if (!id) return [];
+  const town = townOf(id);
+  return [
+    `You are from ${town.name}, right? ${townGist(id)}`,
+    `My cousin visited ${town.name} once. He still talks about ${townPlace(id)}.`
+  ];
+}
+
+const gistOrSituation = c => pickLine('gist-or-sit', [...situationLines(c), ...hometownLines(c), ...GIST]);
 
 /**
  * "Spend time together": pick a tone, share a gift, or ask a favour once you are friends.
@@ -106,7 +118,7 @@ export async function socialMenu(c, npc) {
 
 export async function student(c, npc) {
   const sit = situationLines(c);
-  const open = sit.length && Math.random() < 0.65 ? pickLine(`sit-${npc.id}`, sit) : pickLine('gist', GIST);
+  const open = sit.length && Math.random() < 0.65 ? pickLine(`sit-${npc.id}`, sit) : pickLine('gist', Math.random() < 0.25 ? [...hometownLines(c), ...GIST] : GIST);
   await converse(c, npc, `Hey! ${open}`, () => [
     { label: '💞 Spend time together', run: async () => { await socialMenu(c, npc); } },
     { label: '💬 Any more gist?', run: () => gistOrSituation(c) },
