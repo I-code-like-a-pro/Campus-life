@@ -3,6 +3,7 @@ import { DEPTS, buildCourses } from './courses.js';
 import { QUESTIONS, shuffle } from './questions.js';
 import { courseOf } from './admissions.js';
 import { semesterHasStrike, strikeDays } from './eventengine.js';
+import { orientationLine } from './campuslife-events.js';
 
 /*
  * The academic calendar. A cycle is 7 game days: 6 semester days (Mon to Sat) and a break day (Sun) when
@@ -180,12 +181,15 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     if (!a) return '';
     if (a.graduated) return `🎓 Graduated · ${degreeClass(a.cgpa)}`;
     if (a.withdrawn) return '📄 You withdrew from the university';
-    if (a.phase === 'pre') return `🎓 Semester starts on Day ${a.startDay}`;
+    if (a.phase === 'pre') return orientationLine(a, 0) || `🎓 Semester starts on Day ${a.startDay}`;
     const sd = semDay(), now = minutes();
     if (a.phase === 'break') return a.lastViewed ? '😴 Break day: next semester starts tomorrow' : '📄 Results are out! Open the portal 📱';
     if (sd === EXAM_DAY && !a.examTaken && now < 20 * 60) return '🧪 Exams today! Go to a lecture hall';
     if (sd === CA_DAY && !a.caTaken && now < 18 * 60) return '📝 CA tests today! Go to a lecture hall';
     const next = nextLecture();
+    // orientation week goals take the line unless a lecture is about to start
+    const orient = orientationLine(a, sd);
+    if (orient && !(next && next.day === sd && next.hour * 60 - now < 120)) return orient;
     if (next) return `📚 Next: ${next.code} · ${WEEKDAYS[next.day - 1]} ${hhmm(next.hour)} · ${next.venue}`;
     if (sd <= ASSIGNMENT_DUE && a.courses.some(c => !c.assign.done)) return `📝 Assignments due ${WEEKDAYS[ASSIGNMENT_DUE - 1]}`;
     return '📚 Study at the library';

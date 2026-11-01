@@ -14,7 +14,10 @@ export const ACHIEVEMENTS = [
   { id: 'admitted',      icon: '🎉', name: 'Admitted!',          text: 'Get admission',                           c: 'admitted',     n: 1 },
   { id: 'retaker',       icon: '🔁', name: 'Never Give Up',      text: 'Retake JAMB',                             c: 'retakes',      n: 1 },
   { id: 'on_the_road',   icon: '🚌', name: 'On the Road',        text: 'Take the bus to school',                  c: 'busRides',     n: 1 },
-  { id: 'cleared',       icon: '📋', name: 'Cleared',            text: 'Finish clearance',                        c: 'cleared',      n: 1 },
+  { id: 'matriculated', icon: '🎩', name: 'Matriculated',  text: 'Take the matriculation oath',             c: 'matriculated', n: 1 },
+  { id: 'oriented',     icon: '🧭', name: 'Oriented',      text: 'Finish orientation week',                 c: 'orientationDone', n: 1 },
+  { id: 'scholar',      icon: '🏆', name: 'Scholar',       text: 'Win a bursary award',                     c: 'scholarships', n: 1 },
+  { id: 'cleared',      icon: '📋', name: 'Cleared',            text: 'Finish clearance',                        c: 'cleared',      n: 1 },
   // academics
   { id: 'front_row',     icon: '🎓', name: 'Front Row',          text: 'Attend a lecture',                        c: 'lectures',     n: 1 },
   { id: 'attendance',    icon: '📚', name: 'Attendance King',    text: 'Attend 20 lectures',                      c: 'lectures',     n: 20 },
