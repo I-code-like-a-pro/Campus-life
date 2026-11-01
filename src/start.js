@@ -1,5 +1,6 @@
 import { CAMPUSES, CAMPUS_ORDER } from './campuses.js';
 import { COURSES, BACKGROUNDS, CUTOFFS, CUTOFF_SOURCE } from './admissions.js';
+import { TOWNS } from './towns.js';
 
 const $ = id => document.getElementById(id);
 
@@ -20,6 +21,9 @@ export async function showStart(save) {
     const nameInput = $('nameInput');
     const next = $('next');
     nameInput.value = save?.name || '';
+    const townInput = $('townInput');
+    townInput.replaceChildren(...TOWNS.map(t => el('option', { value: t.id, textContent: `${t.emoji} ${t.name}: ${t.blurb}` })));
+    townInput.value = save?.hometown || 'lagos';
 
     const cards = BACKGROUNDS.map(b => {
       const card = el('button', { type: 'button', className: 'uni' },
@@ -39,7 +43,7 @@ export async function showStart(save) {
 
     next.addEventListener('click', () => {
       const name = nameInput.value.trim();
-      if (name) resolve({ resume: false, name, background });
+      if (name) resolve({ resume: false, name, background, town: townInput.value });
     });
 
     if (save) {

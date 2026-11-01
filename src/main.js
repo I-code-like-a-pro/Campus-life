@@ -19,6 +19,7 @@ import { showModal } from './modal.js';
 import { BACKGROUNDS, rollScores, aggregate, decide, courseOf, cutoff } from './admissions.js';
 import { createGuide, describeWay } from './guide.js';
 import { createFootball } from './football.js';
+import { townOf, distanceKm, travelOptions, giftFor, roadEvent, durationText } from './towns.js';
 import { buildStory, honoursText, shareCard } from './ending.js';
 import { createNpcs, npcDefsFor, crowdDefs, interiorNpcDefs } from './npcs.js';
 import { DIALOGUES } from './dialogues.js';
@@ -69,6 +70,7 @@ async function main() {
   const bg = choice.resume ? null : BACKGROUNDS.find(b => b.id === choice.background);
   const state = {
     campusId: saved?.campusId ?? 'home',
+    hometown: saved?.hometown ?? choice.town ?? 'lagos',
     name: saved?.name ?? choice.name,
     money: saved?.money ?? bg.money,
     needs: saved?.needs ?? newNeeds(),
@@ -91,6 +93,7 @@ async function main() {
       admitSeen: false
     }
   };
+  CAMPUSES.home.name = townOf(state.hometown).name;          // the neighbourhood carries the name of the player's town
   const campus = CAMPUSES[state.campusId];
   document.documentElement.style.setProperty('--accent', campus.accent);
 
@@ -325,13 +328,14 @@ async function main() {
   function snapshot() {
     const p = inside ? { x: inside.place.door.x, z: inside.place.door.z } : player.group.position;
     return {
-      campusId: state.campusId, name: state.name, money: state.money, needs: state.needs,
+      campusId: state.campusId, hometown: state.hometown, name: state.name, money: state.money, needs: state.needs,
       minutes: dayNight.state.minutes, day: dayNight.state.day, x: p.x, z: p.z,
       course: state.course, aspirant: state.aspirant, admission: state.admission,
       clearance: state.clearance, hostel: state.hostel, academic: state.academic, meta: state.meta
     };
   }
   let lastSaveWarning = 0;
+  let lateWarnedDay = -1;
   function save() {
     if (enrolling) return;
     if (!writeSave(snapshot()) && Date.now() - lastSaveWarning > 60000) {
@@ -484,15 +488,17 @@ async function main() {
   async function admitted(uni, course) {
     state.admission = { uni, course };
     state.aspirant = null;
-    state.money += TRANSPORT_GIFT;
-    meta.ledger('Mum: transport and registration', TRANSPORT_GIFT);
+    const gift = giftFor(state.hometown, uni, TRANSPORT_GIFT);
+    state.money += gift;
+    meta.ledger('Mum: transport and registration', gift);
     meta.track('admitted');
     track('admitted', { uni });
     await showModal({
       title: '🏠 Time to get ready',
       lines: [
-        `Mum gives you ${naira(TRANSPORT_GIFT)} for transport and registration.`,
-        `Next: go to the Motor Park and take a bus to ${CAMPUSES[uni].short} (fare ${naira(FARE)}). Ask around if you need directions.`
+        `Mum gives you ${naira(gift)} for transport and registration.`,
+        `${townOf(state.hometown).name} to ${CAMPUSES[uni].short} is about ${distanceKm(state.hometown, uni)} km. ${(() => { const o = travelOptions(state.hometown, uni); return `Travelling takes about ${durationText(o[0].minutes)} by road, from ${naira(o[0].fare)}${o[1] ? ', or you can fly' : ''}.`; })()}`,
+        'Next: go to the Motor Park and ask Conductor Bala about your trip. You can rest at home first.'
       ],
       buttons: [{ label: 'Let\'s go!', value: 'ok' }]
     });
@@ -504,7 +510,7 @@ async function main() {
   function enroll(uni, course) {
     enrolling = true;
     writeSave({
-      campusId: uni, name: state.name, money: state.money, needs: state.needs,
+      campusId: uni, hometown: state.hometown, name: state.name, money: state.money, needs: state.needs,
       minutes: dayNight.state.minutes, day: dayNight.state.day, x: ARRIVAL.x, z: ARRIVAL.z,
       course, aspirant: null, admission: null, hostel: null, meta: state.meta,
       clearance: { admissions: false, bursary: false, medical: false, hostel: false, done: false },
@@ -516,19 +522,34 @@ async function main() {
   async function travel() {
     const adm = state.admission;
     if (!adm) return 'You have no admission yet.';
-    if (state.money < FARE) return `The fare is ${naira(FARE)} and you only have ${naira(state.money)}. Check your pocket!`;
-    state.money -= FARE;
-    meta.ledger('Bus fare to school', -FARE);
+    const km = distanceKm(state.hometown, adm.uni), opts = travelOptions(state.hometown, adm.uni);
+    let pick = opts[0];
+    if (opts.length > 1) {
+      const v = await showModal({
+        title: '🧭 How will you travel?',
+        lines: [`${townOf(state.hometown).name} to ${CAMPUSES[adm.uni].short} is about ${km} km.`],
+        buttons: [...opts.map(o => ({ label: `${o.emoji} ${o.label}: ${naira(o.fare)}, about ${durationText(o.minutes)}`, value: o.mode })), { label: 'Not yet', value: 'no', secondary: true }]
+      });
+      if (v === 'no') return '';
+      pick = opts.find(o => o.mode === v);
+    }
+    if (state.money < pick.fare) return `The fare is ${naira(pick.fare)} and you only have ${naira(state.money)}. Check your pocket!`;
+    state.money -= pick.fare;
+    meta.ledger(pick.mode === 'flight' ? 'Flight to school' : 'Bus fare to school', -pick.fare);
     meta.track('busRides');
+    const ev = roadEvent(pick.mode, Math.random());
+    if (ev.cost) { state.money = Math.max(0, state.money - ev.cost); meta.ledger('Roadside snacks', -ev.cost); }
     await showModal({
-      title: '🚌 On the road',
-      lines: ['You squeeze into the bus. Loud music, tight seats, one very talkative passenger.', `Five hours later: "${CAMPUSES[adm.uni].name}! Everybody get down!"`],
+      title: pick.mode === 'flight' ? '✈️ In the air' : '🚌 On the road',
+      lines: [pick.mode === 'flight' ? 'You find your seat and fasten your belt. Your bags are small but your hopes are big.' : 'You squeeze into the bus. Loud music, tight seats, one very talkative passenger.',
+        ev.text, `${durationText(pick.minutes)} later: "${CAMPUSES[adm.uni].name}! Everybody get down!"`],
       buttons: [{ label: 'Get down 🧳', value: 'ok' }]
     });
     const prevDay = dayNight.state.day;
-    tickNeeds(state.needs, 300);
-    applyEffects(state.needs, { stress: 8 });
-    afterTime(dayNight.skip(300), prevDay);
+    tickNeeds(state.needs, pick.minutes);
+    applyEffects(state.needs, { stress: 4 + Math.min(10, Math.round(km / 100)) });
+    applyEffects(state.needs, ev.fx);
+    afterTime(dayNight.skip(pick.minutes), prevDay);
     fadeEl.classList.add('on');
     await new Promise(r => setTimeout(r, 700));
     enroll(adm.uni, adm.course);
@@ -639,6 +660,7 @@ async function main() {
     campus,
     meta,
     FARE,
+    quote: () => (state.admission ? { km: distanceKm(state.hometown, state.admission.uni), options: travelOptions(state.hometown, state.admission.uni) } : null),
     say,
     directions,
     tellWay,
@@ -801,6 +823,20 @@ async function main() {
     execute(a);
   }
 
+  /** Awake until 3 AM: you drop off on the spot and wake up at your door at 7 AM. No bill, but the night is gone. */
+  function dozeOff() {
+    leavePlace(true);
+    const home = places.find(p => p.type === 'hostel' || p.type === 'home') || places[0];
+    player.group.position.set(home.door.x, 0, home.door.z);
+    const prevDay = dayNight.state.day;
+    const toSeven = ((7 * 60 - dayNight.state.minutes) + 1440) % 1440;
+    state.needs.energy = Math.max(state.needs.energy, 65);
+    state.needs.hunger = Math.max(state.needs.hunger, 25);
+    afterTime(dayNight.skip(toSeven), prevDay);
+    toast('😴 You dozed off in the middle of the night and woke up at your door. Try to sleep earlier!');
+    save();
+  }
+
   function faint() {
     leavePlace(true);
     const home = places.find(p => p.type === 'hostel' || p.type === 'home') || places[0];
@@ -817,7 +853,7 @@ async function main() {
   }
 
   /* ---- menu ---- */
-  const menuLabel = state.aspirant || state.admission ? 'JAMB aspirant' : campus.short;
+  const menuLabel = state.aspirant || state.admission ? `JAMB aspirant · ${townOf(state.hometown).name}` : campus.short;
   document.getElementById('menuTitle').textContent = `${state.name} · ${menuLabel}`;
   document.getElementById('resume').addEventListener('click', () => document.getElementById('menu').classList.remove('open'));
   document.getElementById('newgame').addEventListener('click', () => {
@@ -924,6 +960,14 @@ async function main() {
     const prevDay = dayNight.state.day;
     afterTime(dayNight.advance(dt), prevDay);
     tickNeeds(state.needs, dt * 2);           // 2 game minutes per real second (matches the clock)
+    const hr = dayNight.state.minutes / 60;
+    const drowsy = hr < 5;                    // after midnight you should be in bed
+    if (hr >= 22 && lateWarnedDay !== dayNight.state.day && !paused) {
+      lateWarnedDay = dayNight.state.day;
+      toast(campus.id !== 'home' ? '🌙 It is getting late. Go back to your hostel room and sleep.' : '🌙 It is getting late. Go home and get some sleep.');
+    }
+    if (drowsy) state.needs.energy = Math.max(0, state.needs.energy - dt * 2 * 0.03);    // staying up all night costs extra energy
+    if (hr >= 3 && hr < 5 && !paused && !transitioning) dozeOff();
     if (state.needs.energy <= 0.5) faint();
     meta.refreshDay();
     setSickness(state.meta.health.sick ? 1 : 0);
@@ -956,7 +1000,7 @@ async function main() {
     hud.update({
       minutes: dayNight.state.minutes, day: dayNight.state.day, weatherIcon, blackoutAmount,
       needs: state.needs, money: state.money, goal: goalText(), weekday: academics.weekday(),
-      status: statusLabel(state.meta.health)
+      status: statusLabel(state.meta.health) || (drowsy ? '😴 Drowsy: time for bed' : '')
     });
 
     // movement

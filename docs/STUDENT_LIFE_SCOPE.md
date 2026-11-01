@@ -17,6 +17,7 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | System | Status | Notes |
 |---|---|---|
 | Name and background (brilliant, average, lazy, rich) | ✅ | Background shapes JAMB score, pocket money, study speed |
+| Home town (Lagos, Ibadan, Ile-Ife, Uyo, Abuja, Port Harcourt, Kano) | ✅ | The aspirant phase happens in the player's own town; distance to each university drives the trip |
 | JAMB form: two university/course choices | ✅ | UNILAG, UI, OAU; 9 courses |
 | Appearance and outfit choice | ⬜ 🔮 | Waits for the owner's 3D assets (`modelUrl` hook exists) |
 | Tutorial hints | ✅ | One-time hints; 🎯 add a short guided first day |
@@ -36,7 +37,8 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | System | Status | Notes |
 |---|---|---|
 | Congratulations, family send-off, travel money | ✅ | ₦10,000 gift, ₦3,500 bus fare |
-| Bus journey to campus | ✅ | |
+| Journey to campus by distance (fare, duration, bus or flight, road events) | ✅ | Local trips about an hour; Kano to UNILAG about 19 hours by bus or 5 by air |
+| Bedtime: late warning at 22:00, drowsy after midnight, dozing off at 3 AM | ✅ | Pushes players to sleep at home, then in the hostel |
 | Gate officers and guides (Musa, Seun) | ✅ | |
 
 ## Stage 3. Clearance

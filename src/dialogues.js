@@ -1,3 +1,4 @@
+import { durationText } from './towns.js';
 import { DESKS, CLEARANCE_FEE, nextStep } from './clearance.js';
 import { naira } from './needs.js';
 
@@ -97,11 +98,12 @@ async function bala(c, npc) {
     ]);
     return;
   }
-  const fare = c.FARE;
+  const q = c.quote();
+  const first = q.options[0];
   const short = c.uniShort(adm.uni);
-  await converse(c, npc, `${short}! ${short}! Last seat! Only ${naira(fare)}, sir!`, () => [
-    { label: `🚌 Board the bus (${naira(fare)})`, run: async () => (await c.travel()) },
-    { label: '⏱️ How far is it?', run: () => 'About five hours on the road, depending on traffic. Sit well, we will get there.' },
+  await converse(c, npc, `${short}! ${short}! Last seat! From ${naira(first.fare)}, sir!`, () => [
+    { label: `🧭 Travel to ${short}`, run: async () => (await c.travel()) },
+    { label: '⏱️ How far is it?', run: () => `About ${q.km} km. By road that is roughly ${durationText(first.minutes)}${q.options[1] ? '. There is also a flight if you can afford it.' : '.'} Sit well, we will get there.` },
     asks(c)(npc)
   ]);
 }

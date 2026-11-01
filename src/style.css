@@ -198,3 +198,7 @@ button { touch-action:manipulation; }
   #minimap { width:64px; height:64px; }
   #goal, #guide { max-width:calc(100vw - 96px); }
 }
+
+.field select { display:block; width:100%; margin-top:6px; padding:12px 14px; font-size:16px; border-radius:12px; border:2px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08); color:inherit; }
+.field select option { color:#111; }

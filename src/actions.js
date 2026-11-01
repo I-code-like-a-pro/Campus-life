@@ -16,11 +16,11 @@ export const ACTIONS = {
   hostel: HOSTEL,
   home: [
     ...HOSTEL,
-    { id: 'momfood', label: '🍲 Mum\'s jollof', minutes: 20, fx: { hunger: 50, fun: 5, stress: -3 }, msg: 'Mama cooked! Free food, no stories.' }
+    { id: 'momfood', label: '🍲 Mum\'s jollof', minutes: 20, fx: { hunger: 50, fun: 5, stress: -3 }, msg: 'Mama cooked! Free food, no complaints.' }
   ],
   canteen: [
-    { id: 'jollof', label: '🍛 Jollof & chicken', cost: 3000, minutes: 20, fx: { hunger: 55, fun: 5 }, msg: 'Jollof sweet die!' },
-    { id: 'pie', label: '🥧 Meat pie', cost: 900, minutes: 5, fx: { hunger: 18 }, msg: 'Quick bite, quick mouth.' },
+    { id: 'jollof', label: '🍛 Jollof & chicken', cost: 3000, minutes: 20, fx: { hunger: 55, fun: 5 }, msg: 'The jollof is delicious!' },
+    { id: 'pie', label: '🥧 Meat pie', cost: 900, minutes: 5, fx: { hunger: 18 }, msg: 'A quick bite on the go.' },
     { id: 'zobo', label: '🥤 Zobo drink', cost: 300, minutes: 5, fx: { hunger: 5, fun: 4, stress: -2 }, msg: 'Chilled zobo. Refreshing!' },
     { id: 'canteenjob', label: '🍽️ Serve food (2 hrs)', pay: 2500, minutes: 120, limit: 2, needs: { energy: 20 },
       fx: { energy: -14, fun: -6, hunger: -6, hygiene: -6, stress: 3 }, msg: 'You served a long queue. The madam paid you.' }
@@ -30,7 +30,7 @@ export const ACTIONS = {
     // the results action is added by main.js when results are out
   ],
   shop: [
-    { id: 'snack', label: '🍪 Buy snacks', cost: 500, minutes: 5, fx: { hunger: 14, fun: 3 }, msg: 'Biscuit and sweet. Small belle fill.' },
+    { id: 'snack', label: '🍪 Buy snacks', cost: 500, minutes: 5, fx: { hunger: 14, fun: 3 }, msg: 'Biscuits and sweets. Just enough to get by.' },
     { id: 'foodstuff', label: '🥘 Foodstuff (4 meals)', cost: 3000, minutes: 15, msg: 'You bought rice, tomatoes and ingredients for four meals.' },
     { id: 'decor-poster', label: '🖼️ Room poster', cost: 1500, minutes: 5, decor: 'poster', msg: 'A poster for your room. Instant personality!' },
     { id: 'decor-plant', label: '🪴 Potted plant', cost: 2000, minutes: 5, decor: 'plant', msg: 'A little green plant for your room.' },
