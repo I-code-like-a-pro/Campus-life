@@ -189,3 +189,38 @@ describe('world conditions', () => {
     expect(cutDays / 200).toBeLessThan(0.55);
   });
 });
+
+import { TITLES, UPPER_QUESTIONS } from '../src/upperlevels.js';
+
+describe('200 to 400 level content', () => {
+  it('has four named courses per semester at every level for every department', () => {
+    for (const dept of Object.keys(DEPTS)) {
+      for (const level of [2, 3, 4]) {
+        for (const term of [0, 1]) {
+          const list = TITLES[dept]?.[level]?.[term];
+          expect(list, `${dept} ${level}00L term ${term + 1}`).toHaveLength(4);
+          expect(new Set(list).size).toBe(4);
+        }
+      }
+    }
+  });
+  it('has a question bank for every department and level', () => {
+    for (const dept of Object.keys(DEPTS)) for (const level of [2, 3, 4]) {
+      expect(QUESTIONS[`${dept}@${level}`]?.length, `${dept}@${level}`).toBeGreaterThanOrEqual(8);
+    }
+    expect(Object.keys(UPPER_QUESTIONS)).toHaveLength(27);
+  });
+  it('builds real courses for upper years and points them at the right bank', () => {
+    const c = buildCourses('cs', 3, 1);
+    expect(c.map(x => x.title)).toContain('Database Systems');
+    expect(c.every(x => x.bank === 'cs@3')).toBe(true);
+    expect(c.map(x => x.units)).toEqual([3, 3, 3, 2]);
+    const final = buildCourses('law', 5, 2);                       // a 5 year degree reuses the 400 level lists
+    expect(final.every(x => x.bank === 'law@4')).toBe(true);
+    expect(new Set(final.map(x => x.code)).size).toBe(4);
+  });
+  it('gives carryovers their original bank', () => {
+    const c = buildCourses('cs', 2, 1, [{ code: 'CSC 101', title: 'Introduction to Computer Science', bank: 'cs', units: 3 }]);
+    expect(c[c.length - 1]).toMatchObject({ carry: true, bank: 'cs' });
+  });
+});

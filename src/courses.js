@@ -1,6 +1,8 @@
 // Course catalogue per department (ids match admissions.js). `courses[term - 1]` lists the three
-// departmental courses for that semester of 100 level. Higher levels reuse the titles with new codes.
+// departmental courses for that semester of 100 level. Levels 200 to 400 have their own lists in upperlevels.js.
 // `years` is the length of the degree.
+
+import { TITLES } from './upperlevels.js';
 
 export const DEPTS = {
   cs: { prefix: 'CSC', years: 4, courses: [
@@ -48,16 +50,21 @@ export const GST = [['GST 111', 'Use of English I'], ['GST 112', 'Use of English
 export function buildCourses(deptId, year, term, carry = []) {
   const d = DEPTS[deptId];
   const fresh = course => ({ ...course, att: { ok: 0, late: 0 }, knowledge: 0, assign: { progress: 0, done: false }, ca: null, exam: null, usedQ: [] });
-  const out = d.courses[term - 1].map(([code, title], i) => fresh(
-    year === 1
-      ? { code, title, bank: deptId, units: 3, carry: false }
-      : { code: code.replace(/\d{3}$/, `${year}${term}${i + 1}`), title: `${title} (${year}00L)`, bank: deptId, units: 3, carry: false }
-  ));
+  let out;
   if (year === 1) {
+    out = d.courses[term - 1].map(([code, title]) => fresh({ code, title, bank: deptId, units: 3, carry: false }));
     const [code, title] = GST[term - 1];
     out.push(fresh({ code, title, bank: 'gst', units: 2, carry: false }));
   } else {
-    out.push(fresh({ code: `${d.prefix} ${year}${term}4`, title: `Departmental Elective (${year}00L)`, bank: deptId, units: 2, carry: false }));
+    // 200 to 400 level have their own course lists and question banks; the extra years of 5 and 6 year degrees reuse 400 level
+    const level = Math.min(year, 4);
+    const titles = TITLES[deptId]?.[level]?.[term - 1];
+    out = (titles || [...d.courses[term - 1].map(([, t]) => t), 'Departmental Elective']).map((title, i) => fresh({
+      code: `${d.prefix} ${year}${term}${i + 1}`,
+      title: year > 4 ? `${title} (${year}00L)` : title,
+      bank: titles ? `${deptId}@${level}` : deptId,
+      units: i === 3 ? 2 : 3, carry: false
+    }));
   }
   carry.slice(0, 2).forEach(c => out.push(fresh({ code: c.code, title: c.title, bank: c.bank, units: c.units, carry: true })));
   return out;

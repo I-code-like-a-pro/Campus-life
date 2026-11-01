@@ -1,6 +1,6 @@
 // Question banks for CA tests and exams. Each entry: [question, right answer, wrong, wrong, wrong].
 // Options are shuffled when shown. Keys match course ids in admissions.js, plus 'gst' (general studies).
-// Everything here is first-year level; more questions can simply be added to a bank.
+// The banks keyed by department id are first-year level; 200 to 400 level banks ('cs@2' ...) live in upperlevels.js.
 
 export const QUESTIONS = {
   medicine: [
@@ -169,6 +169,9 @@ export const QUESTIONS = {
     ['NYSC stands for…', 'National Youth Service Corps', 'National Youth Security Council', 'Nigerian Youth Skills Centre', 'National Yearly Service Club']
   ]
 };
+
+import { UPPER_QUESTIONS } from './upperlevels.js';
+Object.assign(QUESTIONS, UPPER_QUESTIONS);   // 'dept@level' banks for 200 to 400 level
 
 export function shuffle(list) {
   const a = list.slice();

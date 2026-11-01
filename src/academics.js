@@ -239,7 +239,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     const a = A();
     const scores = {};
     for (const c of a.courses) {
-      const bank = QUESTIONS[c.bank];
+      const bank = QUESTIONS[c.bank] || QUESTIONS[c.bank.split('@')[0]];
       let pool = bank.map((_, i) => i).filter(i => !c.usedQ.includes(i));
       if (pool.length < perCourse) pool = bank.map((_, i) => i);
       const picks = shuffle(pool).slice(0, perCourse);

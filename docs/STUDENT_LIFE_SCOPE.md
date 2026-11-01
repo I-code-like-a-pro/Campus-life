@@ -67,8 +67,8 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | Attendance, assignments, study | ✅ | |
 | Continuous assessment quiz (Wed) and exam (Sat) | ✅ | |
 | GPA/CGPA on a 5.0 scale, carryovers, portal | ✅ | |
-| Question banks | 🟡 | 100L only, 15 per department. 🎯 40+ per department, 20 GST; 200L to 400L later |
-| Courses by level (100L to 400L) | 🟡 | 🎯 At least 200L and 300L course lists per department |
+| Question banks | 🟡 | 100L: 15 per department. 200L to 400L: 8 per department per level (216 new). 🎯 grow to 20+ per bank and have them reviewed |
+| Courses by level (100L to 400L) | ✅ | Named course lists for every department, 4 courses per semester. 5th/6th years reuse 400L |
 | Handouts, past questions, study groups | 🟡 | Handouts exist; 🎯 past questions and group study |
 | ASUU strike | ✅ | |
 | Lecturer personalities, attendance checks, surprise tests | ⬜ 🎯 | |
