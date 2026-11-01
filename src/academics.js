@@ -383,5 +383,22 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     if (A()) for (const c of A().courses) c.knowledge = Math.min(100, c.knowledge + n);
   }
 
-  return { init, tick, goal, weekday, lectureActions, libraryActions, run, openPortal, graduationModal, semDay, boostAll };
+  /** Plain-text facts about the player's semester, given to the AI so lecturers and others answer from real data. */
+  function facts() {
+    const a = A();
+    if (!a) return ['The player has not started university yet.'];
+    const sd = semDay();
+    const out = [`Semester day ${Math.min(sd, 7)} of 6 (${weekday()}). The player is in ${a.year}00 level, semester ${a.term}.`];
+    if (a.phase === 'pre') out.push(`The semester starts on day ${a.startDay}.`);
+    out.push(`Weekly rhythm: assignments due ${WEEKDAYS[ASSIGNMENT_DUE - 1]}, CA tests ${WEEKDAYS[CA_DAY - 1]}, exams ${WEEKDAYS[EXAM_DAY - 1]}, ${WEEKDAYS[6]} is a break and results come out then.`);
+    out.push(`CA test ${a.caTaken ? 'already taken' : 'not yet taken'} this semester; exam ${a.examTaken ? 'already taken' : 'not yet taken'}.`);
+    out.push(`Courses: ${a.courses.map(c => `${c.code} ${c.title} (preparation ${c.knowledge}%${c.assign.done ? ', assignment submitted' : ', assignment pending'})`).join('; ')}.`);
+    out.push(`Timetable: ${[...a.timetable].sort((x, y) => x.day - y.day || x.hour - y.hour).map(t => `${WEEKDAYS[t.day - 1]} ${hhmm(t.hour)} ${t.code} at ${t.venue}${t.cancelled ? ' (cancelled by strike)' : ''}`).join('; ')}.`);
+    if (a.strike) out.push(`An ASUU strike affects days ${a.strike.from} to ${a.strike.to} of this semester.`);
+    if (a.cgpa != null) out.push(`The player's CGPA is ${a.cgpa.toFixed(2)}.`);
+    if (a.carryovers?.length) out.push(`Carryovers to retake: ${a.carryovers.map(c => c.code).join(', ')}.`);
+    return out;
+  }
+
+  return { init, tick, goal, facts, weekday, lectureActions, libraryActions, run, openPortal, graduationModal, semDay, boostAll };
 }

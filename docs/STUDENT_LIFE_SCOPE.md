@@ -147,6 +147,7 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | Balance simulator and regression tests (128) | ✅ |
 | Share card for the ending (image, phone share sheet or download) | ✅ |
 | Share cards for matriculation and GPA milestones | ⬜ 🎯 |
+| AI NPC chat (typed questions, answers from real game facts, daily limit, server holds the key) | ✅ needs owner setup, see docs/AI_NPCS.md |
 | Cloud save and accounts | ⬜ 🔮 (backend decision pending) |
 | Multiplayer, chat, payments | ⬜ 🔮 (out of scope for launch) |
 

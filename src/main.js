@@ -11,7 +11,7 @@ import { createEventEngine, seasonFor } from './eventengine.js';
 import { createHud } from './hud.js';
 import { CAMPUSES } from './campuses.js';
 import { ACTIONS, COMING_SOON } from './actions.js';
-import { newNeeds, tickNeeds, applyEffects, naira, setSickness } from './needs.js';
+import { newNeeds, tickNeeds, applyEffects, naira, setSickness, mood as moodOf } from './needs.js';
 import { rollIllness, fallSick, dayPassed, rest, diagnose, recover, statusLabel, ILLNESSES } from './health.js';
 import { loadSave, writeSave, clearSave, newMeta, lastLoadNote } from './save.js';
 import { showStart, showJambForm } from './start.js';
@@ -19,6 +19,7 @@ import { showModal } from './modal.js';
 import { BACKGROUNDS, rollScores, aggregate, decide, courseOf, cutoff } from './admissions.js';
 import { createGuide, describeWay } from './guide.js';
 import { createFootball } from './football.js';
+import { createAi } from './ainpc.js';
 import { townOf, distanceKm, travelOptions, giftFor, roadEvent, durationText } from './towns.js';
 import { buildStory, honoursText, shareCard } from './ending.js';
 import { createNpcs, npcDefsFor, crowdDefs, interiorNpcDefs } from './npcs.js';
@@ -659,7 +660,25 @@ async function main() {
       .slice(0, 4).forEach(n => addRelation(n, 2));
   }
 
+  /* ---- AI NPC chat: real game facts go to the AI so answers (tests, exams, timetable) match the game ---- */
+  const ai = createAi({
+    isOn: () => settings.aiChat,
+    getContext: () => {
+      const a = state.academic, m = moodOf(state.needs), t = dayNight.state.minutes;
+      return {
+        player: state.name, uni: campus.id === 'home' ? '' : campus.name, course: state.course ? courseOf(state.course).name : '',
+        hometown: townOf(state.hometown).name,
+        when: `Day ${day()}, ${String(Math.floor(t / 60)).padStart(2, '0')}:${String(Math.floor(t % 60)).padStart(2, '0')}`,
+        place: inside ? inside.place.name : campus.name,
+        mood: `${m.label}; energy ${Math.round(state.needs.energy)}/100, stress ${Math.round(state.needs.stress)}/100`,
+        facts: a ? academics.facts() : state.aspirant
+          ? [`The player is a JAMB aspirant. Result day is ${state.aspirant.jambDay}, admission list day ${state.aspirant.admitDay}. Today is day ${day()}.`]
+          : ['The player is preparing to travel to university.']
+      };
+    }
+  });
   const talkContext = {
+    ai,
     relation,
     addRelation,
     addLoan,

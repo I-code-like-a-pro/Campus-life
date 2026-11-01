@@ -1,5 +1,6 @@
 import { showModal } from './modal.js';
 import { settings, setSetting } from './settings.js';
+import { aiConfigured } from './ainpc.js';
 import { ACHIEVEMENTS } from './meta.js';
 import { naira } from './needs.js';
 import { DECOR, owed } from './housing.js';
@@ -216,6 +217,7 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
           { label: `🐢 Reduced motion: ${onOff(settings.reducedMotion)}`, value: 'reducedMotion' },
           { label: `💡 Tutorial hints: ${onOff(settings.hints)}`, value: 'hints' },
           { label: `🗺️ Minimap: ${onOff(settings.minimap)}`, value: 'minimap' },
+          ...(aiConfigured() ? [{ label: `🤖 AI chat with NPCs: ${onOff(settings.aiChat)}`, value: 'aiChat' }] : []),
           { label: `📊 Share anonymous usage data: ${onOff(settings.analytics)}`, value: 'analytics' },
           { label: '💾 Export my save', value: 'export' },
           { label: '📥 Import a save', value: 'import' },

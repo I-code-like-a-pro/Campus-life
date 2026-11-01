@@ -29,6 +29,7 @@ async function converse(c, npc, opening, makeOptions) {
   let text = opening;
   for (;;) {
     const opts = makeOptions();
+    if (c.ai?.enabled(npc)) opts.push({ label: '✍️ Ask something…', run: async () => (await c.ai.ask(npc)) ?? 'Anything else?' });
     const pick = await c.say(npc, text, [
       ...opts.map((o, i) => ({ label: o.label, value: i })),
       { label: 'Bye 👋', value: -1, secondary: true }
