@@ -18,7 +18,14 @@ export const QUESTIONS = {
     ['Which bone is found in the upper arm?', 'Humerus', 'Femur', 'Tibia', 'Radius'],
     ['Which gas is higher in exhaled air than in inhaled air?', 'Carbon dioxide', 'Oxygen', 'Nitrogen', 'Hydrogen'],
     ['What is the functional unit of the kidney?', 'Nephron', 'Neuron', 'Alveolus', 'Villus'],
-    ['Which part of the brain coordinates balance?', 'Cerebellum', 'Cerebrum', 'Pituitary', 'Hypothalamus']
+    ['Which part of the brain coordinates balance?', 'Cerebellum', 'Cerebrum', 'Pituitary', 'Hypothalamus'],
+    ['Which type of blood vessel has valves?', 'Veins', 'Arteries', 'Capillaries', 'The aorta'],
+    ['Deficiency of which vitamin causes night blindness?', 'Vitamin A', 'Vitamin C', 'Vitamin D', 'Vitamin K'],
+    ['Where does most digestion and absorption of food take place?', 'Small intestine', 'Stomach', 'Large intestine', 'Oesophagus'],
+    ['Which part of the eye controls how much light enters?', 'Iris', 'Cornea', 'Retina', 'Lens'],
+    ['Normal adult body temperature is about…', '37 °C', '30 °C', '42 °C', '25 °C'],
+    ['Which gland is called the master gland?', 'Pituitary', 'Thyroid', 'Adrenal', 'Pancreas'],
+    ['How many pairs of chromosomes do humans have?', '23', '46', '21', '32']
   ],
   law: [
     ['The supreme law of Nigeria is…', 'The Constitution', 'The Penal Code', 'The Criminal Code', 'The Police Act'],
@@ -35,7 +42,14 @@ export const QUESTIONS = {
     ['Which arm of government interprets the law?', 'The judiciary', 'The executive', 'The legislature', 'The police'],
     ['"Ultra vires" means…', 'Beyond one\'s legal powers', 'Within one\'s powers', 'By consent', 'In the alternative'],
     ['An Act passed by the legislature is called a…', 'Statute', 'Precedent', 'Custom', 'Equity'],
-    ['A person who brings a civil action is the…', 'Claimant (plaintiff)', 'Defendant', 'Accused', 'Witness']
+    ['A person who brings a civil action is the…', 'Claimant (plaintiff)', 'Defendant', 'Accused', 'Witness'],
+    ['The Constitution currently in force in Nigeria came into effect in…', '1999', '1979', '1989', '2011'],
+    ['Nigerian law draws on English law, customary law and…', 'Islamic (Sharia) law', 'Roman-Dutch law', 'The French civil code', 'Hindu law'],
+    ['A contract needs an offer, acceptance and…', 'Consideration', 'Confession', 'Conviction', 'Compensation'],
+    ['The Nigerian Bar Association is the professional body for…', 'Lawyers', 'Judges only', 'Police officers', 'Bankers'],
+    ['"Sub judice" describes a matter that is…', 'Under consideration by a court', 'Already judged', 'Dismissed', 'Settled out of court'],
+    ['A will is a document that states…', 'How a person\'s property is shared after death', 'The terms of a lease', 'Criminal charges', 'The rules of a company'],
+    ['The doctrine of precedent means courts should…', 'Follow earlier decisions of higher courts', 'Ignore past decisions', 'Follow public opinion', 'Follow only foreign courts']
   ],
   engineering: [
     ['What is the SI unit of force?', 'Newton', 'Joule', 'Pascal', 'Watt'],
@@ -52,7 +66,14 @@ export const QUESTIONS = {
     ['The total resistance of resistors in series is…', 'The sum of the resistances', 'Their product', 'Their average', 'The smallest one'],
     ['Newton\'s first law is about…', 'Inertia', 'Gravity', 'Action and reaction', 'Conservation of energy'],
     ['The hertz is the unit of…', 'Frequency', 'Force', 'Pressure', 'Power'],
-    ['How many metres are in 1 kilometre?', '1000', '100', '10', '10,000']
+    ['How many metres are in 1 kilometre?', '1000', '100', '10', '10,000'],
+    ['The SI unit of work is the…', 'Joule', 'Newton', 'Pascal', 'Watt'],
+    ['Which of these is a scalar quantity?', 'Distance', 'Displacement', 'Force', 'Momentum'],
+    ['The rate of change of position with time is…', 'Velocity', 'Acceleration', 'Force', 'Work'],
+    ['Work done equals…', 'Force × distance moved in the direction of the force', 'Force ÷ distance', 'Mass × velocity', 'Power ÷ time'],
+    ['Which law relates stress and strain in the elastic range?', 'Hooke\'s law', 'Ohm\'s law', 'Boyle\'s law', 'Charles\'s law'],
+    ['A transformer works on the principle of…', 'Electromagnetic induction', 'Friction', 'Combustion', 'Evaporation'],
+    ['Which instrument measures atmospheric pressure?', 'Barometer', 'Thermometer', 'Voltmeter', 'Anemometer']
   ],
   cs: [
     ['CPU stands for…', 'Central Processing Unit', 'Computer Personal Unit', 'Central Program Utility', 'Core Processing Unit'],
@@ -69,7 +90,14 @@ export const QUESTIONS = {
     ['Which data structure works on a last-in, first-out basis?', 'Stack', 'Queue', 'Array', 'Tree'],
     ['Which of these is an output device?', 'Monitor', 'Mouse', 'Scanner', 'Keyboard'],
     ['What is binary 1000 in decimal?', '8', '4', '10', '16'],
-    ['Which program translates high-level code into machine code?', 'Compiler', 'Text editor', 'Router', 'Firewall']
+    ['Which program translates high-level code into machine code?', 'Compiler', 'Text editor', 'Router', 'Firewall'],
+    ['Which of these is database software?', 'MySQL', 'Photoshop', 'Firefox', 'VLC'],
+    ['A "bug" in a program is…', 'An error in the code', 'A computer virus', 'A hardware part', 'A network cable'],
+    ['Which of these stores data permanently?', 'Hard disk', 'RAM', 'Cache', 'CPU register'],
+    ['The extension .html is used for…', 'Web pages', 'Spreadsheets', 'Images', 'Audio files'],
+    ['URL stands for…', 'Uniform Resource Locator', 'Universal Remote Link', 'Unified Resource Language', 'User Reference Locator'],
+    ['In Boolean logic, NOT 1 equals…', '0', '1', '2', '10'],
+    ['The hexadecimal number system uses how many symbols?', '16', '8', '10', '2']
   ],
   accounting: [
     ['The accounting equation is…', 'Assets = Liabilities + Equity', 'Assets = Equity − Liabilities', 'Assets + Liabilities = Equity', 'Profit = Assets − Cash'],
@@ -86,7 +114,14 @@ export const QUESTIONS = {
     ['A trial balance checks that…', 'Total debits equal total credits', 'Profit is at its maximum', 'Stock is correct', 'Cash is positive'],
     ['Capital is…', 'The owner\'s investment in the business', 'Money owed to suppliers', 'Sales revenue', 'Bank interest'],
     ['Which of these is a liability?', 'Bank loan', 'Cash', 'Inventory', 'Equipment'],
-    ['Net profit is…', 'Gross profit − expenses', 'Gross profit + expenses', 'Sales − purchases', 'Assets − liabilities']
+    ['Net profit is…', 'Gross profit − expenses', 'Gross profit + expenses', 'Sales − purchases', 'Assets − liabilities'],
+    ['A purchase of goods on credit is recorded as a debit to purchases and a credit to…', 'Creditors', 'Cash', 'Debtors', 'Capital'],
+    ['Which of these is a current asset?', 'Inventory (stock)', 'Land', 'Buildings', 'A motor vehicle'],
+    ['The going concern concept assumes a business will…', 'Continue operating for the foreseeable future', 'Close next year', 'Never make a loss', 'Be sold soon'],
+    ['Prepaid expenses are shown as…', 'A current asset', 'A liability', 'Income', 'Capital'],
+    ['Returns inwards reduce…', 'Sales', 'Purchases', 'Capital', 'Drawings'],
+    ['A person who independently examines financial statements is an…', 'Auditor', 'Cashier', 'Debtor', 'Clerk'],
+    ['VAT stands for…', 'Value Added Tax', 'Variable Annual Tax', 'Valued Asset Tax', 'Verified Account Tax']
   ],
   masscomm: [
     ['The person who starts a message is the…', 'Sender (source)', 'Receiver', 'Channel', 'Noise'],
@@ -103,7 +138,14 @@ export const QUESTIONS = {
     ['The 5Ws and H are…', 'Who, What, When, Where, Why, How', 'Who, What, Whom, Which, When, Whose', 'Why, How, Hot, Hard, Heard, Hit', 'What, Wait, Wish, Win, Work, Wear'],
     ['The audience of mass communication is…', 'Large and diverse', 'One person', 'Close friends only', 'Experts only'],
     ['A journalist is someone who…', 'Gathers, writes and reports news', 'Sells newspapers', 'Prints newspapers', 'Repairs radios'],
-    ['Libel is…', 'Written defamation', 'Spoken defamation', 'Copyright theft', 'Advertising']
+    ['Libel is…', 'Written defamation', 'Spoken defamation', 'Copyright theft', 'Advertising'],
+    ['Which of these is a new media platform?', 'Social media', 'Handbill', 'Billboard', 'Town crier'],
+    ['An editorial in a newspaper expresses…', 'The opinion of the newspaper', 'A reader\'s letter', 'An advert', 'Sports scores'],
+    ['Which body regulates broadcasting in Nigeria?', 'The National Broadcasting Commission', 'The National Universities Commission', 'NECO', 'FIRS'],
+    ['A byline shows…', 'The name of the writer', 'The price of the paper', 'The date of printing', 'The name of the printer'],
+    ['Gatekeeping in the media means…', 'Deciding which stories get published', 'Locking the newsroom', 'Policing journalists', 'Selling adverts'],
+    ['Propaganda tries to…', 'Influence opinion, often with one-sided information', 'Give balanced facts', 'Sell tickets', 'Correct spelling'],
+    ['Slander is…', 'Spoken defamation', 'Written defamation', 'Photo editing', 'Copying a story']
   ],
   pharmacy: [
     ['Pharmacology is the study of…', 'Drugs and their effects', 'Plants', 'Diseases only', 'Bones'],
@@ -120,7 +162,14 @@ export const QUESTIONS = {
     ['Aspirin belongs to which group of drugs?', 'NSAIDs', 'Antibiotics', 'Antimalarials', 'Antihistamines'],
     ['Insulin is used to treat…', 'Diabetes', 'Malaria', 'Hypertension', 'Asthma'],
     ['Sterile technique helps to prevent…', 'Contamination', 'Fever', 'Pain', 'Obesity'],
-    ['"Parenteral" administration means giving a drug…', 'By injection', 'By mouth', 'Through a skin patch', 'By inhalation']
+    ['"Parenteral" administration means giving a drug…', 'By injection', 'By mouth', 'Through a skin patch', 'By inhalation'],
+    ['An antipyretic medicine reduces…', 'Fever', 'Pain only', 'Cough', 'Bleeding'],
+    ['Which of these vitamins dissolves in water?', 'Vitamin C', 'Vitamin A', 'Vitamin D', 'Vitamin E'],
+    ['The expiry date on a medicine tells you…', 'The last date it should be used', 'When it was invented', 'Where it was made', 'Its price'],
+    ['Side effects of a medicine are…', 'Unwanted effects besides its main purpose', 'Its main purpose', 'Its price', 'Its colour'],
+    ['Which of these routes gives the fastest effect?', 'Intravenous', 'Oral', 'Topical', 'Transdermal'],
+    ['Syrup is a…', 'Liquid dosage form', 'Solid dosage form', 'Semi-solid dosage form', 'Gaseous dosage form'],
+    ['Medicines you can buy without a prescription are called…', 'Over-the-counter drugs', 'Prescription-only drugs', 'Controlled drugs', 'Hospital-only drugs']
   ],
   economics: [
     ['Scarcity means…', 'Limited resources but unlimited wants', 'Too much money', 'Excess supply of goods', 'Goods that are free'],
@@ -137,7 +186,14 @@ export const QUESTIONS = {
     ['A monopoly has…', 'One seller', 'Many sellers', 'Two buyers', 'No sellers'],
     ['The currency of Nigeria is…', 'Naira', 'Cedi', 'Rand', 'Shilling'],
     ['Unemployment means…', 'Willing workers cannot find jobs', 'People choose not to work', 'People have retired', 'People are students'],
-    ['Price elasticity measures…', 'How quantity responds to price changes', 'How fast prices change', 'The cost of production', 'The tax rate']
+    ['Price elasticity measures…', 'How quantity responds to price changes', 'How fast prices change', 'The cost of production', 'The tax rate'],
+    ['Which payment is the reward for the use of land?', 'Rent', 'Wages', 'Interest', 'Profit'],
+    ['Wages are the reward for…', 'Labour', 'Land', 'Capital', 'Enterprise'],
+    ['GDP per capita is GDP divided by…', 'The population', 'The land area', 'Exports', 'The number of firms'],
+    ['Imports are goods that are…', 'Bought from other countries', 'Sold to other countries', 'Made locally', 'Free of tax'],
+    ['OPEC is an organisation of…', 'Petroleum exporting countries', 'Pharmaceutical exporters', 'Cocoa producers', 'Central banks'],
+    ['Goods that can replace one another are called…', 'Substitutes', 'Complements', 'Inferior goods', 'Public goods'],
+    ['A mixed economy has…', 'Both private and government ownership', 'Only government ownership', 'Only private ownership', 'No trade']
   ],
   maths: [
     ['What is the derivative of x³?', '3x²', 'x²', '3x', 'x⁴'],
@@ -154,7 +210,14 @@ export const QUESTIONS = {
     ['log₁₀ 1000 =', '3', '10', '100', '1'],
     ['5! (five factorial) =', '120', '25', '60', '24'],
     ['The derivative of sin x is…', 'cos x', '−cos x', 'sin x', '−sin x'],
-    ['The area of a circle is…', 'πr²', '2πr', 'πd', 'r²']
+    ['The area of a circle is…', 'πr²', '2πr', 'πd', 'r²'],
+    ['The interior angles of a quadrilateral add up to…', '360°', '180°', '270°', '540°'],
+    ['The value of 2³ is…', '8', '6', '9', '5'],
+    ['The gradient of the line through (0, 0) and (2, 6) is…', '3', '2', '6', '1/3'],
+    ['The mean of 2, 4, 6 and 8 is…', '5', '4', '6', '20'],
+    ['cos 0° =', '1', '0', '−1', '0.5'],
+    ['The derivative of a constant is…', '0', '1', 'The constant itself', 'Undefined'],
+    ['∫ cos x dx =', 'sin x + C', '−sin x + C', 'cos x + C', '−cos x + C']
   ],
   gst: [
     ['Which of these words is a noun?', 'Happiness', 'Quickly', 'Beautiful', 'Sing'],
@@ -166,7 +229,19 @@ export const QUESTIONS = {
     ['The plural of "child" is…', 'Children', 'Childs', 'Childrens', 'Childes'],
     ['The past tense of "go" is…', 'Went', 'Goed', 'Gone', 'Going'],
     ['The longest river in Nigeria is…', 'River Niger', 'River Benue', 'River Kaduna', 'River Ogun'],
-    ['NYSC stands for…', 'National Youth Service Corps', 'National Youth Security Council', 'Nigerian Youth Skills Centre', 'National Yearly Service Club']
+    ['NYSC stands for…', 'National Youth Service Corps', 'National Youth Security Council', 'Nigerian Youth Skills Centre', 'National Yearly Service Club'],
+    ['Who was Nigeria\'s first Prime Minister?', 'Abubakar Tafawa Balewa', 'Nnamdi Azikiwe', 'Obafemi Awolowo', 'Ahmadu Bello'],
+    ['Which spelling is correct?', 'Necessary', 'Neccessary', 'Necesary', 'Neccesary'],
+    ['How many states does Nigeria have (not counting the FCT)?', '36', '30', '37', '32'],
+    ['Which sentence is correct?', 'She has gone to school.', 'She have gone to school.', 'She gone to school has.', 'She going gone to school.'],
+    ['Which symbol is used for the Nigerian naira?', '₦', '$', '£', '€'],
+    ['In which month is Nigeria\'s Independence Day?', 'October', 'January', 'June', 'May'],
+    ['The opposite of "expand" is…', 'Contract', 'Grow', 'Stretch', 'Widen'],
+    ['Plagiarism means…', 'Presenting another person\'s work as your own', 'Quoting a source with credit', 'Writing in your own words', 'Editing your essay'],
+    ['An essay normally has an introduction, a body and a…', 'Conclusion', 'Appendix', 'Preface', 'Index'],
+    ['Which city was Nigeria\'s capital before Abuja?', 'Lagos', 'Kaduna', 'Ibadan', 'Enugu'],
+    ['Which of these is the most reliable source for a research paper?', 'A peer-reviewed journal', 'An anonymous post', 'A rumour', 'A meme'],
+    ['The first line of the current national anthem is…', 'Arise, O compatriots', 'Nigeria, we hail thee', 'Stand to attention', 'Rise up and shine']
   ]
 };
 

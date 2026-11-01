@@ -102,8 +102,8 @@ describe('course and question data', () => {
     expect(buildCourses('law', 2, 1).some(c => c.bank === 'gst')).toBe(false);
   });
   it('has a question bank for every department and GST, and each question is well-formed', () => {
-    for (const dept of Object.keys(DEPTS)) expect(QUESTIONS[dept]?.length).toBeGreaterThanOrEqual(15);
-    expect(QUESTIONS.gst.length).toBeGreaterThanOrEqual(10);
+    for (const dept of Object.keys(DEPTS)) expect(QUESTIONS[dept]?.length, dept).toBeGreaterThanOrEqual(22);
+    expect(QUESTIONS.gst.length).toBeGreaterThanOrEqual(22);
     for (const [bank, list] of Object.entries(QUESTIONS)) {
       for (const [q, right, ...wrong] of list) {
         expect(q.length, bank).toBeGreaterThan(5);
@@ -206,7 +206,7 @@ describe('200 to 400 level content', () => {
   });
   it('has a question bank for every department and level', () => {
     for (const dept of Object.keys(DEPTS)) for (const level of [2, 3, 4]) {
-      expect(QUESTIONS[`${dept}@${level}`]?.length, `${dept}@${level}`).toBeGreaterThanOrEqual(8);
+      expect(QUESTIONS[`${dept}@${level}`]?.length, `${dept}@${level}`).toBeGreaterThanOrEqual(16);
     }
     expect(Object.keys(UPPER_QUESTIONS)).toHaveLength(27);
   });
