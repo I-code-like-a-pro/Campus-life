@@ -18,6 +18,10 @@ export const SCHEDULE = [
 
 const GREY = new THREE.Color(0x6c7a86);
 const DUST = new THREE.Color(0xc9a878);
+// Warm light: golden at dawn and dusk, a soft blue-grey ambient at night. Shared colours, so nothing is allocated per frame.
+const AMB_DAY = new THREE.Color(0xfff4e6), AMB_NIGHT = new THREE.Color(0x8fa6dc);
+const SUN_WARM = new THREE.Color(0xffa766), SUN_DAY = new THREE.Color(0xfff3dc);
+const glow = h => Math.max(0, 1 - Math.abs(h - 6.8) / 1.6, 1 - Math.abs(h - 18) / 2);   // 0..1 around sunrise and sunset
 
 function sample(table, hour) {
   for (let i = 0; i < table.length - 1; i++) {
@@ -63,7 +67,8 @@ export function createDayNight() {
 
     engine.ambient.intensity = (0.28 + 0.55 * light) * LIGHT_SCALE;
     engine.sun.intensity = (0.1 + 0.9 * light) * (raining ? 0.6 : 1) * LIGHT_SCALE;
-    engine.sun.color.setHex(hour > 17 || hour < 7.5 ? 0xffc89a : 0xffffff);
+    engine.sun.color.copy(SUN_DAY).lerp(SUN_WARM, glow(hour) * (raining ? 0.4 : 1));
+    engine.ambient.color.copy(AMB_NIGHT).lerp(AMB_DAY, Math.min(1, light * 1.3));
 
     const night = 1 - Math.min(1, light * 1.2);
     const lit = night > 0.35 && !blackout;
