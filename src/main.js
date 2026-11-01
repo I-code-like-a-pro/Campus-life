@@ -38,6 +38,7 @@ import { buildGrid, findPath } from './pathfind.js';
 import { createMapUI, createMinimap } from './map.js';
 import { MODES, fareFor, minutesFor, okadaScare } from './transport.js';
 import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS } from './social.js';
+import { createCampusStory, waterAdjust } from './campuslife-events.js';   // group B: story beats
 
 const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES };
 
@@ -248,6 +249,7 @@ async function main() {
           meta.track('semesters');
           meta.track('gradeA', info.rows.filter(r => r.grade === 'A').length);
           if (info.gpa >= 4.5) meta.track('deansList');
+          campusStory.results(info.gpa);                  // group B: bursary award (GPA >= 4.5, once a year)
           if (!info.rows.some(r => r.grade === 'F')) meta.track('cleanSemesters');
           if (info.carryPassed) meta.track('carryPassed', info.carryPassed);
           if (info.probation) meta.notify({ icon: '⚠️', title: 'Academic probation', text: 'Your GPA this semester was below 1.0. One more semester like that and you will be asked to withdraw.' });
@@ -265,6 +267,12 @@ async function main() {
     }
   });
   if (state.clearance?.done) academics.init();      // also covers saves made before academics existed
+
+  // --- group B: hiccups, matriculation, orientation, bursary (see campuslife-events.js) ---
+  const campusStory = createCampusStory({
+    state, meta, day, minutes: () => dayNight.state.minutes, consume: a => consume(a),
+    give: n => { state.money += n; }, campusName: campus.name, courseName: () => courseOf(state.course).name
+  });
 
   const events = createEvents(engine.scene, () => {});
   const eventEngine = createEventEngine({
@@ -307,6 +315,7 @@ async function main() {
       sfx('door');
       meta.track('enters');
       meta.trackOnce('place', place.name, 'placesSeen');
+      campusStory.visited(place.type);                  // group B: orientation week goals
     });
   }
   function leavePlace(instant) {
@@ -687,9 +696,10 @@ async function main() {
     paused = true;
     meta.track('talks');
     meta.trackOnce('met', npc.id, 'peopleMet');
+    campusStory.met(npc.id);                            // group B: orientation week goal
     const gain = dailyChat(relation(npc), day());
     if (gain) addRelation(npc, gain);
-    try { await run(talkContext, npc); }
+    try { await campusStory.clearanceHiccup(npc); await run(talkContext, npc); }   // group B: hiccup first
     finally { paused = false; save(); }
   }
 
@@ -764,6 +774,7 @@ async function main() {
       return false;
     }
     if (a.needsAcademic && !state.academic) { toast('That is for enrolled students.'); return false; }
+    a = waterAdjust(a, eventEngine.current?.waterShort, inside?.place.type);     // group B: bucket baths in a water shortage
     const health = state.meta.health;
     if (a.pay && health.sick) { toast('🤒 You are too sick to work. Rest or see a doctor.'); return false; }
     if (a.id === 'drugs' && !(health.sick && health.sick.diagnosed)) { toast(health.sick ? 'See the doctor first so you get the right drugs.' : 'You are not sick. No drugs needed.'); return false; }
@@ -993,6 +1004,7 @@ async function main() {
       if (ev === 'graduated') runModal(() => runEnding('graduated'));
       if (ev === 'withdrawn') runModal(() => runEnding('withdrawn'));
     }
+    if (state.academic && !paused && !transitioning && !inside && campusStory.matricPending()) runModal(() => campusStory.matriculation());   // group B: one-time ceremony
     storyBtn.hidden = !(state.academic && (state.academic.graduated || state.academic.withdrawn));
     const unread = meta.unread();
     badge.hidden = !unread;
@@ -1087,7 +1099,7 @@ async function main() {
         } else {
           const sd = academics.semDay();
           const social = state.academic && state.academic.phase !== 'pre'
-            ? socialActions({ venue: place.type, sd, hour: dayNight.state.minutes / 60, clubs: state.meta.clubs }) : [];
+            ? socialActions({ venue: place.type, sd, hour: dayNight.state.minutes / 60, clubs: state.meta.clubs, term: state.academic.term }) : [];
           actions = [...(ACTIONS[place.type] || []), ...social];
           if (place.type === 'field' && fb) {
             if (fb.active) actions = [{ id: 'fbquit', label: '🏳️ Leave the match' }, ...actions];

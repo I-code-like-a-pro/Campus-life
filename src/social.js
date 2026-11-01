@@ -115,14 +115,19 @@ export const clubSchedule = club => `${club.days.map(d => WEEKDAYS[d - 1]).join(
 export const EVENTS = [
   { id: 'party',      venue: 'field',      day: 5, hours: [20, 23], label: '🎉 Join the hostel night party', cost: 1000, minutes: 120, fx: { fun: 35, energy: -14, hygiene: -8, stress: -10 }, msg: 'What a night! The music was loud and the jollof was free.' },
   { id: 'match',      venue: 'field',      day: 6, hours: [16, 18], label: '⚽ Watch the inter-hostel match', minutes: 90, fx: { fun: 20, energy: -5, stress: -6 }, msg: 'Your hostel lost on penalties. Still fun!' },
-  { id: 'fellowship', venue: 'auditorium', day: 7, hours: [9, 11],  label: '🙏 Attend Sunday fellowship', minutes: 120, fx: { stress: -14, fun: 6, energy: -3 }, msg: 'You left refreshed and at peace.' }
+  { id: 'fellowship', venue: 'auditorium', day: 7, hours: [9, 11],  label: '🙏 Attend Sunday fellowship', minutes: 120, fx: { stress: -14, fun: 6, energy: -3 }, msg: 'You left refreshed and at peace.' },
+  // added later; `term` limits an event to one semester (seasonal)
+  { id: 'deptweek',   venue: 'auditorium', day: 1, hours: [15, 17], term: 2, label: '🏫 Join Departmental week quiz', minutes: 90, fx: { fun: 14, stress: -4, energy: -6 }, msg: 'Your department won the quiz. Well, came second. Still loud.' },
+  { id: 'cultural',   venue: 'auditorium', day: 6, hours: [19, 22], term: 1, label: '🥁 Attend Cultural night', cost: 500, minutes: 120, fx: { fun: 28, energy: -10, stress: -8 }, msg: 'Drums, dances and food from every corner of Nigeria. Unforgettable.' },
+  { id: 'fellownight', venue: 'auditorium', day: 5, hours: [18, 20], label: '🕯️ Join Fellowship night', minutes: 90, fx: { stress: -10, fun: 8, energy: -4 }, msg: 'Singing by candlelight. You left calm and a little hoarse.' },
+  { id: 'carnival',   venue: 'field',      day: 3, hours: [16, 18], term: 2, label: '🎪 Visit the faculty carnival', cost: 300, minutes: 90, fx: { fun: 24, energy: -8, hygiene: -4, stress: -6 }, msg: 'Games, roasted corn and a very competitive tug of war.' }
 ];
 
 /**
  * Actions available outside a venue right now. `venue` is the building type ('field' or 'auditorium'),
  * `sd` the day of the week (1 = Monday ... 7 = Sunday), `hour` the time of day.
  */
-export function socialActions({ venue, sd, hour, clubs }) {
+export function socialActions({ venue, sd, hour, clubs, term = null }) {
   const out = [];
   for (const id of clubs) {
     const c = clubById(id);
@@ -131,6 +136,7 @@ export function socialActions({ venue, sd, hour, clubs }) {
     }
   }
   for (const e of EVENTS) {
+    if (e.term && term && e.term !== term) continue;
     if (e.venue === venue && e.day === sd && hour >= e.hours[0] && hour < e.hours[1]) {
       out.push({ id: e.id, label: e.label, cost: e.cost, minutes: e.minutes, limit: 1, fx: e.fx, msg: e.msg, socialBoost: true, needsAcademic: true });
     }

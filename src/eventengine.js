@@ -40,7 +40,15 @@ export function conditions({ day, minutes, season }) {
     const length = 1 + hash01(day, 'nepa-len') * 2;                          // one to three hours
     powerCut = hour >= start && hour < start + length;
   }
-  return { season, raining, haze, powerCut };
+  const waterShort = waterShortage(day, hour);
+  return { season, raining, haze, powerCut, waterShort };
+}
+
+/** Water shortage: about 1 day in 5 the hostel taps run dry from early morning until early afternoon. */
+export function waterShortage(day, hour) {
+  if (hash01(day, 'water') >= 0.2) return false;
+  const start = 5 + Math.floor(hash01(day, 'water-start') * 3);               // 05:00 to 07:59
+  return hour >= start && hour < start + 7;
 }
 
 export const strikeDays = { from: 4, to: 5 };                                // Thursday and Friday
@@ -65,6 +73,8 @@ export function createEventEngine({ events, meta, sound = () => {}, getContext }
     if (!now.powerCut && prev.powerCut) meta.notify({ icon: '🎉', title: 'Power is back!', text: 'Power is back.' });
     if (now.raining && !prev.raining) meta.notify({ icon: '🌧️', title: 'It is raining', text: 'A shower for the next two hours.' });
     if (!now.raining && prev.raining) meta.notify({ icon: '☀️', title: 'The rain has stopped', text: 'The sky is clearing.' });
+    if (now.waterShort && !prev.waterShort) meta.notify({ icon: '🚰', title: 'Water shortage', text: 'The hostel taps are dry. Baths are bucket baths until the afternoon.' });
+    if (!now.waterShort && prev.waterShort) meta.notify({ icon: '🚰', title: 'Water is back', text: 'The taps are running again.' });
     if (ctx && lastSeason && now.season !== lastSeason) {
       meta.notify({ icon: now.season === 'harmattan' ? '🌫️' : '🌧️', title: now.season === 'harmattan' ? 'Harmattan season' : 'Rainy season', text: now.season === 'harmattan' ? 'Dry and hazy mornings and evenings.' : 'Expect afternoon showers.' });
     }
@@ -89,7 +99,7 @@ export function createEventEngine({ events, meta, sound = () => {}, getContext }
     const season = seasonFor({ term: ctx.term, day: ctx.day });
     const now = conditions({ day: ctx.day, minutes: ctx.minutes, season });
 
-    if (!last || last.powerCut !== now.powerCut || last.raining !== now.raining || last.haze !== now.haze) {
+    if (!last || last.powerCut !== now.powerCut || last.raining !== now.raining || last.haze !== now.haze || last.waterShort !== now.waterShort) {
       announce(last, now, ctx);
       events.set('nepa', now.powerCut);
       events.set('rain', now.raining);

@@ -45,9 +45,9 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | System | Status | Notes |
 |---|---|---|
 | Four desks: Admissions, Bursary (fees), Medical, Hostel allocation | ✅ | |
-| Queue frustrations and random hiccups (missing document, long line) | ⬜ 🎯 | Cheap, funny, very Nigerian |
-| Matriculation ceremony | ⬜ 🎯 | A one-time event with a photo/result card |
-| Orientation week (campus tour, meet your department, rules) | ⬜ 🎯 | Doubles as the tutorial |
+| Queue frustrations and random hiccups (missing document, long line) | ✅ | Seeded per save; wait it out or pay a small fee; never blocks |
+| Matriculation ceremony | ✅ | Three-page modal on day 2 of the first semester, fun reward, Matriculated achievement |
+| Orientation week (campus tour, meet your department, rules) | ✅ | Four optional goals (hall, library, canteen, meet 2 people) on the goal line, ₦1,500 reward |
 
 ## Stage 4. Hostel and daily living
 | System | Status | Notes |
@@ -57,7 +57,7 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | Hostel dues and bills | ✅ | |
 | Room decor | ✅ | |
 | Roommate NPC | ✅ | |
-| Water shortage / NEPA | 🟡 | NEPA exists; 🎯 add water shortage |
+| Water shortage / NEPA | ✅ | About 1 day in 5 the taps run dry in the morning; hostel baths become bucket baths |
 | Chores and laundry | ⬜ 🔮 | |
 | Curfew and hostel rules | ⬜ 🔮 | |
 | Off-campus housing | ⬜ 🔮 | |
@@ -84,7 +84,7 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | Allowance, ledger, bank in the phone | ✅ | |
 | Jobs with daily limits (library, clinic, shop, freelance, business centre) | ✅ | |
 | Bills and loans (favours, repayments) | ✅ | |
-| Scholarships and bursaries | ⬜ 🎯 | Reward for a high CGPA |
+| Scholarships and bursaries | ✅ | ₦20,000 bursary once a year for a semester GPA of 4.5 or more |
 | Small business (sell snacks, print and photocopy) | ⬜ 🔮 | |
 
 ## Stage 7. Health
