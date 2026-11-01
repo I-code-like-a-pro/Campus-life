@@ -984,6 +984,7 @@ async function main() {
       engine.ambient.intensity = Math.max(engine.ambient.intensity, 0.95 * Math.PI);
       engine.sun.intensity = Math.max(engine.sun.intensity, 0.5 * Math.PI);
       engine.scene.fog.near = 60; engine.scene.fog.far = 160;
+      engine.ambient.color.setHex(0xfff4e6);   // rooms keep warm light at night
     }
 
     const target = events.blackout ? (night > 0.35 ? 0.55 : 0.28) : 0;
@@ -1116,6 +1117,8 @@ async function main() {
       if (world.powerCut) hints.show('power');
       if (state.meta.health.sick) hints.show('health');
     }
+    // guided first day (hints.js): one call per frame, hides itself while a dialog is open
+    hints.tour.update({ x: p.x, z: p.z, paused, npc: !!npc, inside: !!inside, hour: dayNight.state.minutes / 60, day: dayNight.state.day });
 
     updateSigns(engine.camera.position);
     minimap.update(performance.now());
