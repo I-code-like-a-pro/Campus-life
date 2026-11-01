@@ -153,6 +153,13 @@ async function dean(c, npc) {
     { label: '🎓 What do you expect of students?', run: () => 'Punctuality, honesty and curiosity. Attend lectures, hand in your assignments, and never copy in an exam.' }
   ]);
 }
+async function deptofficer(c, npc) {
+  await converse(c, npc, 'Form in hand, please. Next!', () => [
+    asks(c)(npc),
+    { label: '📋 What do I need to register?', run: () => 'Your course form, your clearance receipt, and a pen that works. The level adviser signs it at the end.' },
+    { label: '💡 Any advice?', run: () => `Yes. ${tip()}` }
+  ]);
+}
 async function registrar(c, npc) {
   await converse(c, npc, 'The university welcomes you. Please keep your matriculation number safe.', () => [
     asks(c)(npc),
@@ -266,7 +273,7 @@ async function porter(c, npc) {
   });
 }
 
-export const DIALOGUES = { mama, tobi, shopkeeper, bode, sade, bala, musa, seun, dean, registrar, admissions, bursary, medical, porter };
+export const DIALOGUES = { mama, tobi, shopkeeper, bode, sade, bala, musa, seun, dean, registrar, deptofficer, admissions, bursary, medical, porter };
 
 // shared helpers for other dialogue modules
 export { converse, asks, tip };

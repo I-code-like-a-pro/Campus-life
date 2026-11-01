@@ -16,11 +16,14 @@ Story events are real places and real times. The player is told when and where, 
 | Freshers' orientation | Main auditorium | Day 1, 10:00 to 13:00 |
 | Hall meeting | The player's hostel | Days 1 and 2, 17:00 to 19:30 |
 | Matriculation | Main auditorium | Days 2 and 3, 10:00 to 13:00 |
+| Course registration | Your department's first lecture hall | Days 1 and 2, 14:00 to 17:30 |
+| Your first lecture | The hall of your first timetable class | From 15 minutes before that class until one hour after it starts |
 
 - A notification appears when a scene opens. The HUD goal line shows what is on now or coming up.
 - Walking in during the window shows **Attend or Not now**. Attending plays the beats (dialogs with choices), spends time, applies effects, and fills the room with NPCs you can talk to. Talking to them counts toward the orientation "meet people" goal.
 - If every window passes, the scene is marked **missed** with a short notice. State is stored in `state.academic.scenes[id]`.
-- Matriculation sets `academic.matric` when attended.
+- Matriculation sets `academic.matric` when attended. Course registration sets `academic.registered`; skipping it adds a little stress and a notice to visit the department office.
+- The first lecture counts as real attendance for that class (`academics.attendEntry`), with preparation gained from where you sit, a warm-up question from the course's own bank, and how you take notes. If you attend the class the normal way first, the scene closes itself, so nothing is counted twice.
 - Scene facts are given to the AI, so NPCs can answer "when is matriculation?".
 
 ## AI in these scenes

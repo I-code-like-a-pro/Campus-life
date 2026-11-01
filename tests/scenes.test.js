@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { DOCS, docsFor, rollMissing, ensureDocs, checkDesk, fixDoc, allMissing, clearanceFacts, detailsCard, OFFICE_HOURS } from '../src/documents.js';
 import { seedOf } from '../src/clearance.js';
-import { SCENES, sceneById, isOpen, isOverdue, nextWindow, windowsOf, clock } from '../src/scenes.js';
+import { SCENES, sceneById, isOpen, isOverdue, nextWindow, windowsOf, clock, firstEntry } from '../src/scenes.js';
 
 describe('clearance documents', () => {
   it('rolls the same missing papers for the same seed, never more than two, never the always-held ones', () => {
@@ -81,7 +81,8 @@ describe('scenes', () => {
     expect(nextWindow(m, a(), 12, 14)).toBeNull();
   });
   it('has playable content: every scene has beats, a crowd, and choices with text', () => {
-    const ctx = { name: 'Ada', campusName: 'UNILAG', courseName: 'Law', hostelName: 'Moremi Hall', rhythm: 'Tests are on Wednesday.' };
+    const ctx = { name: 'Ada', campusName: 'UNILAG', courseName: 'Law', hostelName: 'Moremi Hall', rhythm: 'Tests are on Wednesday.',
+      courses: ['CSC 101: Intro'], weakest: 'CSC 101', first: { code: 'CSC 101', title: 'Intro', venue: 'Hall A', day: 1, hour: 9 }, warmup: () => null };
     for (const s of SCENES) {
       const beats = s.beats(ctx);
       expect(beats.length).toBeGreaterThan(2);
@@ -95,5 +96,33 @@ describe('scenes', () => {
   it('writes standard English times', () => {
     expect(clock(10)).toBe('10:00');
     expect(clock(19.5)).toBe('19:30');
+  });
+  describe('course registration and the first lecture', () => {
+    const tt = [{ day: 2, hour: 11, code: 'MTH 101', venue: 'Hall B' }, { day: 1, hour: 9, code: 'CSC 101', venue: 'Hall A' }, { day: 1, hour: 8, code: 'GST 111', venue: 'Hall C', cancelled: true }];
+    const acad = (extra = {}) => ({ startDay: 10, timetable: tt, attended: {}, ...extra });
+    it('finds the first class that is not cancelled', () => {
+      expect(firstEntry(acad()).code).toBe('CSC 101');
+      expect(firstEntry({ timetable: [] })).toBeNull();
+      expect(firstEntry(null)).toBeNull();
+    });
+    it('opens the first lecture just before its slot, on the right day, at its own hall', () => {
+      const f = sceneById('firstLecture');
+      expect(windowsOf(f, acad())).toEqual([{ day: 10, from: 8.75, to: 10 }]);
+      expect(isOpen(f, acad(), 10, 8.8)).toBe(true);
+      expect(isOpen(f, acad(), 10, 10)).toBe(false);
+      expect(isOpen(f, acad(), 11, 9)).toBe(false);
+    });
+    it('treats a lecture attended the normal way as done, so the scene never double counts', () => {
+      const f = sceneById('firstLecture');
+      const a = acad({ attended: { '1|9|CSC 101': 'ok' } });
+      expect(isOpen(f, a, 10, 9)).toBe(false);
+      expect(isOverdue(f, a, 12, 12)).toBe(false);
+    });
+    it('opens course registration on day one and two in the afternoon', () => {
+      const r = sceneById('courseReg');
+      expect(windowsOf(r, acad()).map(w => [w.day, w.from, w.to])).toEqual([[10, 14, 17.5], [11, 14, 17.5]]);
+      expect(isOverdue(r, acad(), 11, 17.5)).toBe(true);
+      expect(r.missFx.stress).toBeGreaterThan(0);
+    });
   });
 });

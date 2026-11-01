@@ -13,6 +13,10 @@ const pad = n => String(n).padStart(2, '0');
 export const clock = h => `${pad(Math.floor(h))}:${pad(Math.round((h % 1) * 60))}`;
 
 /** `windows(a)` lists { day, from, to } (hours). `venue` is 'auditorium' (the main hall) or 'hostel' (the player's own hall). */
+const entryKey = t => `${t.day}|${t.hour}|${t.code}`;
+/** The first class on the timetable (earliest day and hour that is not cancelled). */
+export const firstEntry = a => [...(a?.timetable || [])].filter(t => !t.cancelled).sort((x, y) => x.day - y.day || x.hour - y.hour)[0] || null;
+
 export const SCENES = [
   {
     id: 'orientation', emoji: '🧭', title: "Freshers' orientation", short: 'Orientation briefing',
@@ -102,7 +106,75 @@ export const SCENES = [
         }
       ];
     }
-  }
+  },
+  {
+    id: 'courseReg', emoji: '📝', title: 'Course registration', short: 'Course registration',
+    venue: 'class', minutes: 90, fx: { energy: -4, hunger: -5 }, missFx: { stress: 3 },
+    windows: a => [{ day: a.startDay, from: 14, to: 17.5 }, { day: a.startDay + 1, from: 14, to: 17.5 }],
+    crowd: [
+      { id: 'officer', name: 'Mrs. Obi', role: 'Department officer', emoji: '🗂️', dx: -3.6, dz: -4.4, shirt: 0x8e44ad, skin: 0x5a3a26, dialogue: 'deptofficer' },
+      { id: 'f1', name: 'Kelechi', role: 'Fresher', emoji: '🎒', dx: -6, dz: 1.4, shirt: 0x3498db, dialogue: 'student' },
+      { id: 'f2', name: 'Amina', role: 'Fresher', emoji: '🎒', dx: 6, dz: 1.4, shirt: 0xff7aa8, dialogue: 'student' }
+    ],
+    beats: ctx => [
+      { title: '📝 Course registration', lines: ['The department office is full of freshers holding forms and photocopies.', `Mrs. Obi, the department officer, calls out names. ${ctx.courseName} students are told to form a line along the wall.`] },
+      { title: '📋 Your course form', lines: ['This semester you register for:', ...ctx.courses] },
+      {
+        title: '🧍 The queue', lines: ['The line is long and the hall is warm. A senior student offers to carry your form to the front.'],
+        choices: [
+          { label: 'Join the queue and wait', text: 'An hour later you reach the front. Your feet hurt but your conscience is clear.', fx: { stress: 3, energy: -3 } },
+          { label: 'Pay the senior ₦500 to fast-track', cost: 500, text: 'The senior walks you past the line. A few people mutter, but it is done in minutes.', poor: 'You cannot afford it right now, so you join the queue and wait.', fx: { stress: -1 } }
+        ]
+      },
+      {
+        title: '🧑🏾‍🏫 The level adviser', lines: ['The level adviser has five minutes for each student. What do you want to ask?'],
+        choices: [
+          { label: 'Which course needs the most work?', text: `The adviser says to look at your lowest scores early. ${ctx.weakest ? `For you, that may be ${ctx.weakest}.` : 'Start reading before the tests come.'}`, fx: { stress: -2 } },
+          { label: 'What is a carryover?', text: 'A carryover is a course you failed and must retake. Keep your attendance up and do not leave everything for the exam.', fx: { stress: -2 } },
+          { label: 'Where do I find past questions?', text: 'The Business Centre sells handouts and past questions. They help, but they do not replace lectures.', fx: { fun: 1 } }
+        ]
+      },
+      { title: '🖋️ Signed and stamped', lines: ['Your form is signed, stamped and filed. You are registered for the semester.', 'You walk out holding the stamped copy like a trophy.'] }
+    ],
+    onAttend: ctx => ctx.setRegistered()
+  },
+  {
+    id: 'firstLecture', emoji: '🎓', title: 'Your first lecture', short: 'First lecture',
+    venue: 'class', minutes: 105, fx: { energy: -7, hunger: -8, stress: 2 },
+    windows: a => { const t = firstEntry(a); return t ? [{ day: a.startDay + t.day - 1, from: t.hour - 0.25, to: t.hour + 1 }] : []; },
+    done: a => { const t = firstEntry(a); return !!t && !!a.attended?.[entryKey(t)]; },
+    crowd: [
+      { id: 'c1', name: 'Tosin', role: 'Coursemate', emoji: '🎒', dx: -5.2, dz: 2.5, shirt: 0xf1c40f, dialogue: 'student' },
+      { id: 'c2', name: 'Ibrahim', role: 'Coursemate', emoji: '🎒', dx: 5.2, dz: 2.5, shirt: 0x2ecc71, dialogue: 'student' },
+      { id: 'c3', name: 'Chioma', role: 'Coursemate', emoji: '🎒', dx: -5.2, dz: 5.2, shirt: 0xe74c3c, dialogue: 'student' }
+    ],
+    beats: ctx => [
+      { title: `🎓 ${ctx.first.code}: ${ctx.first.title}`, lines: ['The hall fills slowly. Some people arrive with notebooks, some with only a pen, and one person with a laptop and no charger.', 'The lecturer walks in and the room goes quiet.'] },
+      {
+        title: '💺 Where will you sit?', lines: ['Lecturers remember the front rows. Friends sit at the back.'],
+        choices: [
+          { label: 'The front row', text: 'You can see every word on the board. The lecturer notices you and nods.', fx: { stress: 2 }, prep: 3 },
+          { label: 'The middle, beside Tosin', text: 'Tosin shares a spare pen and a very short summary of the course.', fx: { fun: 2 }, prep: 1, meet: 'firstlecture-c1' },
+          { label: 'The back, near the door', text: 'You are the first one out later. You also miss half of what is said.', fx: {} }
+        ]
+      },
+      { title: '📖 The course outline', lines: [`The lecturer introduces ${ctx.first.code} and lists what the semester will cover.`, 'Assignments are due on Fridays, and attendance counts towards your final mark.'] },
+      {
+        title: '🙋 A question to the room', lines: ['The lecturer asks a warm-up question to see who is paying attention.'], quiz: ctx.warmup,
+        right: 'You answered correctly. The lecturer smiles and writes your name down as someone to remember.', rightFx: { fun: 3, stress: -2 }, rightPrep: 3,
+        wrong: 'Not quite. The lecturer explains the answer kindly, and the room laughs with you, not at you.', wrongFx: { stress: 2 }
+      },
+      {
+        title: '✍️ Notes', lines: ['The lecturer starts the first topic. How do you want to follow it?'],
+        choices: [
+          { label: 'Write careful notes', text: 'Your hand aches, but the page is full and neat.', fx: { energy: -3 }, prep: 4 },
+          { label: 'Mostly listen', text: 'You follow the main ideas and ask a question at the end.', fx: {}, prep: 2 },
+          { label: 'Take photos of the board', text: 'Quick, but the photos are blurry and you do not retain much.', fx: {}, prep: 1 }
+        ]
+      }
+    ],
+    onAttend: ctx => ctx.attendFirstLecture()
+  },
 ];
 
 export const sceneById = id => SCENES.find(s => s.id === id);
@@ -115,7 +187,7 @@ const inWindow = (w, day, hour) => w.day === day && hour >= w.from && hour < w.t
 
 /** Is this scene on right now (inside one of its windows) and not yet attended or missed? */
 export function isOpen(def, a, day, hour) {
-  return !!a && !sceneState(a, def.id).status && windowsOf(def, a).some(w => inWindow(w, day, hour));
+  return !!a && !sceneState(a, def.id).status && !def.done?.(a) && windowsOf(def, a).some(w => inWindow(w, day, hour));
 }
 
 /** The next window that has not passed yet (or null). */
@@ -125,7 +197,7 @@ export function nextWindow(def, a, day, hour) {
 
 /** True once every window has passed without the player going. */
 export function isOverdue(def, a, day, hour) {
-  if (!a || sceneState(a, def.id).status) return false;
+  if (!a || sceneState(a, def.id).status || def.done?.(a)) return false;
   const ws = windowsOf(def, a);
   return ws.length > 0 && ws.every(w => w.day < day || (w.day === day && hour >= w.to));
 }
@@ -139,6 +211,17 @@ const whenText = (w, a) => `${WEEKDAY[Math.max(0, Math.min(6, w.day - a.startDay
 export async function playScene(def, ctx) {
   const done = [];
   for (const beat of def.beats(ctx)) {
+    if (beat.quiz) {
+      const q = beat.quiz();
+      if (!q) continue;
+      const pick = await showModal({ title: beat.title, lines: [...beat.lines, q.q], buttons: q.options.map((o, i) => ({ label: o.t, value: i })) });
+      const ok = !!q.options[pick]?.ok;
+      const fx = (ok ? beat.rightFx : beat.wrongFx) || {};
+      if (Object.keys(fx).length) ctx.consume({ minutes: 0, fx });
+      if (ok && beat.rightPrep) ctx.boost(beat.rightPrep);
+      await showModal({ title: beat.title, lines: [ok ? beat.right : beat.wrong], buttons: [{ label: 'Continue', value: 1 }] });
+      continue;
+    }
     if (!beat.choices) { await showModal({ title: beat.title, lines: beat.lines, buttons: [{ label: 'Next', value: 0 }] }); continue; }
     const pick = await showModal({ title: beat.title, lines: beat.lines, buttons: beat.choices.map((c, i) => ({ label: c.label, value: i })) });
     const ch = beat.choices[pick] ?? beat.choices[beat.choices.length - 1];
@@ -146,6 +229,7 @@ export async function playScene(def, ctx) {
     if (ch.cost && !ctx.pay(ch.cost)) { text = ch.poor || 'You do not have the money for that.'; fx = {}; }
     else if (ch.cost) done.push(`Paid ₦${ch.cost.toLocaleString('en-NG')}`);
     if (Object.keys(fx).length) ctx.consume({ minutes: 0, fx });
+    if (ch.prep) ctx.boost(ch.prep);
     if (ch.meet) ctx.met(ch.meet);
     await showModal({ title: beat.title, lines: [text], buttons: [{ label: 'Continue', value: 1 }] });
   }
@@ -160,7 +244,11 @@ export function createScenes(deps) {
   const { state, meta, npcs } = deps;
   const A = () => state.academic;
   const hour = () => deps.minutes() / 60;
-  const venueName = def => (def.venue === 'hostel' ? deps.hostelName() : deps.venuePlace('auditorium'));
+  const venueName = def => {
+    if (def.venue === 'hostel') return deps.hostelName();
+    if (def.venue === 'class') return firstEntry(A())?.venue || deps.venuePlace('lecture');     // the department's first lecture hall
+    return deps.venuePlace('auditorium');
+  };
   const rec = id => { const a = A(); a.scenes = a.scenes || {}; return (a.scenes[id] = a.scenes[id] || {}); };
   const spawned = new Map();            // scene id -> npc ids currently standing in the venue
   let askedHere = false;                // already offered for this visit to the venue
@@ -198,6 +286,7 @@ export function createScenes(deps) {
     const d = deps.day(), h = hour();
     for (const def of SCENES) {
       const r = rec(def.id);
+      if (!r.status && def.done?.(a)) r.status = 'attended';
       if (r.status) { clearCrowd(def.id); continue; }
       const w = windowsOf(def, a).find(x => inWindow(x, d, h));
       if (w && r.notified !== `${d}`) {
@@ -207,7 +296,8 @@ export function createScenes(deps) {
       if (!w && spawned.has(def.id)) clearCrowd(def.id);
       if (isOverdue(def, a, d, h)) {
         r.status = 'missed';
-        meta.notify({ icon: '⏱️', title: `You missed the ${def.short.toLowerCase()}`, text: def.matric ? 'The Registry will sort out your matriculation later.' : 'It is over now. Maybe next time.' });
+        if (def.missFx) deps.consume({ minutes: 0, fx: def.missFx });
+        meta.notify({ icon: '⏱️', title: `You missed the ${def.short.toLowerCase()}`, text: def.matric ? 'The Registry will sort out your matriculation later.' : def.id === 'courseReg' ? 'You are not registered yet. Visit the department office as soon as you can.' : 'It is over now. Maybe next time.' });
       }
     }
   }
@@ -229,17 +319,26 @@ export function createScenes(deps) {
     });
     if (pick !== 'go') return false;
     const a = A();
+    const entry = firstEntry(a);
+    const first = entry && { ...entry, title: deps.courseTitle(entry.code) };
+    const late = !!first && hour() > first.hour + 0.4;      // judged on arrival, before the scene spends time
     const summary = await playScene(def, {
       name: deps.name(), campusName: deps.campusName, courseName: deps.courseName(), hostelName: deps.hostelName(), rhythm: deps.rhythm(),
-      pay: deps.pay, consume: deps.consume, met: deps.met
+      pay: deps.pay, consume: deps.consume, met: deps.met,
+      courses: deps.courseLines(), weakest: deps.weakest(), first, boost: n => first && deps.boost(first.code, n),
+      warmup: () => first && deps.warmup(first.code)
     });
     deps.consume({ minutes: def.minutes, fx: def.matric ? MATRIC_FX : def.fx });
     rec(def.id).status = 'attended';
+    def.onAttend?.({
+      setRegistered: () => { a.registered = true; },
+      attendFirstLecture: () => { if (first) deps.attendEntry(entry, late); }
+    });
     if (def.matric) { a.matric = true; meta.track('matriculated'); }
     clearCrowd(def.id);
     await showModal({
       title: `${def.emoji} ${def.title} is over`,
-      lines: [def.matric ? 'You are now a matriculated student. Welcome to the university family.' : 'That was time well spent.', ...summary],
+      lines: [def.matric ? 'You are now a matriculated student. Welcome to the university family.' : def.id === 'courseReg' ? 'You are registered for the semester.' : def.id === 'firstLecture' ? `${first?.code} is now counted as attended, and you already know the lecturer's name.` : 'That was time well spent.', ...summary],
       buttons: [{ label: 'Continue', value: 1 }]
     });
     return true;

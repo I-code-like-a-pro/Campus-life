@@ -400,5 +400,29 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     return out;
   }
 
-  return { init, tick, goal, facts, weekday, lectureActions, libraryActions, run, openPortal, graduationModal, semDay, boostAll };
+  /* ---------- helpers for scenes (first lecture, course registration) ---------- */
+  /** Counts a timetable entry as attended without spending time (the scene spends it). */
+  function attendEntry(t, late = false) {
+    const a = A();
+    const c = a?.courses.find(x => x.code === t.code);
+    if (!c || a.attended[key(t)]) return;
+    a.attended[key(t)] = late ? 'late' : 'ok';
+    c.att[late ? 'late' : 'ok'] += 1;
+    c.knowledge = Math.min(100, c.knowledge + 6);
+    onEvent('lecture');
+  }
+  function boostCourse(code, n) {
+    const c = A()?.courses.find(x => x.code === code);
+    if (c) c.knowledge = Math.min(100, c.knowledge + n);
+  }
+  /** A warm-up question from the course's own bank for the lecturer to ask the room: { q, options: [{ t, ok }] } or null. */
+  function warmup(code) {
+    const c = A()?.courses.find(x => x.code === code);
+    const bank = c && (QUESTIONS[c.bank] || QUESTIONS[c.bank.split('@')[0]]);
+    if (!bank?.length) return null;
+    const [q, correct, ...wrong] = bank[Math.floor(Math.random() * bank.length)];
+    return { q, options: shuffle([{ t: correct, ok: true }, ...shuffle(wrong).slice(0, 2).map(t => ({ t, ok: false }))]) };
+  }
+
+  return { init, tick, goal, facts, weekday, lectureActions, libraryActions, run, openPortal, graduationModal, semDay, boostAll, attendEntry, boostCourse, warmup };
 }
