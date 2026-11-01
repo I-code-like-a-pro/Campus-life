@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),
+          landing: resolve(__dirname, 'landing.html'),
           about: resolve(__dirname, 'about.html'),
           privacy: resolve(__dirname, 'privacy.html'),
           terms: resolve(__dirname, 'terms.html')

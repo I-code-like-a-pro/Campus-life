@@ -1,59 +1,69 @@
-# Launch plan: four weeks to a public release
+# Launch plan: the final three weeks
 
-**Decisions (from the owner):** free public launch, no ads and no payments · real university names kept with a clear disclaimer · 3D assets will be supplied by the owner, so until then the focus is gameplay, content, balance and stability · a small backend (accounts and cloud save) is wanted if it fits.
+Last updated 1 November 2026, from the git history and [STUDENT_LIFE_SCOPE.md](STUDENT_LIFE_SCOPE.md) / [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).
 
-**Launch definition.** Anyone can open a link on a phone and play a polished single-player game from JAMB results to graduation, with progress that is safe (export and import, and cloud save if the backend lands), fast on mid-range Android, and with a way to send feedback.
+**Owner decisions in force:** free public launch, no ads, no payments · real university names (UNILAG, UI, OAU) with a disclaimer and no logos or crests · the game ends at graduation (no NYSC) · standard English only (no Pidgin) · phone first · public host not chosen yet (Vercel suggested) · backend undecided (see [BACKEND_OPTIONS.md](BACKEND_OPTIONS.md)).
 
-**Out of scope for launch** (planned for after): shared multiplayer worlds, live chat, trading, payments and ads, romance, off-campus housing, new campuses beyond the three.
+**Launch definition.** Anyone can open a link on a phone and play a polished single-player game from JAMB result to graduation, with progress that is safe (local saves, export/import codes, and cloud save only if the backend lands), acceptable speed on a mid-range Android phone, and a way to send feedback.
 
-## Progress
-**Week 1 is done on the code side** (1.1 to 1.5 below). What remains for week 1 needs a real phone: measure the frame rate and run the 🧪 items in [QA_CHECKLIST.md](QA_CHECKLIST.md).
+## What is done (from the git log)
+- **Core game:** JAMB, admission, 7 home towns, distance-based travel to campus (bus or flight, road events), clearance, hostel, lectures, exams, jobs, economy, needs, health and sickness, social life, clubs, campus events, football, map and wayfinding, bedtime, ASUU strike.
+- **Content:** named courses and exam questions for 100 to 400 level in all 9 departments (banks keyed by level); standard English throughout.
+- **Ending:** graduation, convocation, "your story" summary, share card, First Class achievement, probation and withdrawal ending.
+- **Safety and quality:** versioned saves (schema v3) with rolling backup, repair, export/import codes; balance simulator and regression tests; QA checklist; instanced rendering (worst case 87 draw calls).
+- **Platform:** About, privacy and terms pages; opt-in telemetry stub; service worker; mobile-first UI pass (44px targets, landscape, 320px width); deploy configs for Vercel, Netlify, Render and Railway.
+- **Launch docs (this group):** backend memo, marketing kit, release checklist, landing page.
 
-## Week 1: stability, speed and safety nets (done)
-| # | Task | Done when |
+## What is not done
+- Measurement on real phones (frame rate, memory, heat) and the manual items in [QA_CHECKLIST.md](QA_CHECKLIST.md).
+- Subject-expert review of exam questions; a read of all dialogue by the owner or a reviewer.
+- Host, domain and HTTPS chosen and live; contact email and feedback form created.
+- Backend decision; if yes, accounts and cloud save.
+- Real screenshots, share image and short trailer.
+- Legal read-through of the privacy policy, terms and disclaimer, ideally by a lawyer who knows the Nigeria Data Protection Act (NDPA).
+- Closed beta with real students.
+- 3D assets from the owner (not a launch blocker; the game ships with the current look).
+
+## Week A (1 to 7 Nov): decide, host, start the beta
+| Task | Owner | Done when |
 |---|---|---|
-| 1.1 | Measure and cut rendering cost (draw calls, triangles) with instancing and merged static geometry | ✅ Worst case went from 130 to 87 draw calls (target 150) and the frame's CPU cost fell about 40%. Phone frame rate still to measure |
-| 1.2 | Save safety: export and import a save code, storage-full handling, corrupted-save recovery, backup of the last good save | ✅ Rolling backup, automatic repair, export/import with a checksum, warning when saving fails |
-| 1.3 | Legal pages in the game: disclaimer (fan-made, not affiliated), privacy policy, terms, credits | ✅ About, privacy and terms pages, linked from the menu and the start screen. Set `VITE_CONTACT_EMAIL` so your address appears on them. Have a lawyer read them before launch |
-| 1.4 | Economy and difficulty balance using a bot that plays full semesters | ✅ Simulator and regression tests. Diligent about 4.5 CGPA, average about 3.5, careless about 2.0 with failures. Added a power nap, harder later years, an exam curve and tighter costs |
-| 1.5 | Bug sweep: soft-locks, edge cases (sleeping through exams, results while indoors, retake loops) | ✅ [QA_CHECKLIST.md](QA_CHECKLIST.md); a scripted run of the whole journey finished with no errors |
+| Choose host and domain; create the hosting account (Vercel suggested) | Owner | A preview URL works over HTTPS |
+| Decide backend: yes, later or never (memo recommends ship without it, add Supabase cloud save as release 1.1) | Owner | Written decision |
+| Create the feedback form and a contact email; set `VITE_FEEDBACK_URL`, `VITE_CONTACT_EMAIL` | Owner | Both appear in a deployed build |
+| Recruit 20 to 50 closed-beta testers (students, mostly Android) | Owner | List with phone models |
+| Real-phone performance pass on 3 phones (one low-end) | Owner tests, developer fixes | Median 30 fps or better on the low-end phone, or the Low graphics preset gets there |
+| Run the full QA checklist and fix soft-locks | Developer | No known soft-lock |
+| Send questions to subject reviewers | Owner | Reviewers have the list |
 
-## Week 2: content and gameplay depth
-| # | Task | Done when |
+## Week B (8 to 14 Nov): closed beta and content freeze
+| Task | Owner | Done when |
 |---|---|---|
-| 2.1 | Questions: at least 40 per department and 20 general studies, reviewed for accuracy; year 2 and above use harder, separate questions | No question repeats within a semester; reviewers have checked the facts |
-| 2.2 | More achievements (to 80), weekly challenges and titles | Players always have a next goal |
-| 2.3 | More events and dialogue: protests, matriculation, convocation, more gist, lecturer personalities | At least 30 lines per NPC type; each campus feels distinct |
-| 2.4 | Onboarding polish: scripted first 3 minutes, clearer goal line, better first-run hints | New testers finish clearance without asking for help |
-| 2.5 | Decision on the backend (host, provider) | Chosen and an account created by you |
+| Closed beta live on the real host (unlisted link) | Owner | Testers playing; exit criteria tracked in [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) |
+| Triage feedback daily; fix top crashes and confusing moments | Developer | Top 10 issues closed |
+| Apply reviewer corrections to questions and dialogue | Developer | Reviewer sign-off recorded |
+| If backend = yes: cloud save behind a flag | Developer | Two-device sync works in staging |
+| Take real screenshots, a 20 to 30 second clip and a share image; fill the landing page placeholders | Owner captures, developer places | Landing page has no placeholders |
+| Lawyer reads privacy, terms, disclaimer | Owner | Comments back |
+| Start teasers per [MARKETING_KIT.md](MARKETING_KIT.md) | Owner | First posts out |
 
-## Week 3: backend (if chosen) and polish
-| # | Task | Done when |
+## Week C (15 to 21 Nov): freeze, rehearse, launch
+| Task | Owner | Done when |
 |---|---|---|
-| 3.1 | Accounts and cloud save (email or Google), conflict handling, save validation | Sign in on two devices and continue seamlessly |
-| 3.2 | Asset pipeline for your 3D models, ready to drop in | Replacing a placeholder with a model is a one-line change |
-| 3.3 | Cross-browser and device testing: Chrome and Samsung Internet on Android, Safari on iPhone, low-end phones | No blocking bugs on the target devices |
-| 3.4 | Accessibility and language pass: Pidgin and English review, colour contrast, text sizes | Reviewed by native speakers |
-
-## Week 4: release
-| # | Task | Done when |
-|---|---|---|
-| 4.1 | Closed beta with 20 to 50 people, fix the top issues | Crash-free sessions above 99%; no soft-locks reported |
-| 4.2 | Hosting, domain, HTTPS, caching, uptime check, analytics (opt-in), error reports | Site live on your domain |
-| 4.3 | Landing page, share image, screenshots, short trailer, app-install prompt | Ready to post |
-| 4.4 | Launch, then watch feedback and fix quickly | Launch day checklist complete |
-
-## What I need from you, and when
-- **By the end of week 1:** a few real phones to test on, and your first testers.
-- **By the end of week 2:** the backend decision and account; the first 3D assets (even a character and one building) so integration can be tested.
-- **Subject and Pidgin reviewers:** someone to check quiz questions and dialogue.
-- **Domain name** if you want one (optional, a free host link works).
+| Feature freeze (bug fixes only); bump service worker cache | Developer | Release candidate tagged |
+| Pass the beta exit criteria | Both | All numbers met, or the date moves |
+| Launch rehearsal: production deploy, rollback drill, error endpoint test | Developer | Checklist items ticked |
+| Public launch and ambassador push | Owner | Live link shared |
+| Watch feedback for 72 hours; hotfixes only | Both | Daily issue note |
 
 ## Risks
-| Risk | Plan |
-|---|---|
-| Asset delivery slips | The game ships with the current look; assets can be added after launch because the pipeline will be ready |
-| Phone performance | Measured every week; a Low graphics preset is already in the settings |
-| Backend adds bugs | It is optional: launch without it, and add it as an update if it is not solid by the end of week 3 |
-| Real university names | Disclaimer in the game; no logos; switch to fictional names quickly if anyone objects |
-| Quiz mistakes | Reviewer sign-off and an in-game "report a question" option |
+| Risk | Likelihood | Plan |
+|---|---|---|
+| Real-phone performance worse than desktop numbers suggest | Medium | Low preset by default on weak devices; cut effects; test in week A, not later |
+| Backend adds bugs or privacy work late | Medium | It is optional. Launch local-first with export/import; add cloud save after launch |
+| Beta recruits fewer than 20 people | Medium | Use ambassadors and class groups early; lower the numbers only with the owner's agreement |
+| Quiz errors or dialogue that offends | Medium | Reviewer sign-off; in-game feedback; quick content patch path |
+| A university objects to its name | Low | Disclaimer present, no logos; be ready to switch to fictional names through data in one deploy |
+| Data protection complaint | Low | Opt-in telemetry only, no personal data collected, legal read, live contact address |
+| Owner time (testing, recruiting, reviewers) is the real bottleneck | High | Fixed weekly asks above; developer works on what does not need the owner |
+| Asset delivery slips | Medium | Not a blocker; the pipeline is ready |
+| Host free-tier limits or terms | Low to medium | A static site is cheap; check terms; a second host config (Netlify) already exists |
