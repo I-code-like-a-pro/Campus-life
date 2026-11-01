@@ -73,8 +73,8 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | ASUU strike | ✅ | |
 | Lecturer personalities, attendance checks, surprise tests | ⬜ 🎯 | |
 | Final-year project and supervisor | ⬜ 🎯 | The 400L storyline |
-| Degree class and honours | 🟡 | CGPA exists; 🎯 give a degree class (First, 2:1, 2:2, Third) |
-| Probation and withdrawal | ⬜ 🎯 | Real consequence for a failing CGPA |
+| Degree class and honours | ✅ | First, 2:1, 2:2, Third, Pass, with a line of honours for each |
+| Probation and withdrawal | ✅ | Semester GPA below 1.0: probation; two in a row: withdrawal ending |
 
 ## Stage 6. Money and hustle
 | System | Status | Notes |
@@ -128,10 +128,10 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | System | Status | Notes |
 |---|---|---|
 | Final results and CGPA | 🟡 | 🎯 degree class and honours |
-| Graduation ceremony | ⬜ 🎯 | Cap and gown event with a share card |
+| Graduation ceremony | ✅ | Convocation day screen, then Your story |
 | NYSC (mobilisation, camp, posting) | ❌ | Out of scope: owner decision, the game ends at graduation |
 | Life after: job hunt, further study | ❌ | Out of scope, the game ends at graduation |
-| Final summary screen (stats, achievements, "your story") | ⬜ 🎯 | Highly shareable |
+| Final summary screen (stats, achievements, "your story") | ✅ | Menu button "Your story" stays available after the ending |
 
 ---
 
@@ -143,7 +143,8 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | Settings, procedural audio | ✅ |
 | PWA/offline, feedback report, opt-in telemetry | ✅ |
 | Balance simulator and regression tests (128) | ✅ |
-| Share cards (graduation, matriculation, GPA) | ⬜ 🎯 |
+| Share card for the ending (image, phone share sheet or download) | ✅ |
+| Share cards for matriculation and GPA milestones | ⬜ 🎯 |
 | Cloud save and accounts | ⬜ 🔮 (backend decision pending) |
 | Multiplayer, chat, payments | ⬜ 🔮 (out of scope for launch) |
 

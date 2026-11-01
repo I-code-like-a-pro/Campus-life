@@ -36,6 +36,16 @@ const GRADES = [[70, 'A', 5], [60, 'B', 4], [50, 'C', 3], [45, 'D', 2], [40, 'E'
 const hhmm = h => `${String(h).padStart(2, '0')}:00`;
 const gradeFor = total => GRADES.find(g => total >= g[0]);
 
+/** Two semesters in a row with a GPA below 1.0 means withdrawal; one means probation. */
+export const PROBATION_GPA = 1.0;
+export const WITHDRAW_AFTER = 2;
+export function applyStanding(a, gpa) {
+  a.lowStreak = gpa < PROBATION_GPA ? (a.lowStreak || 0) + 1 : 0;
+  a.probation = a.lowStreak > 0 && a.lowStreak < WITHDRAW_AFTER;
+  if (a.lowStreak >= WITHDRAW_AFTER) a.withdrawn = true;
+  return { probation: a.probation, withdrawn: !!a.withdrawn };
+}
+
 export function degreeClass(cgpa) {
   if (cgpa >= 4.5) return 'First Class';
   if (cgpa >= 3.5) return 'Second Class Upper';
@@ -120,9 +130,11 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
         a.carryovers.push({ code: r.code, title: r.title, bank: src.bank, units: r.units });
       }
     }
-    if (a.year >= DEPTS[state.course].years && a.term === 2) a.graduated = true;
-    onEvent('results', { gpa, rows, carryPassed: rows.filter(r => r.carry && r.grade !== 'F').length });
+    const standing = applyStanding(a, gpa);
+    if (a.year >= DEPTS[state.course].years && a.term === 2 && !standing.withdrawn) a.graduated = true;
+    onEvent('results', { gpa, rows, carryPassed: rows.filter(r => r.carry && r.grade !== 'F').length, probation: standing.probation });
     if (a.graduated) onEvent('graduated');
+    if (a.withdrawn) onEvent('withdrawn');
   }
 
   function nextSemester() {
@@ -137,7 +149,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
   /** Advances the calendar. Returns events: 'results', 'graduated'. */
   function tick() {
     const a = A();
-    if (!a || a.graduated && a.phase === 'break') return [];
+    if (!a || (a.graduated || a.withdrawn) && a.phase === 'break') return [];
     const events = [];
     if (a.phase === 'pre') {
       if (day() >= a.startDay) { a.phase = 'semester'; onEvent('semesterStart', { year: a.year, term: a.term, startDay: a.startDay }); } else return events;
@@ -148,7 +160,8 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
       a.phase = 'break';
       events.push('results');
       if (a.graduated) events.push('graduated');
-    } else if (a.phase === 'break' && sd >= 8 && !a.graduated) {
+      if (a.withdrawn) events.push('withdrawn');
+    } else if (a.phase === 'break' && sd >= 8 && !a.graduated && !a.withdrawn) {
       nextSemester();
     }
     return events;
@@ -166,6 +179,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     const a = A();
     if (!a) return '';
     if (a.graduated) return `🎓 Graduated · ${degreeClass(a.cgpa)}`;
+    if (a.withdrawn) return '📄 You withdrew from the university';
     if (a.phase === 'pre') return `🎓 Semester starts on Day ${a.startDay}`;
     const sd = semDay(), now = minutes();
     if (a.phase === 'break') return a.lastViewed ? '😴 Break day: next semester starts tomorrow' : '📄 Results are out! Open the portal 📱';

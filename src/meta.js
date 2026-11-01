@@ -27,6 +27,7 @@ export const ACHIEVEMENTS = [
   { id: 'dean_list',     icon: '🏅', name: "Dean's List",        text: 'Get a semester GPA of 4.5 or more',       c: 'deansList',    n: 1 },
   { id: 'no_carry',      icon: '✅', name: 'Clean Sheet',        text: 'Finish a semester with no F',             c: 'cleanSemesters', n: 1 },
   { id: 'comeback',      icon: '💪', name: 'Comeback',           text: 'Pass a carryover course',                 c: 'carryPassed',  n: 1 },
+  { id: 'first_class',    icon: '🥇', name: 'First Class',        text: 'Graduate with First Class honours',       c: 'firstClass',   n: 1 },
   { id: 'graduate',      icon: '🎓', name: 'Graduate',           text: 'Complete your degree',                    c: 'graduated',    n: 1 },
   // money
   { id: 'first_naira',   icon: '💵', name: 'First Naira',        text: 'Earn money from work',                    c: 'shifts',       n: 1 },

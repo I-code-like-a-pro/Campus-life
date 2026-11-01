@@ -19,6 +19,7 @@ import { showModal } from './modal.js';
 import { BACKGROUNDS, rollScores, aggregate, decide, courseOf, cutoff } from './admissions.js';
 import { createGuide, describeWay } from './guide.js';
 import { createFootball } from './football.js';
+import { buildStory, honoursText, shareCard } from './ending.js';
 import { createNpcs, npcDefsFor, crowdDefs, interiorNpcDefs } from './npcs.js';
 import { DIALOGUES } from './dialogues.js';
 import { WORLD_DIALOGUES } from './worlddialogues.js';
@@ -161,6 +162,55 @@ async function main() {
     }));
   }
 
+  /* ---- the ending: graduation (or withdrawal), your story and the share card ---- */
+  function currentStory() {
+    return buildStory({
+      state, campus: campus.name, course: courseOf(state.course).name, day: dayNight.state.day,
+      achievements: meta.achievements().filter(x => x.unlockedDay != null).length
+    });
+  }
+  async function runEnding(kind, { ceremony = true } = {}) {
+    const story = currentStory();
+    if (ceremony) {
+      if (kind === 'graduated') {
+        await showModal({
+          title: '🎓 Convocation day',
+          lines: ['The hall is full. Parents are waving phones and the band is playing.', `${state.name}, ${story.course}, ${campus.name}.`, honoursText(state.academic.cgpa), `Degree class: ${story.degree} · CGPA ${story.cgpa.toFixed(2)}`],
+          buttons: [{ label: 'Walk across the stage 🎓', value: 1 }]
+        });
+      } else {
+        await showModal({
+          title: '📄 Withdrawal letter',
+          lines: ['Your results stayed below the minimum for two semesters in a row, so the senate has asked you to withdraw.', 'It is not the end of your story. Many people try again and finish stronger.', `Final CGPA: ${story.cgpa.toFixed(2)}`],
+          buttons: [{ label: 'Read my story', value: 1 }]
+        });
+      }
+    }
+    for (;;) {
+      const pick = await showModal({
+        title: kind === 'graduated' ? '🏆 Your story' : '📖 Your story',
+        lines: [`${story.name}: ${story.title}`, `${story.degree} · CGPA ${story.cgpa.toFixed(2)}`, ...story.lines],
+        buttons: [
+          { label: '📤 Share my result', value: 'share' },
+          { label: '🆕 Start a new student', value: 'new' },
+          { label: kind === 'graduated' ? 'Keep exploring campus' : 'Close', value: 'close', secondary: true }
+        ]
+      });
+      if (pick === 'share') {
+        const r = await shareCard(story);
+        toast(r === 'saved' ? '🖼️ Image saved. Post it anywhere!' : r === 'shared' ? 'Shared!' : 'Share cancelled.');
+      } else if (pick === 'new') {
+        if (confirm('Erase this save and start a new student?')) { clearSave(); location.reload(); return; }
+      } else return;
+    }
+  }
+  const storyBtn = document.getElementById('storybtn');
+  storyBtn.addEventListener('click', () => {
+    document.getElementById('menu').classList.remove('open');
+    const a = state.academic;
+    if (a && (a.graduated || a.withdrawn)) runModal(() => runEnding(a.graduated ? 'graduated' : 'withdrawn', { ceremony: false }));
+  });
+
   /* ---- progression, notifications, phone ---- */
   const meta = createMeta({
     state, day, give: n => { state.money += n; }, toast, sound: sfx, isStudent: () => !!state.academic
@@ -185,7 +235,7 @@ async function main() {
         case 'assignmentDone': meta.track('assignments'); break;
         case 'ca': meta.track('caTests'); break;
         case 'exam': meta.track('exams'); break;
-        case 'graduated': meta.track('graduated'); break;
+        case 'graduated': meta.track('graduated'); if (state.academic.cgpa >= 4.5) meta.track('firstClass'); break;
         case 'semesterStart':
           if (state.hostel && addBill(state.meta.bills, newBill(info.year, info.term, info.startDay))) {
             meta.notify({ icon: '🏠', title: 'Hostel dues', text: `Hostel dues of ${naira(HOSTEL_DUES)} are due on Friday. Pay in your phone under My room and bills.` });
@@ -197,6 +247,7 @@ async function main() {
           if (info.gpa >= 4.5) meta.track('deansList');
           if (!info.rows.some(r => r.grade === 'F')) meta.track('cleanSemesters');
           if (info.carryPassed) meta.track('carryPassed', info.carryPassed);
+          if (info.probation) meta.notify({ icon: '⚠️', title: 'Academic probation', text: 'Your GPA this semester was below 1.0. One more semester like that and you will be asked to withdraw.' });
           meta.notify({ icon: '📄', title: 'Results are out!', text: `Semester GPA ${info.gpa.toFixed(2)}. Open your phone, then the student portal.` });
           sfx('bell');
           // academic standing (spec F-064): warnings first, then probation
@@ -895,8 +946,10 @@ async function main() {
     blackoutAmount += (target - blackoutAmount) * Math.min(1, dt * 2);
     const weatherIcon = events.blackout ? '💡' : events.raining ? '🌧️' : events.haze ? '🌫️' : events.strike ? '📢' : '☀️';
     for (const ev of academics.tick()) {
-      if (ev === 'graduated') runModal(() => academics.graduationModal());
+      if (ev === 'graduated') runModal(() => runEnding('graduated'));
+      if (ev === 'withdrawn') runModal(() => runEnding('withdrawn'));
     }
+    storyBtn.hidden = !(state.academic && (state.academic.graduated || state.academic.withdrawn));
     const unread = meta.unread();
     badge.hidden = !unread;
     badge.textContent = unread > 9 ? '9+' : String(unread);
@@ -1069,7 +1122,7 @@ async function main() {
     state, places, player, npcs, guide, enter: enterPlace, leave: leavePlace, get inside() { return inside; },
     checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
-    football, mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
+    football, runEnding, mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
     addRelation, relation, boostNearby, engine, colliders, resolveCollisions
   };
 }
