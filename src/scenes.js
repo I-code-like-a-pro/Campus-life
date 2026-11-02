@@ -1,4 +1,7 @@
 import { showModal } from './modal.js';
+import { CLUBS, clubSchedule, CLUB_DUES, MAX_CLUBS } from './social.js';
+import { hash01 } from './eventengine.js';
+import { seedOf } from './clearance.js';
 import { matricPages, MATRIC_FX } from './campuslife-events.js';
 
 /*
@@ -13,6 +16,46 @@ const pad = n => String(n).padStart(2, '0');
 export const clock = h => `${pad(Math.floor(h))}:${pad(Math.round((h % 1) * 60))}`;
 
 /** `windows(a)` lists { day, from, to } (hours). `venue` is 'auditorium' (the main hall) or 'hostel' (the player's own hall). */
+
+/* ---- club fair helpers: two rounds of "visit a stall, then decide whether to join" ---- */
+const PITCH = {
+  debate: 'The president argues that you should join before you can finish saying "no". You admire the confidence.',
+  drama: 'Members in costume act out a scene about a lost phone charger. It is surprisingly moving.',
+  tech: 'A laptop sticker wall and a robot arm that waves at passers-by. They promise real projects, and real bugs.',
+  enterprise: 'A table of branded notebooks and a sign that says "Start small, think big". The mentor offers you a handshake and a business card.',
+  football: 'Boots hang from the stall frame. The captain says training is twice a week and the pitch is free.'
+};
+const stallBeat = round => ctx => {
+  const seen = ctx.flags.seen || (ctx.flags.seen = []);
+  const left = ctx.clubs.filter(c => !seen.includes(c.id));
+  if (ctx.flags.stop || !left.length) return null;
+  return {
+    title: round === 1 ? '🎪 The stalls' : '🎪 Another stall',
+    lines: [round === 1 ? 'Tables line the hall, each with banners, flyers and a volunteer shouting over the drums.' : 'You still have time for another stall.'],
+    choices: [
+      ...left.map(c => ({ label: `${c.icon} ${c.name}`, text: PITCH[c.id], fx: { fun: 2 }, pick: c.id })),
+      { label: 'Skip the rest and grab snacks', text: 'You collect a free flyer, a sachet of water and a meat pie. The pie is the best offer in the hall.', fx: { hunger: 10, fun: 2 }, flag: 'stop' }
+    ]
+  };
+};
+const joinBeat = ctx => {
+  const id = ctx.flags.pick;
+  if (!id) return null;
+  delete ctx.flags.pick;
+  const c = ctx.clubs.find(x => x.id === id);
+  const why = ctx.canJoin(id);
+  return {
+    title: `${c.icon} ${c.name}`,
+    lines: [`The president slides a form across the table. Dues are ₦${ctx.clubDues} and meetings are ${c.schedule}.`, ...(why ? [why] : [])],
+    choices: why
+      ? [{ label: 'Take a flyer and move on', text: 'You fold the flyer into your pocket for later.', fx: {} }]
+      : [
+        { label: `Join the ${c.name} (₦${ctx.clubDues})`, cost: ctx.clubDues, join: id, text: `Welcome to the ${c.name}! Your first meeting is ${c.schedule}.`, poor: 'You do not have the dues today. The president says you are welcome any time.', fx: { fun: 4 } },
+        { label: 'Not today', text: 'The president says the door is always open, and hands you a flyer anyway.', fx: {} }
+      ]
+  };
+};
+
 const entryKey = t => `${t.day}|${t.hour}|${t.code}`;
 /** The first class on the timetable (earliest day and hour that is not cancelled). */
 export const firstEntry = a => [...(a?.timetable || [])].filter(t => !t.cancelled).sort((x, y) => x.day - y.day || x.hour - y.hour)[0] || null;
@@ -176,6 +219,52 @@ export const SCENES = [
     onAttend: ctx => ctx.attendFirstLecture()
   },
   {
+    id: 'clubfair', emoji: '🎪', title: 'Club fair', short: 'Club fair',
+    venue: 'auditorium', minutes: 105, fx: { energy: -3, hunger: -4 },
+    windows: a => [{ day: a.startDay + 1, from: 14, to: 17 }, { day: a.startDay + 3, from: 14, to: 17 }],
+    crowd: [
+      { id: 'pres', name: 'Club President', role: 'Club president', emoji: '📣', dx: 0, dz: -4.6, shirt: 0xe67e22, skin: 0x5a3a26, dialogue: 'student' },
+      { id: 's1', name: 'Dayo', role: 'Senior', emoji: '😎', dx: -5.4, dz: -1.2, shirt: 0x16a085, dialogue: 'student' },
+      { id: 's2', name: 'Yetunde', role: 'Fresher', emoji: '🎒', dx: 5.4, dz: 1.2, shirt: 0xe84393, dialogue: 'student' }
+    ],
+    beats: ctx => [
+      { title: '🎪 The club fair', lines: [`Every club on campus has set up a stall in the main hall at ${ctx.campusName}. Drums, flyers, banners and volunteers who will not take no for an answer.`, `You may join up to ${ctx.maxClubs} clubs. Meetings are in the evening and dues are ₦${ctx.clubDues} each.`] },
+      stallBeat(1), joinBeat, stallBeat(2), joinBeat
+    ]
+  },
+  {
+    id: 'firstCA', emoji: '📝', title: 'Your first CA test', short: 'First CA test',
+    venue: 'class', minutes: 0, fx: {},
+    windows: a => [{ day: a.startDay + 2, from: 8, to: 18 }],
+    done: a => !!a.caTaken,
+    crowd: [
+      { id: 'inv', name: 'Dr. Adebayo', role: 'Invigilator', emoji: '🕶️', dx: 3.2, dz: -3.4, shirt: 0x1f2a44, skin: 0x5a3a26, dialogue: 'invigilator' },
+      { id: 'c1', name: 'Tosin', role: 'Coursemate', emoji: '🎒', dx: -5.2, dz: 2.5, shirt: 0xf1c40f, dialogue: 'student' },
+      { id: 'c2', name: 'Ibrahim', role: 'Coursemate', emoji: '🎒', dx: 5.2, dz: 2.5, shirt: 0x2ecc71, dialogue: 'student' }
+    ],
+    beats: ctx => [
+      { title: '📝 Test day', lines: ['A notice is stuck to the board: the first CA test holds today. Three questions per course.', 'Nervous coursemates whisper formulas to themselves outside the hall.'] },
+      {
+        title: '📖 Last minutes before the test', lines: ['You still have a little time. How do you use it?'],
+        choices: [
+          { label: ctx.weakest ? `Revise ${ctx.weakest}, your weakest course` : 'Revise your weakest course', text: 'You go through your notes one last time. Two things click that did not before.', fx: { energy: -2 }, prepWeak: 6 },
+          { label: 'Ask Tosin to quiz you', text: 'Tosin fires questions at you. You get half of them wrong, which is useful.', fx: { fun: 1 }, prepWeak: 3, meet: 'firstca-c1' },
+          { label: 'Cram everything until the last second', text: 'Your head is full of half-remembered facts and your hands are cold.', fx: { stress: 3, energy: -3 }, prepWeak: 3 },
+          { label: 'Breathe and trust what you have studied', text: 'You take a slow breath and walk in calm. It helps more than you expected.', fx: { stress: -3 } }
+        ]
+      },
+      { title: '📜 The rules', lines: ['The invigilator reads the rules: bags at the front, phones switched off, no talking, no sharing answers.', 'Anyone caught cheating receives a zero and a letter to the Dean.'] },
+      {
+        title: '🤫 A whisper from behind', lines: ['Halfway through, Ibrahim leans forward and whispers: "Number two, quickly. What is the answer?"'],
+        choices: [
+          { label: 'Ignore him politely', text: 'You keep your eyes on your paper. He sighs, and then finds the answer himself.', fx: { stress: 1 } },
+          { label: 'Whisper the answer back', text: 'You whisper a quick answer.', fx: { stress: 1 }, risk: 0.5, caught: 'The invigilator turns around at that exact moment. You get a warning, and your face goes hot for an hour.', caughtFx: { stress: 8, fun: -4 } }
+        ]
+      }
+    ],
+    onAttend: ctx => ctx.takeCa()
+  },
+  {
     id: 'inspection', emoji: '🧹', title: 'Hostel inspection', short: 'Hostel inspection',
     venue: 'hostel', minutes: 60, fx: { energy: -2 },
     windows: a => [{ day: a.startDay + 2, from: 15, to: 18 }, { day: a.startDay + 3, from: 15, to: 18 }],
@@ -254,7 +343,7 @@ export const sceneById = id => SCENES.find(s => s.id === id);
 /* ---------------- scheduling rules (pure) ---------------- */
 
 export const sceneState = (a, id) => a?.scenes?.[id] || {};
-export const windowsOf = (def, a) => (a ? def.windows(a) : []);
+export const windowsOf = (def, a) => (a && a.year === 1 && a.term === 1 ? def.windows(a) : []);      // first semester only
 const inWindow = (w, day, hour) => w.day === day && hour >= w.from && hour < w.to;
 
 /** Is this scene on right now (inside one of its windows) and not yet attended or missed? */
@@ -306,8 +395,15 @@ export async function playScene(def, ctx) {
     const pick = await showModal({ title: beat.title, lines: beat.lines, buttons: beat.choices.map((c, i) => ({ label: c.label, value: i })) });
     const ch = beat.choices[pick] ?? beat.choices[beat.choices.length - 1];
     let text = ch.text, fx = ch.fx || {};
-    if (ch.cost && !ctx.pay(ch.cost)) { text = ch.poor || 'You do not have the money for that.'; fx = {}; }
-    else if (ch.cost) done.push(`Paid ₦${ch.cost.toLocaleString('en-NG')}`);
+    let ok = true;
+    if (ch.cost) {
+      if (ctx.pay(ch.cost)) done.push(`Paid ₦${ch.cost.toLocaleString('en-NG')}`);
+      else { text = ch.poor || 'You do not have the money for that.'; fx = {}; ok = false; }
+    }
+    if (ok && ch.join && ctx.joinClub(ch.join).ok) done.push(`Joined the ${ctx.clubs.find(c => c.id === ch.join).name}`);
+    if (ok && ch.risk != null && ctx.roll(ch.label) < ch.risk) { text = `${text} ${ch.caught}`; fx = { ...fx, ...ch.caughtFx }; ctx.warn(); done.push('Warning recorded'); }
+    if (ch.pick) { ctx.flags.pick = ch.pick; (ctx.flags.seen || (ctx.flags.seen = [])).push(ch.pick); }
+    if (ch.prepWeak) ctx.boostWeakest(ch.prepWeak);
     if (ch.flag) ctx.flags[ch.flag] = true;
     if (Object.keys(fx).length || ch.minutes) ctx.consume({ minutes: ch.minutes || 0, fx });
     if (ch.prep) ctx.boost(ch.prep);
@@ -378,7 +474,7 @@ export function createScenes(deps) {
       if (isOverdue(def, a, d, h)) {
         r.status = 'missed';
         if (def.missFx) deps.consume({ minutes: 0, fx: def.missFx });
-        meta.notify({ icon: '⏱️', title: `You missed the ${def.short.toLowerCase()}`, text: def.matric ? 'The Registry will sort out your matriculation later.' : def.id === 'courseReg' ? 'You are not registered yet. Visit the department office as soon as you can.' : 'It is over now. Maybe next time.' });
+        meta.notify({ icon: '⏱️', title: `You missed the ${def.short.toLowerCase()}`, text: def.matric ? 'The Registry will sort out your matriculation later.' : def.id === 'courseReg' ? 'You are not registered yet. Visit the department office as soon as you can.' : def.id === 'firstCA' ? 'The CA test was not written. That mark will count as zero.' : 'It is over now. Maybe next time.' });
       }
     }
   }
@@ -407,12 +503,16 @@ export function createScenes(deps) {
       name: deps.name(), campusName: deps.campusName, courseName: deps.courseName(), hostelName: deps.hostelName(), rhythm: deps.rhythm(),
       pay: deps.pay, consume: deps.consume, met: deps.met,
       flags: {}, give: deps.give, room: deps.room,
+      clubs: CLUBS.map(c => ({ id: c.id, icon: c.icon, name: c.name, schedule: clubSchedule(c) })), clubDues: CLUB_DUES, maxClubs: MAX_CLUBS,
+      canJoin: deps.canJoin, joinClub: deps.joinClub, warn: deps.warn, boostWeakest: n => deps.boostWeakest(n),
+      roll: key => hash01(seedOf(`${deps.name()}|${deps.day()}`), key),
       courses: deps.courseLines(), weakest: deps.weakest(), first, boost: n => first && deps.boost(first.code, n),
       warmup: () => first && deps.warmup(first.code)
     });
     deps.consume({ minutes: def.minutes, fx: def.matric ? MATRIC_FX : def.fx });
     rec(def.id).status = 'attended';
-    def.onAttend?.({
+    await def.onAttend?.({
+      takeCa: () => deps.takeCa(),
       setRegistered: () => { a.registered = true; },
       attendFirstLecture: () => { if (first) deps.attendEntry(entry, late); }
     });
@@ -420,7 +520,7 @@ export function createScenes(deps) {
     clearCrowd(def.id);
     await showModal({
       title: `${def.emoji} ${def.title} is over`,
-      lines: [def.matric ? 'You are now a matriculated student. Welcome to the university family.' : def.id === 'courseReg' ? 'You are registered for the semester.' : def.id === 'party' ? 'You will remember tonight for a long time.' : def.id === 'inspection' ? 'The warden has moved on to the next room.' : def.id === 'firstLecture' ? `${first?.code} is now counted as attended, and you already know the lecturer's name.` : 'That was time well spent.', ...summary],
+      lines: [def.matric ? 'You are now a matriculated student. Welcome to the university family.' : def.id === 'courseReg' ? 'You are registered for the semester.' : def.id === 'firstCA' ? 'The first CA test is behind you. Results come at the end of the semester.' : def.id === 'clubfair' ? 'The fair is winding down and your arms are full of flyers.' : def.id === 'party' ? 'You will remember tonight for a long time.' : def.id === 'inspection' ? 'The warden has moved on to the next room.' : def.id === 'firstLecture' ? `${first?.code} is now counted as attended, and you already know the lecturer's name.` : 'That was time well spent.', ...summary],
       buttons: [{ label: 'Continue', value: 1 }]
     });
     return true;

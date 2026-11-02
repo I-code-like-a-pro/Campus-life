@@ -19,6 +19,8 @@ Story events are real places and real times. The player is told when and where, 
 | Course registration | Your department's first lecture hall | Days 1 and 2, 14:00 to 17:30 |
 | Hostel inspection | The player's hostel | Days 3 and 4, 15:00 to 18:00 |
 | Freshers' night (party) | Main auditorium | Day 5 (Friday), 19:00 to 23:00 |
+| Club fair | Main auditorium | Days 2 and 4, 14:00 to 17:00 |
+| Your first CA test | The hall of your first class | Day 3 (Wednesday), 08:00 to 18:00 |
 | Your first lecture | The hall of your first timetable class | From 15 minutes before that class until one hour after it starts |
 
 - A notification appears when a scene opens. The HUD goal line shows what is on now or coming up.
@@ -29,6 +31,9 @@ Story events are real places and real times. The player is told when and where, 
 - The hostel inspection judges your real room: hygiene, decorations bought, whether you tidied, and whether you hid or handed in the banned heater. The verdict (commended with a ₦1,000 prize, satisfactory, or warning with possible ₦500 fine) comes from code, not chance.
 - Freshers' night costs ₦1,000 (or carry chairs instead). A late-night choice comes with the exam the next morning: leave at once, or stay another hour for fun at the price of energy.
 - Beats may be functions (decided when reached), choices may carry `flag`, `minutes` and `prep`, and beats may `give`, `cost` or apply `fx`.
+- The club fair lets you visit up to two stalls and join clubs for real (₦500 dues, two clubs maximum, existing club rules). Joining uses the same data as the phone's Clubs app.
+- The first CA test lets you prepare first (revising your weakest course adds preparation that really changes the quiz hints), then a cheating dilemma (a seeded 50% chance of being caught; a warning is recorded in `academic.integrityWarnings`), then the real CA quiz from `academics.run`. If you take the CA the normal way, the scene closes itself.
+- Scenes only run in the first semester of year 1 (`windowsOf`), so older saves are never flooded with missed scenes.
 - Scene facts are given to the AI, so NPCs can answer "when is matriculation?".
 
 ## AI in these scenes

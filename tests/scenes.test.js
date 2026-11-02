@@ -82,9 +82,9 @@ describe('scenes', () => {
   });
   it('has playable content: every scene has beats, a crowd, and choices with text', () => {
     const ctx = { name: 'Ada', campusName: 'UNILAG', courseName: 'Law', hostelName: 'Moremi Hall', rhythm: 'Tests are on Wednesday.',
-      courses: ['CSC 101: Intro'], weakest: 'CSC 101', first: { code: 'CSC 101', title: 'Intro', venue: 'Hall A', day: 1, hour: 9 }, warmup: () => null, flags: {}, room: () => ({ hygiene: 80, decor: 1 }) };
+      courses: ['CSC 101: Intro'], weakest: 'CSC 101', first: { code: 'CSC 101', title: 'Intro', venue: 'Hall A', day: 1, hour: 9 }, warmup: () => null, flags: {}, clubs: [{ id: 'debate', icon: '🎤', name: 'Debate Club', schedule: 'Tue and Thu at 17:00' }, { id: 'drama', icon: '🎭', name: 'Drama Society', schedule: 'Wed at 17:00' }], clubDues: 500, maxClubs: 2, canJoin: () => '', room: () => ({ hygiene: 80, decor: 1 }) };
     for (const s of SCENES) {
-      const beats = s.beats(ctx).map(b => (typeof b === 'function' ? b(ctx) : b));
+      const beats = s.beats(ctx).map(b => (typeof b === 'function' ? b(ctx) : b)).filter(Boolean);
       expect(beats.length).toBeGreaterThan(2);
       expect(s.crowd.length).toBeGreaterThan(0);
       for (const b of beats) {
@@ -99,7 +99,7 @@ describe('scenes', () => {
   });
   describe('course registration and the first lecture', () => {
     const tt = [{ day: 2, hour: 11, code: 'MTH 101', venue: 'Hall B' }, { day: 1, hour: 9, code: 'CSC 101', venue: 'Hall A' }, { day: 1, hour: 8, code: 'GST 111', venue: 'Hall C', cancelled: true }];
-    const acad = (extra = {}) => ({ startDay: 10, timetable: tt, attended: {}, ...extra });
+    const acad = (extra = {}) => ({ startDay: 10, year: 1, term: 1, timetable: tt, attended: {}, ...extra });
     it('finds the first class that is not cancelled', () => {
       expect(firstEntry(acad()).code).toBe('CSC 101');
       expect(firstEntry({ timetable: [] })).toBeNull();
@@ -127,7 +127,7 @@ describe('scenes', () => {
   });
 
   describe('hostel inspection and the first-week party', () => {
-    const a = { startDay: 10 };
+    const a = { startDay: 10, year: 1, term: 1 };
     const verdict = (room, flags) => sceneById('inspection').beats({ hostelName: 'Moremi Hall' }).pop()({ room: () => room, flags });
     it('schedules the inspection in your hostel on days three and four, and the party on Friday night', () => {
       expect(windowsOf(sceneById('inspection'), a).map(w => [w.day, w.from, w.to])).toEqual([[12, 15, 18], [13, 15, 18]]);
@@ -152,6 +152,56 @@ describe('scenes', () => {
       const stay = last.choices.find(c => c.label.includes('one more hour'));
       expect(stay.minutes).toBeGreaterThan(0);
       expect(stay.fx.energy).toBeLessThan(-4);
+    });
+  });
+
+  describe('club fair and the first CA test', () => {
+    const a = { startDay: 10, year: 1, term: 1, caTaken: false };
+    const ctx = () => ({ flags: {}, clubs: [{ id: 'debate', icon: '🎤', name: 'Debate Club', schedule: 'Tue at 17:00' }, { id: 'tech', icon: '💻', name: 'Tech Club', schedule: 'Thu at 17:00' }], clubDues: 500, maxClubs: 2, canJoin: () => '', campusName: 'UNILAG' });
+    it('opens the club fair on days two and four in the afternoon, and the CA test on the real CA day', () => {
+      expect(windowsOf(sceneById('clubfair'), a).map(w => [w.day, w.from, w.to])).toEqual([[11, 14, 17], [13, 14, 17]]);
+      expect(windowsOf(sceneById('firstCA'), a).map(w => [w.day, w.from, w.to])).toEqual([[12, 8, 18]]);
+    });
+    it('closes the CA scene once the test is taken the normal way, and it never double counts', () => {
+      const t = sceneById('firstCA');
+      expect(isOpen(t, a, 12, 10)).toBe(true);
+      expect(isOpen(t, { ...a, caTaken: true }, 12, 10)).toBe(false);
+      expect(isOverdue(t, { ...a, caTaken: true }, 14, 10)).toBe(false);
+      expect(isOverdue(t, a, 12, 18)).toBe(true);
+    });
+    it('only applies to the first semester, so older saves are never flooded with missed scenes', () => {
+      expect(windowsOf(sceneById('matric'), { startDay: 200, year: 2, term: 1 })).toEqual([]);
+      expect(isOverdue(sceneById('matric'), { startDay: 200, year: 3, term: 2 }, 400, 12)).toBe(false);
+    });
+    it('offers each club once, lets the player stop, and builds a join offer with the real dues', () => {
+      const c = ctx();
+      const beats = sceneById('clubfair').beats(c);
+      const stall1 = beats[1](c);
+      expect(stall1.choices.filter(x => x.pick).length).toBe(2);
+      c.flags.seen = ['debate']; c.flags.pick = 'debate';
+      const offer = beats[2](c);
+      expect(offer.choices[0].cost).toBe(500);
+      expect(offer.choices[0].join).toBe('debate');
+      expect(c.flags.pick).toBeUndefined();
+      const stall2 = beats[3](c);
+      expect(stall2.choices.filter(x => x.pick).map(x => x.pick)).toEqual(['tech']);
+      c.flags.stop = true;
+      expect(beats[3](c)).toBeNull();
+    });
+    it('does not charge dues when the club is full or already joined', () => {
+      const c = { ...ctx(), canJoin: () => 'You can join at most 2 clubs. Leave one first.' };
+      c.flags.pick = 'tech';
+      const offer = sceneById('clubfair').beats(c)[2](c);
+      expect(offer.choices.some(x => x.cost)).toBe(false);
+      expect(offer.lines.join(' ')).toContain('at most 2 clubs');
+    });
+    it('puts a cheating dilemma in the CA test with a real risk, and lets the player prepare first', () => {
+      const beats = sceneById('firstCA').beats({ weakest: 'MTH 101' });
+      const prep = beats[1].choices;
+      expect(prep.filter(x => x.prepWeak).length).toBeGreaterThanOrEqual(3);
+      const cheat = beats[3].choices.find(x => x.risk);
+      expect(cheat.risk).toBeGreaterThan(0);
+      expect(cheat.caughtFx.stress).toBeGreaterThan(5);
     });
   });
 });

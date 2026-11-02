@@ -40,7 +40,7 @@ import { openFeedback } from './feedback.js';
 import { buildGrid, findPath } from './pathfind.js';
 import { createMapUI, createMinimap } from './map.js';
 import { MODES, fareFor, minutesFor, okadaScare } from './transport.js';
-import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS } from './social.js';
+import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS, joinClub, MAX_CLUBS } from './social.js';
 import { createCampusStory, waterAdjust } from './campuslife-events.js';   // group B: story beats
 
 const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES };
@@ -282,6 +282,11 @@ async function main() {
     met: id => campusStory.met(id), name: () => state.name || 'Fresher', campusName: campus.name, courseName: () => courseOf(state.course).name,
     hostelName: () => state.hostel || '', venuePlace: type => places.find(p => p.type === type)?.name || '',
     give: n => { state.money += n; meta.ledger('Hall prize', n); },
+    canJoin: id => (state.meta.clubs.includes(id) ? 'You are already a member.' : state.meta.clubs.length >= MAX_CLUBS ? `You can join at most ${MAX_CLUBS} clubs. Leave one first.` : ''),
+    joinClub: id => { const r = joinClub(state.meta.clubs, id); if (r.ok) meta.track('clubsJoined'); return r; },
+    warn: () => { state.academic.integrityWarnings = (state.academic.integrityWarnings || 0) + 1; },
+    boostWeakest: n => { const c = state.academic?.courses.slice().sort((x, y) => x.knowledge - y.knowledge)[0]; if (c) academics.boostCourse(c.code, n); },
+    takeCa: () => academics.run({ id: 'ca' }),
     room: () => ({ hygiene: state.needs.hygiene, decor: Object.keys(state.meta.room || {}).length }),
     courseTitle: code => state.academic?.courses.find(c => c.code === code)?.title || '',
     courseLines: () => (state.academic?.courses || []).map(c => `${c.code}: ${c.title}`),
