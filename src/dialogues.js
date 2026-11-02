@@ -160,6 +160,13 @@ async function deptofficer(c, npc) {
     { label: '💡 Any advice?', run: () => `Yes. ${tip()}` }
   ]);
 }
+async function warden(c, npc) {
+  await converse(c, npc, 'Good afternoon. Keep your room clean and your corridor quiet.', () => [
+    asks(c)(npc),
+    { label: '📜 What are the hall rules?', run: () => 'Visitors leave by nine. No heaters, no loud music after ten, and no leaving the tap running. It is not complicated.' },
+    { label: '💡 Any advice?', run: () => `Yes. ${tip()}` }
+  ]);
+}
 async function registrar(c, npc) {
   await converse(c, npc, 'The university welcomes you. Please keep your matriculation number safe.', () => [
     asks(c)(npc),
@@ -273,7 +280,7 @@ async function porter(c, npc) {
   });
 }
 
-export const DIALOGUES = { mama, tobi, shopkeeper, bode, sade, bala, musa, seun, dean, registrar, deptofficer, admissions, bursary, medical, porter };
+export const DIALOGUES = { mama, tobi, shopkeeper, bode, sade, bala, musa, seun, dean, registrar, deptofficer, warden, admissions, bursary, medical, porter };
 
 // shared helpers for other dialogue modules
 export { converse, asks, tip };

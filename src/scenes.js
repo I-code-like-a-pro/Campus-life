@@ -175,6 +175,78 @@ export const SCENES = [
     ],
     onAttend: ctx => ctx.attendFirstLecture()
   },
+  {
+    id: 'inspection', emoji: '🧹', title: 'Hostel inspection', short: 'Hostel inspection',
+    venue: 'hostel', minutes: 60, fx: { energy: -2 },
+    windows: a => [{ day: a.startDay + 2, from: 15, to: 18 }, { day: a.startDay + 3, from: 15, to: 18 }],
+    crowd: [
+      { id: 'warden', name: 'Hall Warden', role: 'Hall warden', emoji: '📋', dx: 2.5, dz: 3, shirt: 0x1f2a44, skin: 0x5a3a26, dialogue: 'warden' },
+      { id: 'porter', name: 'Baba Sule', role: 'Hostel porter', emoji: '🔑', dx: -1.5, dz: 4.4, shirt: 0x6b4a2f, skin: 0x3b2418, dialogue: 'porter' }
+    ],
+    beats: ctx => [
+      { title: '🧹 Hall inspection', lines: [`The notice on the door of ${ctx.hostelName} said "inspection this week". Today the porter knocks on every room.`, 'The hall warden walks behind him with a clipboard and a very serious face.'] },
+      {
+        title: '🛏️ Before they reach your room', lines: ['You hear them two doors away. What do you do?'],
+        choices: [
+          { label: 'Tidy the room properly', text: 'You make the bed, wipe the desk and fold the clothes. The room has never looked this good.', fx: { energy: -3 }, minutes: 20, flag: 'tidy' },
+          { label: 'Do a quick sweep', text: 'You push things under the bed and straighten the sheet. It will do from the door.', fx: {}, minutes: 5, flag: 'quick' },
+          { label: 'Leave it as it is', text: 'You decide the room is a fair picture of your life right now.', fx: {} }
+        ]
+      },
+      {
+        title: '🔌 The forbidden heater', lines: ['Under your bed is a small electric heater. Heaters are banned in the hostel because of the fire risk.'],
+        choices: [
+          { label: 'Hide it in the wardrobe', text: 'It goes in behind the shoes. You try to look innocent.', fx: {}, flag: 'hid' },
+          { label: 'Hand it to the porter and apologise', cost: 300, text: 'The porter sighs, takes the heater, and says honesty will be remembered. You pay the ₦300 fine.', poor: 'The porter takes the heater and says he will remember your honesty. You cannot pay the fine today, so it goes on your record.', fx: { stress: 1 }, flag: 'honest' }
+        ]
+      },
+      ctx2 => {
+        const room = ctx2.room(), f = ctx2.flags;
+        const caught = f.hid && !f.tidy;
+        const score = (room.hygiene >= 60 ? 1 : 0) + (room.decor >= 1 ? 1 : 0) + (f.tidy ? 2 : f.quick ? 1 : 0) + (f.honest ? 1 : 0) - (caught ? 2 : 0);
+        const why = [room.hygiene >= 60 ? 'The room smells fresh.' : 'The warden wrinkles his nose at the air.', room.decor >= 1 ? 'The poster and the little touches make it feel like a home.' : 'The walls are bare.'];
+        if (caught) why.push('The warden opens the wardrobe and finds the heater behind the shoes.');
+        if (score >= 4) return { title: '🏅 Commended', lines: [...why, 'The warden writes "Excellent" and tells the porter to use your room as the example.', 'You get a ₦1,000 tidy-room prize from the hall fund.'], fx: { fun: 4, stress: -3 }, give: 1000 };
+        if (score >= 2) return { title: '✅ Satisfactory', lines: [...why, 'The warden ticks the box and moves on to the next door.'], fx: { stress: -1 } };
+        return { title: '⚠️ Warning', lines: [...why, 'You get a written warning. A second one means a letter to the Dean.'], fx: { stress: 3 }, cost: caught ? 500 : 0 };
+      }
+    ]
+  },
+  {
+    id: 'party', emoji: '🎉', title: "Freshers' night", short: "Freshers' night",
+    venue: 'auditorium', minutes: 120, fx: { hunger: -6 },
+    windows: a => [{ day: a.startDay + 4, from: 19, to: 23 }],
+    crowd: [
+      { id: 'dj', name: 'DJ Kash', role: 'DJ', emoji: '🎧', dx: 0, dz: -6.2, shirt: 0x8e44ad, skin: 0x5a3a26, dialogue: 'student' },
+      { id: 'p1', name: 'Bisi', role: 'Fresher', emoji: '🎒', dx: -5.4, dz: -1.6, shirt: 0xff7aa8, dialogue: 'student' },
+      { id: 'p2', name: 'Femi', role: 'Fresher', emoji: '🎒', dx: 5.4, dz: 0.8, shirt: 0x3498db, dialogue: 'student' },
+      { id: 'p3', name: 'Uche', role: 'Senior', emoji: '😎', dx: -5.4, dz: 3.2, shirt: 0x34495e, dialogue: 'student' }
+    ],
+    beats: ctx => [
+      {
+        title: "🎉 Freshers' night", lines: ['The student union has turned the hall into a party: loud speakers, coloured lights and a DJ who keeps shouting "make some noise!".', 'Tickets are ₦1,000 at the door.'],
+        choices: [
+          { label: 'Pay the ₦1,000 ticket', cost: 1000, text: 'The bouncer stamps your wrist and the music hits you like a wall.', poor: 'You cannot afford the ticket, so you volunteer to carry chairs for the union. The bouncer lets you in for free.', fx: { fun: 2 } },
+          { label: 'Volunteer to carry chairs instead', text: 'You carry thirty chairs in and are let in for free. Your arms are not impressed.', fx: { energy: -4, fun: 2 } }
+        ]
+      },
+      {
+        title: '💃 The dance floor', lines: ['The night is warming up. What do you do first?'],
+        choices: [
+          { label: 'Dance with everyone', text: 'You dance badly and happily. Someone films it. Hopefully not you.', fx: { fun: 12, energy: -8 } },
+          { label: 'Chat with people at the edge', text: 'You meet Bisi and Femi, who are also new. You swap numbers and stories about your lecturers.', fx: { fun: 6, stress: -3 }, meet: 'party-p1' },
+          { label: 'Buy snacks and watch (₦500)', cost: 500, text: 'Meat pie, a cold drink and a good view of the dance floor.', poor: 'You count your money twice and decide to just watch.', fx: { fun: 4, hunger: 18 } }
+        ]
+      },
+      {
+        title: '🌙 It is nearly eleven', lines: ['A senior says the real party begins at midnight. But the exams are tomorrow morning.'],
+        choices: [
+          { label: 'Go back to the hostel and sleep', text: 'You leave while the music is still loud and sleep better than you have all week.', fx: { stress: -3, energy: 2 }, minutes: 30 },
+          { label: 'Stay for one more hour', text: 'The last hour is the best of the night. You will pay for it in the morning.', fx: { fun: 5, energy: -8, stress: 2 }, minutes: 60 }
+        ]
+      }
+    ]
+  },
 ];
 
 export const sceneById = id => SCENES.find(s => s.id === id);
@@ -210,7 +282,9 @@ const whenText = (w, a) => `${WEEKDAY[Math.max(0, Math.min(6, w.day - a.startDay
 /** Plays the beats as dialogs, applying each choice. Returns the lines to show in the closing summary. */
 export async function playScene(def, ctx) {
   const done = [];
-  for (const beat of def.beats(ctx)) {
+  for (let beat of def.beats(ctx)) {
+    if (typeof beat === 'function') beat = beat(ctx);     // a beat decided at the moment it is reached (e.g. a verdict)
+    if (!beat) continue;
     if (beat.quiz) {
       const q = beat.quiz();
       if (!q) continue;
@@ -222,13 +296,20 @@ export async function playScene(def, ctx) {
       await showModal({ title: beat.title, lines: [ok ? beat.right : beat.wrong], buttons: [{ label: 'Continue', value: 1 }] });
       continue;
     }
-    if (!beat.choices) { await showModal({ title: beat.title, lines: beat.lines, buttons: [{ label: 'Next', value: 0 }] }); continue; }
+    if (!beat.choices) {
+      await showModal({ title: beat.title, lines: beat.lines, buttons: [{ label: 'Next', value: 0 }] });
+      if (beat.fx) ctx.consume({ minutes: 0, fx: beat.fx });
+      if (beat.give) { ctx.give(beat.give); done.push(`Received ₦${beat.give.toLocaleString('en-NG')}`); }
+      if (beat.cost) { if (ctx.pay(beat.cost)) done.push(`Paid ₦${beat.cost.toLocaleString('en-NG')}`); else ctx.consume({ minutes: 0, fx: { stress: 2 } }); }
+      continue;
+    }
     const pick = await showModal({ title: beat.title, lines: beat.lines, buttons: beat.choices.map((c, i) => ({ label: c.label, value: i })) });
     const ch = beat.choices[pick] ?? beat.choices[beat.choices.length - 1];
     let text = ch.text, fx = ch.fx || {};
     if (ch.cost && !ctx.pay(ch.cost)) { text = ch.poor || 'You do not have the money for that.'; fx = {}; }
     else if (ch.cost) done.push(`Paid ₦${ch.cost.toLocaleString('en-NG')}`);
-    if (Object.keys(fx).length) ctx.consume({ minutes: 0, fx });
+    if (ch.flag) ctx.flags[ch.flag] = true;
+    if (Object.keys(fx).length || ch.minutes) ctx.consume({ minutes: ch.minutes || 0, fx });
     if (ch.prep) ctx.boost(ch.prep);
     if (ch.meet) ctx.met(ch.meet);
     await showModal({ title: beat.title, lines: [text], buttons: [{ label: 'Continue', value: 1 }] });
@@ -325,6 +406,7 @@ export function createScenes(deps) {
     const summary = await playScene(def, {
       name: deps.name(), campusName: deps.campusName, courseName: deps.courseName(), hostelName: deps.hostelName(), rhythm: deps.rhythm(),
       pay: deps.pay, consume: deps.consume, met: deps.met,
+      flags: {}, give: deps.give, room: deps.room,
       courses: deps.courseLines(), weakest: deps.weakest(), first, boost: n => first && deps.boost(first.code, n),
       warmup: () => first && deps.warmup(first.code)
     });
@@ -338,7 +420,7 @@ export function createScenes(deps) {
     clearCrowd(def.id);
     await showModal({
       title: `${def.emoji} ${def.title} is over`,
-      lines: [def.matric ? 'You are now a matriculated student. Welcome to the university family.' : def.id === 'courseReg' ? 'You are registered for the semester.' : def.id === 'firstLecture' ? `${first?.code} is now counted as attended, and you already know the lecturer's name.` : 'That was time well spent.', ...summary],
+      lines: [def.matric ? 'You are now a matriculated student. Welcome to the university family.' : def.id === 'courseReg' ? 'You are registered for the semester.' : def.id === 'party' ? 'You will remember tonight for a long time.' : def.id === 'inspection' ? 'The warden has moved on to the next room.' : def.id === 'firstLecture' ? `${first?.code} is now counted as attended, and you already know the lecturer's name.` : 'That was time well spent.', ...summary],
       buttons: [{ label: 'Continue', value: 1 }]
     });
     return true;

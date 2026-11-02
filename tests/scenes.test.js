@@ -82,9 +82,9 @@ describe('scenes', () => {
   });
   it('has playable content: every scene has beats, a crowd, and choices with text', () => {
     const ctx = { name: 'Ada', campusName: 'UNILAG', courseName: 'Law', hostelName: 'Moremi Hall', rhythm: 'Tests are on Wednesday.',
-      courses: ['CSC 101: Intro'], weakest: 'CSC 101', first: { code: 'CSC 101', title: 'Intro', venue: 'Hall A', day: 1, hour: 9 }, warmup: () => null };
+      courses: ['CSC 101: Intro'], weakest: 'CSC 101', first: { code: 'CSC 101', title: 'Intro', venue: 'Hall A', day: 1, hour: 9 }, warmup: () => null, flags: {}, room: () => ({ hygiene: 80, decor: 1 }) };
     for (const s of SCENES) {
-      const beats = s.beats(ctx);
+      const beats = s.beats(ctx).map(b => (typeof b === 'function' ? b(ctx) : b));
       expect(beats.length).toBeGreaterThan(2);
       expect(s.crowd.length).toBeGreaterThan(0);
       for (const b of beats) {
@@ -123,6 +123,35 @@ describe('scenes', () => {
       expect(windowsOf(r, acad()).map(w => [w.day, w.from, w.to])).toEqual([[10, 14, 17.5], [11, 14, 17.5]]);
       expect(isOverdue(r, acad(), 11, 17.5)).toBe(true);
       expect(r.missFx.stress).toBeGreaterThan(0);
+    });
+  });
+
+  describe('hostel inspection and the first-week party', () => {
+    const a = { startDay: 10 };
+    const verdict = (room, flags) => sceneById('inspection').beats({ hostelName: 'Moremi Hall' }).pop()({ room: () => room, flags });
+    it('schedules the inspection in your hostel on days three and four, and the party on Friday night', () => {
+      expect(windowsOf(sceneById('inspection'), a).map(w => [w.day, w.from, w.to])).toEqual([[12, 15, 18], [13, 15, 18]]);
+      expect(sceneById('inspection').venue).toBe('hostel');
+      expect(windowsOf(sceneById('party'), a).map(w => [w.day, w.from, w.to])).toEqual([[14, 19, 23]]);
+    });
+    it('judges the room from its real state and the choices made', () => {
+      expect(verdict({ hygiene: 90, decor: 2 }, { tidy: true }).title).toContain('Commended');
+      expect(verdict({ hygiene: 90, decor: 2 }, { tidy: true }).give).toBe(1000);
+      expect(verdict({ hygiene: 70, decor: 0 }, { quick: true }).title).toContain('Satisfactory');
+      expect(verdict({ hygiene: 30, decor: 0 }, {}).title).toContain('Warning');
+    });
+    it('punishes a hidden heater unless the room was tidied, and rewards honesty', () => {
+      const caught = verdict({ hygiene: 90, decor: 1 }, { hid: true, quick: true });
+      expect(caught.lines.join(' ')).toContain('finds the heater');
+      expect(caught.cost).toBe(500);
+      expect(verdict({ hygiene: 90, decor: 1 }, { hid: true, tidy: true }).lines.join(' ')).not.toContain('finds the heater');
+      expect(verdict({ hygiene: 90, decor: 1 }, { quick: true, honest: true }).title).toContain('Commended');
+    });
+    it('gives the party a late-night choice with a real cost', () => {
+      const last = sceneById('party').beats({}).pop();
+      const stay = last.choices.find(c => c.label.includes('one more hour'));
+      expect(stay.minutes).toBeGreaterThan(0);
+      expect(stay.fx.energy).toBeLessThan(-4);
     });
   });
 });

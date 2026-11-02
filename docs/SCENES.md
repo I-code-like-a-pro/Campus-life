@@ -17,6 +17,8 @@ Story events are real places and real times. The player is told when and where, 
 | Hall meeting | The player's hostel | Days 1 and 2, 17:00 to 19:30 |
 | Matriculation | Main auditorium | Days 2 and 3, 10:00 to 13:00 |
 | Course registration | Your department's first lecture hall | Days 1 and 2, 14:00 to 17:30 |
+| Hostel inspection | The player's hostel | Days 3 and 4, 15:00 to 18:00 |
+| Freshers' night (party) | Main auditorium | Day 5 (Friday), 19:00 to 23:00 |
 | Your first lecture | The hall of your first timetable class | From 15 minutes before that class until one hour after it starts |
 
 - A notification appears when a scene opens. The HUD goal line shows what is on now or coming up.
@@ -24,6 +26,9 @@ Story events are real places and real times. The player is told when and where, 
 - If every window passes, the scene is marked **missed** with a short notice. State is stored in `state.academic.scenes[id]`.
 - Matriculation sets `academic.matric` when attended. Course registration sets `academic.registered`; skipping it adds a little stress and a notice to visit the department office.
 - The first lecture counts as real attendance for that class (`academics.attendEntry`), with preparation gained from where you sit, a warm-up question from the course's own bank, and how you take notes. If you attend the class the normal way first, the scene closes itself, so nothing is counted twice.
+- The hostel inspection judges your real room: hygiene, decorations bought, whether you tidied, and whether you hid or handed in the banned heater. The verdict (commended with a ₦1,000 prize, satisfactory, or warning with possible ₦500 fine) comes from code, not chance.
+- Freshers' night costs ₦1,000 (or carry chairs instead). A late-night choice comes with the exam the next morning: leave at once, or stay another hour for fun at the price of energy.
+- Beats may be functions (decided when reached), choices may carry `flag`, `minutes` and `prep`, and beats may `give`, `cost` or apply `fx`.
 - Scene facts are given to the AI, so NPCs can answer "when is matriculation?".
 
 ## AI in these scenes

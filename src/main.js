@@ -281,6 +281,8 @@ async function main() {
     state, meta, npcs, day, minutes: () => dayNight.state.minutes, consume: a => consume(a), pay: payQuiet,
     met: id => campusStory.met(id), name: () => state.name || 'Fresher', campusName: campus.name, courseName: () => courseOf(state.course).name,
     hostelName: () => state.hostel || '', venuePlace: type => places.find(p => p.type === type)?.name || '',
+    give: n => { state.money += n; meta.ledger('Hall prize', n); },
+    room: () => ({ hygiene: state.needs.hygiene, decor: Object.keys(state.meta.room || {}).length }),
     courseTitle: code => state.academic?.courses.find(c => c.code === code)?.title || '',
     courseLines: () => (state.academic?.courses || []).map(c => `${c.code}: ${c.title}`),
     weakest: () => state.academic?.courses.slice().sort((x, y) => x.knowledge - y.knowledge)[0]?.code || '',
