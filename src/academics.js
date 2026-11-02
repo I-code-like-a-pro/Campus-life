@@ -1,9 +1,10 @@
 import { showModal } from './modal.js';
-import { DEPTS, buildCourses } from './courses.js';
+import { DEPTS, buildCourses, bankOf } from './courses.js';
 import { QUESTIONS, shuffle } from './questions.js';
 import { courseOf } from './admissions.js';
 import { semesterHasStrike, strikeDays, lateGraceMinutes, seasonFor } from './eventengine.js';
 import { makeupHold } from './trouble.js';       // group trouble
+import { createAcademicLife, resetSemester, lecturerFacts } from './academic-life.js';
 import { orientationLine } from './campuslife-events.js';
 
 /*
@@ -64,8 +65,10 @@ export function degreeClass(cgpa) {
  * deps: { state, day(), minutes(), venues() -> lecture building names, consume({minutes, fx}), toast(text) }
  * The academic record lives in state.academic and is saved with the game.
  */
-export function createAcademics({ state, day, minutes, venues, consume, toast, onEvent = () => {}, goHome = null }) {
+export function createAcademics({ state, day, minutes, venues, consume, toast, pay = () => false, onEvent = () => {}, goHome = null }) {
   const A = () => state.academic;
+  // group academic: lecturers, handouts, group work, labs, tutorials
+  const life = createAcademicLife({ A, consume, toast, pay, boost: (code, n) => boostCourse(code, n), minutes, semDay: () => semDay() });
 
   /* ---------- setup ---------- */
   function buildSemester(a) {
@@ -82,6 +85,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     // an ASUU strike suspends the lectures on its days; they don't count against attendance
     a.strike = semesterHasStrike(a.year, a.term) ? { from: strikeDays.from, to: strikeDays.to } : null;
     if (a.strike) for (const t of a.timetable) t.cancelled = t.day >= a.strike.from && t.day <= a.strike.to;
+    resetSemester(a);
     a.reminded = {};
     a.attended = {};
     a.caTaken = false;
@@ -219,6 +223,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     }
     if (sd === CA_DAY && !a.caTaken && now >= 8 * 60 && now < 18 * 60) actions.push({ id: 'ca', label: '📝 Take CA tests' });
     if (sd === EXAM_DAY && !a.examTaken && now >= 8 * 60 && now < 20 * 60) actions.push({ id: 'exam', label: '🧪 Write exams' });
+    actions.push(...life.actions('lecture'));
     if (actions.length) return { actions, note: '' };
     if (a.strike && sd >= a.strike.from && sd <= a.strike.to) return { actions: [], note: '📢 ASUU strike: lectures are suspended until Saturday.' };
 
@@ -236,6 +241,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     if (a.phase === 'semester' && sd >= 1 && sd <= ASSIGNMENT_DUE && a.courses.some(c => !c.assign.done)) {
       actions.push({ id: 'assign', label: '📝 Work on an assignment' });
     }
+    actions.push(...life.actions('library'));
     return { actions, note: '' };
   }
 
@@ -252,7 +258,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     const a = A();
     const scores = {};
     for (const c of a.courses) {
-      const bank = QUESTIONS[c.bank] || QUESTIONS[c.bank.split('@')[0]];
+      const bank = QUESTIONS[bankOf(c)] || QUESTIONS[bankOf(c).split('@')[0]];
       let pool = bank.map((_, i) => i).filter(i => !c.usedQ.includes(i));
       if (pool.length < perCourse) pool = bank.map((_, i) => i);
       const picks = shuffle(pool).slice(0, perCourse);
@@ -286,6 +292,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
   async function run(action) {
     const a = A();
     if (!a) return;
+    if (life.handles(action.id)) { await life.run(action); return; }   // group academic (checked first so lecture/CA actions stay synchronous)
 
     if (action.id === 'attend') {
       const t = action.entry;
@@ -293,9 +300,12 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
       a.attended[key(t)] = action.late ? 'late' : 'ok';
       c.att[action.late ? 'late' : 'ok'] += 1;
       c.knowledge = Math.min(100, c.knowledge + 6);
-      const left = Math.max(30, (t.hour + LECTURE_HOURS) * 60 - minutes());
-      consume({ minutes: left, fx: { energy: -8, hunger: -8, fun: -6, stress: 3 } });
-      toast(`🎓 You attended ${t.code}${action.late ? ' (late)' : ''}.`);
+      const style = life.attendHook(c, action.late);
+      const left = Math.max(30, (t.hour + LECTURE_HOURS) * 60 - minutes() - style.minutesBack);
+      const lfx = { energy: -8, hunger: -8, fun: -6, stress: 3 };
+      for (const [k, v] of Object.entries(style.fx)) lfx[k] = (lfx[k] || 0) + v;
+      consume({ minutes: left, fx: lfx });
+      toast(`🎓 You attended ${t.code}${action.late ? ' (late)' : ''}. ${style.line}`);
       onEvent('lecture');
     } else if (action.id === 'study') {
       const c = await chooseCourse('📚 Study', 'Which course do you want to study?', a.courses, x => `${x.code} · ${x.title} (${x.knowledge}%)`);
@@ -407,6 +417,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     out.push(`Timetable: ${[...a.timetable].sort((x, y) => x.day - y.day || x.hour - y.hour).map(t => `${WEEKDAYS[t.day - 1]} ${hhmm(t.hour)} ${t.code} at ${t.venue}${t.cancelled ? ' (cancelled by strike)' : ''}`).join('; ')}.`);
     if (a.strike) out.push(`An ASUU strike affects days ${a.strike.from} to ${a.strike.to} of this semester.`);
     if (a.cgpa != null) out.push(`The player's CGPA is ${a.cgpa.toFixed(2)}.`);
+    out.push(`Lecturers: ${lecturerFacts(a).join('; ')}.`);
     if (a.carryovers?.length) out.push(`Carryovers to retake: ${a.carryovers.map(c => c.code).join(', ')}.`);
     return out;
   }
@@ -429,7 +440,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
   /** A warm-up question from the course's own bank for the lecturer to ask the room: { q, options: [{ t, ok }] } or null. */
   function warmup(code) {
     const c = A()?.courses.find(x => x.code === code);
-    const bank = c && (QUESTIONS[c.bank] || QUESTIONS[c.bank.split('@')[0]]);
+    const bank = c && (QUESTIONS[bankOf(c)] || QUESTIONS[bankOf(c).split('@')[0]]);
     if (!bank?.length) return null;
     const [q, correct, ...wrong] = bank[Math.floor(Math.random() * bank.length)];
     return { q, options: shuffle([{ t: correct, ok: true }, ...shuffle(wrong).slice(0, 2).map(t => ({ t, ok: false }))]) };

@@ -247,6 +247,7 @@ async function main() {
     consume: a => consume(a),
     toast,
     goHome: () => homeVisit.start(),      // group cycle: the portal offers a trip home during the break
+    pay: n => payQuiet(n),   // group academic
     onEvent: (name, info) => {
       switch (name) {
         case 'lecture': meta.track('lectures'); break;
@@ -853,7 +854,7 @@ async function main() {
     document.getElementById('menu').classList.remove('open');
     runModal(() => openFeedback(() => ({ state, day: day() })));
   });
-  const ACADEMIC_ACTIONS = new Set(['attend', 'study', 'assign', 'ca', 'exam']);
+  const ACADEMIC_ACTIONS = new Set(['attend', 'study', 'assign', 'ca', 'exam', 'tutorial', 'practical', 'group', 'handoutchase', 'handoutcopy']);   // group academic
 
   /** Spends game time and applies need changes (shared by building actions and academics). */
   function consume({ minutes, fx, sleep }) {

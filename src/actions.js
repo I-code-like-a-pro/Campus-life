@@ -51,7 +51,8 @@ export const ACTIONS = {
       fx: { energy: -12, fun: -8, stress: 4, hunger: -5 }, msg: 'Printed 200 pages of handouts. Ink everywhere!' },
     { id: 'pos', label: '💳 POS agent shift (3 hrs)', pay: 4500, minutes: 180, limit: 1, needs: { energy: 25 },
       fx: { energy: -16, fun: -8, stress: 7, hunger: -7 }, msg: 'Withdrawals all day. Your commission is in.' },
-    { id: 'handouts', label: '📖 Buy handouts', cost: 1500, minutes: 10, needsAcademic: true, msg: 'Handouts and past questions bought. Your preparation improved.' }
+    { id: 'handouts', label: '📖 Buy handouts', cost: 1500, minutes: 10, needsAcademic: true, msg: 'Handouts and past questions bought. Your preparation improved.' },
+    { id: 'handoutcopy', label: '📄 Buy a course handout (₦300)', needsAcademic: true }   // group academic
   ],
   lecture: [],
   library: [

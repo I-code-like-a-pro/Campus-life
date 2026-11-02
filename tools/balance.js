@@ -33,6 +33,7 @@ const JOB_CHOICES = [['biz', 'pos'], ['biz', 'print'], ['canteen', 'canteenjob']
 /** Plays `semesters` semesters and returns the results. */
 export function simulate({ course = 'cs', profile = 'average', seed = 1, semesters = 2, startMoney = 35000 } = {}) {
   const P = PROFILES[profile];
+  setSickness(0);   // the sickness level is module-global; a previous run must not leak into this one
   const rand = rng(seed * 7919 + 13);
   const state = { course, name: 'Sim', money: startMoney, needs: newNeeds(), academic: null, meta: newMeta(), hostel: 'Hostel' };
   const clock = { t: 7 * 60 };                                    // day 1, 07:00

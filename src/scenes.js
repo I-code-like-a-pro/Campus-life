@@ -6,6 +6,7 @@ import { matricPages, MATRIC_FX } from './campuslife-events.js';
 import { DEPTS } from './courses.js';
 import { MILESTONES, CONVOCATION } from './milestones.js';      // group cycle: year-structure scenes (results, resumption, exams, projects...)
 import { TROUBLE_SCENES } from './trouble.js';       // group trouble: hearings, Dean's visits, counselling, community service
+import { ACADEMIC_SCENES } from './scenes-academic.js';
 
 /*
  * Scenes: story events that happen at a real place and a real time. The player is told when and where, can walk there and
@@ -346,6 +347,7 @@ export const SCENES = [
 
 SCENES.push(...MILESTONES);                  // group cycle
 
+SCENES.push(...ACADEMIC_SCENES);   // group academic
 export const sceneById = id => SCENES.find(s => s.id === id);
 
 /* ---------------- scheduling rules (pure) ---------------- */

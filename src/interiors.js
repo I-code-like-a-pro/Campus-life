@@ -149,7 +149,7 @@ export function buildInterior(scene, place, ox) {
         box(1.3, 0.9, 0.12, 0x222a35, x, 1.85, z - 0.5);
       });
       box(9, 2.2, 0.15, 0x1f4d33, 0, 4.2, -D / 2 + 0.15);                  // price board
-      spot('Counter', '💼', 0, -3.6, 5.2, ['print', 'pos', 'handouts']);
+      spot('Counter', '💼', 0, -3.6, 5.2, ['print', 'pos', 'handouts', 'handoutcopy']);
     },
     canteen() {
       // serving counter with pots
