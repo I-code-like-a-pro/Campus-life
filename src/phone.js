@@ -4,6 +4,7 @@ import { aiConfigured } from './ainpc.js';
 import { ACHIEVEMENTS } from './meta.js';
 import { naira } from './needs.js';
 import { DECOR, owed } from './housing.js';
+import { isFee, instalmentCost } from './money.js';   // group money
 import { exportCode, parseCode } from './save.js';
 import { levelOf, CLUBS, clubSchedule, joinClub, leaveClub, MAX_CLUBS, CLUB_DUES, clubById } from './social.js';
 
@@ -121,7 +122,11 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
           unpaid.length ? 'Unpaid bills:' : 'No unpaid bills. 🎉',
           ...unpaid.map(b => `• ${b.label}: ${naira(owed(b))}, due Day ${b.due}${b.late ? ' (late fee added)' : ''}`)
         ],
-        buttons: [...unpaid.map(b => ({ label: `💳 Pay: ${b.label} (${naira(owed(b))})`, value: b.id })), { label: '← Back', value: 'b', secondary: true }]
+        buttons: [...unpaid.flatMap(b => [
+          { label: `💳 Pay: ${b.label} (${naira(owed(b))})`, value: b.id },
+          ...(isFee(b) && !b.cleared ? [{ label: `½ Pay half now (${naira(instalmentCost(b))})`, value: `part:${b.id}` }] : []),     // group money
+          ...(isFee(b) && !b.cleared && !b.mumHelped ? [{ label: '📞 Ask Mum for help with fees', value: `mum:${b.id}` }] : [])
+        ]), { label: '← Back', value: 'b', secondary: true }]
       });
       if (pick === 'b') return;
       await showModal({ title: '💳 Payment', lines: [payBill(pick)], buttons: back });

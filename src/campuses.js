@@ -93,7 +93,10 @@ for (const id of CAMPUS_ORDER) {
     { name: 'Registry', emoji: '📋', type: 'registry', x: -12, z: 36, w: 10, d: 8, h: 6, color: 0xe6e2d6, roof: 0x2f4f7a },
     { name: 'Business Centre', emoji: '💼', type: 'biz', x: -26, z: 42, w: 12, d: 10, h: 5, color: 0xdde8f0, roof: 0x3a4f66 },
     { name: 'Health Centre', emoji: '🏥', type: 'clinic', x: -24, z: -44, w: 12, d: 9, h: 5, color: 0xe8f4ee, roof: 0x2d8f6f },
-    { name: 'Campus Market', emoji: '🛒', type: 'shop', x: 26, z: -44, w: 12, d: 9, h: 4, color: 0xf0d9c2, roof: 0x7a4a2a }
+    { name: 'Campus Market', emoji: '🛒', type: 'shop', x: 26, z: -44, w: 12, d: 9, h: 4, color: 0xf0d9c2, roof: 0x7a4a2a },
+    // group money: the bookshop (north-west) and the bank with an ATM (south-west), off the paths and clear of every other building
+    { name: 'Campus Bookshop', emoji: '📚', type: 'books', x: -40, z: -9, w: 9, d: 8, h: 5, color: 0xf3e0c4, roof: 0x7a3b2b },
+    { name: 'Campus Bank', emoji: '🏦', type: 'bank', x: -40, z: 9, w: 9, d: 8, h: 5, color: 0xdfe8f0, roof: 0x1f4f7a }
   );
 }
 CAMPUSES.home.buildings.push({ name: 'Chemist', emoji: '💊', type: 'clinic', x: 26, z: 44, w: 10, d: 8, h: 5, color: 0xe8f4ee, roof: 0x2d8f6f });

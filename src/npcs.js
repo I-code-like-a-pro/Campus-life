@@ -213,6 +213,10 @@ export function interiorNpcDefs(place, interior) {
       return [{ ...base, id: `nurse-${place.name}`, name: 'Nurse Amaka', hours: [[8, 22]], role: 'Nurse', emoji: '🩺', dialogue: 'nurse', shirt: 0xf4f7f5, skin: 0x5a3a26 }];
     case 'biz':
       return [{ ...base, id: `biz-${place.name}`, name: 'Madam Ify', hours: [[8, 20]], role: 'Business Centre manager', emoji: '💼', dialogue: 'bizmanager', shirt: 0x16a085, skin: 0x8d5a3b }];
+    case 'books':
+      return [{ ...base, id: `books-${place.name}`, name: 'Mr. Okafor', hours: [[8, 19]], role: 'Bookshop owner', emoji: '📚', dialogue: 'bookseller', shirt: 0x8e5a2f, skin: 0x5a3a26 }];
+    case 'bank':
+      return [{ ...base, id: `bank-${place.name}`, name: 'Mrs. Danjuma', hours: [[8, 16]], role: 'Bank teller', emoji: '🏦', dialogue: 'teller', shirt: 0x1f4f7a, skin: 0x6b4a2f }];
     case 'registry':
       // the four clearance officers, one behind each counter, working office hours
       return DESKS.map((d, i) => ({ ...d.npc, ...base, x: interior.ox + REGISTRY_SLOTS[i], z: -6.4, hours: [OFFICE_HOURS] }));

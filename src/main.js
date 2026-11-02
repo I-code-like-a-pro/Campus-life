@@ -25,6 +25,8 @@ import { buildStory, honoursText, shareCard } from './ending.js';
 import { createNpcs, npcDefsFor, crowdDefs, interiorNpcDefs } from './npcs.js';
 import { DIALOGUES } from './dialogues.js';
 import { WORLD_DIALOGUES } from './worlddialogues.js';
+import { MONEY_DIALOGUES } from './moneydialogues.js';   // group money
+import { createMoney } from './moneyui.js';             // group money
 import { DESKS, nextStep } from './clearance.js';
 import { clearanceFacts } from './documents.js';
 import { createScenes } from './scenes.js';
@@ -46,7 +48,7 @@ import { stopShort } from './vehicles.js';
 import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS, joinClub, MAX_CLUBS } from './social.js';
 import { createCampusStory, waterAdjust } from './campuslife-events.js';   // group B: story beats
 
-const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES };
+const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES, ...MONEY_DIALOGUES };   // group money
 
 const SPEED = 9;
 const REACH = 5;              // how close you must be to a building to use it
@@ -246,6 +248,7 @@ async function main() {
         case 'exam': meta.track('exams'); break;
         case 'graduated': meta.track('graduated'); if (state.academic.cgpa >= 4.5) meta.track('firstClass'); break;
         case 'semesterStart':
+          money.semesterStart(info);   // group money
           if (state.hostel && addBill(state.meta.bills, newBill(info.year, info.term, info.startDay))) {
             meta.notify({ icon: '🏠', title: 'Hostel dues', text: `Hostel dues of ${naira(HOSTEL_DUES)} are due on Friday. Pay in your phone under My room and bills.` });
           }
@@ -273,6 +276,7 @@ async function main() {
   });
   if (state.clearance?.done) academics.init();      // also covers saves made before academics existed
 
+  const money = createMoney({ state, meta, academics, day, give: n => { state.money += n; }, toast, sfx, save });   // group money
   // --- group B: hiccups, matriculation, orientation, bursary (see campuslife-events.js) ---
   const campusStory = createCampusStory({
     state, meta, day, minutes: () => dayNight.state.minutes, consume: a => consume(a),
@@ -407,7 +411,9 @@ async function main() {
   function afterTime(_crossed, prevDay) {
     for (let d = prevDay + 1; d <= dayNight.state.day; d++) {
       dailyHealth(d);
+      money.daily(d);   // group money
       for (const ev of dailyBillCheck(state.meta.bills, d)) {
+        if (ev.bill.kind === 'fees') { money.billEvent(ev); continue; }   // group money
         if (ev.type === 'reminder') meta.notify({ icon: '💳', title: ev.bill.npc ? `Repay ${ev.bill.label.replace('Repay ', '')} tomorrow` : 'Hostel dues tomorrow', text: `${naira(owed(ev.bill))} is due tomorrow. Pay in your phone.` });
         else if (ev.bill.npc) {
           addRelation({ id: ev.bill.npc, name: ev.bill.label.replace('Repay ', '') }, -10);
@@ -775,11 +781,12 @@ async function main() {
     getSnapshot: () => snapshot(),
     applyImportedSave,
     payBill: id => {
+      if (/^(part|mum):/.test(id)) return money.billAction(id);   // group money
       const bill = state.meta.bills.find(b => b.id === id);
       const r = payHostelBill(state.meta.bills, id, state.money);
       if (r.ok) {
         state.money -= r.cost;
-        meta.ledger(bill.npc ? bill.label : 'Hostel dues', -r.cost, { count: !bill.npc });
+        meta.ledger(bill.npc || bill.kind ? bill.label : 'Hostel dues', -r.cost, { count: !bill.npc });
         if (bill.npc) addRelation({ id: bill.npc, name: bill.label.replace('Repay ', '') }, 3); else meta.track('billsPaid');
         sfx('coin');
       }
@@ -883,6 +890,8 @@ async function main() {
     if (a.id === 'enter') { if (activePlace) enterPlace(activePlace); return; }
     if (a.id === 'exit') { leavePlace(false); return; }
     if (a.id === 'results') { checkResults(); return; }
+    if (a.money) { runModal(() => money.run(a)); return; }   // group money
+    if (a.id === 'exam' && money.blockExam()) return;   // group money
     if (a.id === 'talk') { runTalk(a.npc); return; }
     if (a.id === 'fbjoin') { if (canDo(a) && football?.startMatch()) toast('📣 Kick-off! 2 minutes 30. You are in blue, attacking east (right).'); else toast('You are too tired to play.'); return; }
     if (a.id === 'fbquit') { football?.endMatch(true); return; }
