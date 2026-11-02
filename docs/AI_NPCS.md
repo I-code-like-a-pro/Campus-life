@@ -74,3 +74,15 @@ Rough cost: each chat is one short request and one short reply. Check the provid
 - AI-generated exam questions. Exam content is still written and reviewed by hand, so grades stay fair.
 - AI-driven NPC schedules or autonomous behaviour. NPC movement is still scripted.
 - Voice.
+
+## After deployment: the smoke test
+
+`tools/ai-smoke.js` sends six test questions (two ask for real exam answers from the question banks, one tries to override the rules, one asks for Pidgin) and checks every reply: at most about 45 words and three sentences, no Pidgin marker words, no unusual characters, and the exam answer never appears.
+
+```bash
+node tools/ai-smoke.js                                  # mock mode (default): no key, no network; proves the script and the rules
+AI_SMOKE_URL=https://yourgame.vercel.app/api/npc node tools/ai-smoke.js   # real: tests your DEPLOYED proxy (the key stays on the server)
+AI_API_KEY=... node tools/ai-smoke.js --direct          # real: calls the provider directly; set the key in your own shell only
+```
+
+Run the real mode once after every deployment and whenever you change `AI_MODEL` or the prompt in `server/npc-core.js`. It exits with code 1 if any check fails. Each real run costs about six short chats and counts toward the per-network daily limit (80 by default). A pass is not proof: also read the replies yourself and send a few more questions by hand. Mock mode only echoes the question, so it cannot catch a bad model.

@@ -51,6 +51,7 @@ import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS
 import { createCampusStory, waterAdjust } from './campuslife-events.js';   // group B: story beats
 import { ensurePeople, setRivalSeed, faithPanel, FAITH_TYPES } from './people.js';   // group people
 import { PEOPLE_DIALOGUES, rivalNews } from './peopledialogues.js';   // group people
+import { initLaunch, createLaunch } from './launch.js';   // group launch
 
 const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES, ...MONEY_DIALOGUES, ...PEOPLE_DIALOGUES };   // group money, group people
 
@@ -65,6 +66,7 @@ const MEAL_IDS = new Set(['jollof', 'pie', 'zobo', 'momfood', 'snack', 'vendorha
 const CROWD_BY_QUALITY = { low: 4, medium: 8, high: 12 };
 
 installErrorHandlers();
+initLaunch();   // group launch
 
 async function main() {
   // ---- start: new game, continue, or straight into the campus after the bus ride ----
@@ -112,6 +114,7 @@ async function main() {
 
   const engine = createEngine();
   applySettings(engine);
+  const launch = createLaunch(engine, () => (inside ? inside.place.type : 'campus'));   // group launch
   const { colliders, places } = buildCampus(engine.scene, campus, []);
   const input = createInput();
   const hud = createHud();
@@ -1291,6 +1294,7 @@ async function main() {
     rides.update(real);
     soundTick({ dt: real, hour: dayNight.state.minutes / 60, inside: !!inside, placeType: inside?.place.type, sceneOn: !!(inside && scenes.openAt(inside.place.name)), riding: rides.active, raining: events.raining, walking: lastMoveLen > 0.08, stride: lastMoveLen });   // group sound
     engine.renderer.render(engine.scene, engine.camera);
+    launch.frame(now, inside, interiors);   // group launch
     requestAnimationFrame(frame);
   }
 
@@ -1323,7 +1327,9 @@ async function main() {
     scenes, trouble, checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
     football, runEnding, mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
-    addRelation, relation, boostNearby, engine, colliders, resolveCollisions, talkContext   // group people: talkContext
+    addRelation, relation, boostNearby, engine, colliders, resolveCollisions,
+    talkContext,   // group people
+    launch   // group launch: launch.report() prints a performance row
   };
 }
 

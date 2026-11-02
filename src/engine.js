@@ -1,11 +1,12 @@
 import * as THREE from 'three';
+import { settings } from './settings.js';
 
 // three.js r155+ dropped the legacy light scaling, so light intensities are multiplied by this
 // to keep the look the same as the original prototype.
 export const LIGHT_SCALE = Math.PI;
 
 export function createEngine() {
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: settings.quality !== 'low', powerPreference: 'high-performance' });   // Low graphics: no anti-aliasing (takes effect on the next load)
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   document.body.prepend(renderer.domElement);
 

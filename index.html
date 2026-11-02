@@ -15,8 +15,8 @@
     <div class="pill" id="clock"><span id="sun">🌞</span><span id="time">07:00</span><span id="day">Day 1</span></div>
     <div class="right">
       <div class="pill" id="weather">☀️</div>
-      <button class="pill iconbtn" id="portalbtn" aria-label="Phone">📱<span id="badge" hidden></span></button>
-      <button class="pill iconbtn" id="menubtn" aria-label="Menu">☰</button>
+      <button class="pill iconbtn" id="portalbtn" aria-label="Phone" data-i18n-label="hud.phone">📱<span id="badge" hidden></span></button>
+      <button class="pill iconbtn" id="menubtn" aria-label="Menu" data-i18n-label="hud.menu">☰</button>
       <button class="pill iconbtn" id="logbtn" aria-label="Campus gist log" hidden>📜</button>
     </div>
   </div>
@@ -45,14 +45,14 @@
   <div id="banner"><b id="bt"></b><span id="bm"></span></div>
   <div id="toast"></div>
   <div id="tip" hidden></div>
-  <div id="log"><h4>Campus gist</h4><div id="loglist">Nothing yet. Just vibe.</div></div>
+  <div id="log"><h4 data-i18n="hud.gist">Campus gist</h4><div id="loglist">Nothing yet. Just vibe.</div></div>
   <div id="menu">
     <h4 id="menuTitle"></h4>
-    <button id="resume">Resume</button>
-    <button id="storybtn" hidden>🎓 Your story</button>
-    <button id="feedbackbtn">💡 Send feedback</button>
-    <button id="aboutbtn">ℹ️ About and legal</button>
-    <button id="newgame" class="danger">New game (erases save)</button>
+    <button id="resume" data-i18n="hud.resume">Resume</button>
+    <button id="storybtn" data-i18n="hud.story" hidden>🎓 Your story</button>
+    <button id="feedbackbtn" data-i18n="hud.feedback">💡 Send feedback</button>
+    <button id="aboutbtn" data-i18n="hud.about">ℹ️ About and legal</button>
+    <button id="newgame" class="danger" data-i18n="hud.newgame">New game (erases save)</button>
   </div>
 
   <div id="fbhud" hidden></div>
@@ -74,26 +74,26 @@
   <div id="start">
     <div class="card-wrap" id="step1">
       <h1>Campus Life</h1>
-      <p class="sub">You wrote JAMB. Now the waiting begins.</p>
+      <p class="sub" data-i18n="start.sub">You wrote JAMB. Now the waiting begins.</p>
       <p class="preview-note">🚧 Early preview: art and content are still placeholder. Your ideas shape the game, so tap ☰ then <b>Send feedback</b> any time.</p>
-      <label class="field">Your name
+      <label class="field"><span data-i18n="start.name">Your name</span>
         <input id="nameInput" maxlength="16" placeholder="e.g. Tunde" autocomplete="off">
       </label>
-      <label class="field">Where do you live?
+      <label class="field"><span data-i18n="start.town">Where do you live?</span>
         <select id="townInput"></select>
       </label>
-      <p class="label">Your background</p>
+      <p class="label" data-i18n="start.background">Your background</p>
       <div id="bgs"></div>
-      <button id="next" class="primary">Next: fill your JAMB form</button>
+      <button id="next" class="primary" data-i18n="start.next">Next: fill your JAMB form</button>
       <button id="continue" class="ghost" hidden></button>
       <p class="legal-links"><a href="/about.html" target="_blank" rel="noopener">About</a> · <a href="/privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="/terms.html" target="_blank" rel="noopener">Terms</a><br>Fan-made game. Not affiliated with any university or institution.</p>
     </div>
     <div class="card-wrap" id="step2" hidden>
-      <h1>JAMB / CAPS form</h1>
-      <p class="sub">Choose your university and course. You get two choices.</p>
+      <h1 data-i18n="start.jambTitle">JAMB / CAPS form</h1>
+      <p class="sub" data-i18n="start.jambSub">Choose your university and course. You get two choices.</p>
       <div id="choices"></div>
       <p id="formErr" class="err"></p>
-      <button id="submitForm" class="primary">Submit and wait for results</button>
+      <button id="submitForm" class="primary" data-i18n="start.submit">Submit and wait for results</button>
     </div>
   </div>
 

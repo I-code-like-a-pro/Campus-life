@@ -30,6 +30,8 @@ New game → JAMB form → home → JAMB result → admission list → Mum's gif
 ## Needs a real phone (🧪)
 | Check | Notes |
 |---|---|
+| Performance overlay (`?perf=1`) on a real phone: fill the table in PERFORMANCE.md for campus and each interior | 🧪 tooling ready |
+| High contrast on, text size 130%, at 375x812, 320x568 and 667x375: nothing overlaps, targets stay 44px | 🧪 desktop-checked only |
 | Frame rate on a mid-range Android on mobile data | Worst case measured on UNILAG is now 88 draw calls (it was 115 before static scenery was baked into one mesh); the phone number is unknown |
 | iPhone Safari: audio starts after the first tap, joystick works, safe areas respected | 🧪 |
 | Samsung Internet and Chrome on Android | 🧪 |

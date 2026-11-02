@@ -20,7 +20,7 @@ performance testing and legal sign-off. Those are listed as 🔒 below, with wha
 | Error tracking | 🟡 | Errors are logged locally (last 20); sending is opt-in and needs an endpoint (`VITE_TELEMETRY_URL`) |
 | Analytics and KPIs | 🟡 | Consent-based event tracking exists; no dashboard or endpoint yet |
 | TypeScript migration | ⬜ | Large mechanical change; best done as its own pass with the tests as a safety net |
-| Performance baseline on a real phone | 🟡 | Trees, lamps and windows are instanced: worst case 87 draw calls (was 130), interiors about 40. Bundle is 208 KB gzipped. Not yet measured on a phone. Draw-call and FPS budgets in the spec are unverified |
+| Performance baseline on a real phone | 🟡 | Trees, lamps and windows are instanced: worst case 87 draw calls (was 130), interiors about 40. Bundle is 208 KB gzipped. Debug overlay (`?perf=1`), per-place budget table and phone measurement procedure now exist ([PERFORMANCE.md](PERFORMANCE.md)); hidden interiors, auto Low graphics on weak devices. Still NOT measured on a phone |
 | Content in data files | 🟡 | Courses, questions, campuses, actions, achievements are already data; dialogue is still code |
 
 ## 4.1 Accounts, onboarding and saves
@@ -138,10 +138,10 @@ performance testing and legal sign-off. Those are listed as 🔒 below, with wha
 | ID | Status | Notes |
 |---|---|---|
 | F-240 Mobile-first HUD | 🟡 | Phone layout with a resizable text scale and handedness option; not yet tested on real devices |
-| F-241 Readable text and signs | ✅ | Smaller labels that fade with distance. High-contrast mode not built |
+| F-241 Readable text and signs | ✅ | Smaller labels that fade with distance. High-contrast setting now restyles HUD, buttons, dialogs and landmark signs (checked at 375px in a desktop browser; not on a phone) |
 | F-242 Portal, map, inventory | 🟡 | Portal and phone apps exist; map and inventory do not |
-| F-243 Accessibility | 🟡 | Text size, reduced motion, focus outlines. No screen-reader support for the 3D scene, no colour-blind mode |
-| F-244 Localisation | ⬜ | Strings are inline in the code |
+| F-243 Accessibility | 🟡 | Text size, reduced motion, high contrast, focus outlines. No screen-reader support for the 3D scene, no colour-blind mode |
+| F-244 Localisation | 🟡 | `t(key)` layer with English fallback (`src/i18n.js`); start screen, HUD, phone menu and Settings moved over; picker lists only reviewed languages (English only today). Yoruba, Igbo and Hausa are empty stubs that need native-speaker review. Most in-game text is still inline |
 | F-245 Loading and offline | 🟡 | 193 KB gzipped bundle, installable manifest and a service worker. Not tested offline on a device |
 
 ## 4.14 Audio and art
@@ -164,3 +164,13 @@ performance testing and legal sign-off. Those are listed as 🔒 below, with wha
 3. **Large content (questions, NPCs, dialogue, events):** subject-matter reviewers and native Pidgin reviewers; the pipelines to add content are in place.
 4. **Legal:** permission for real university logos, a privacy policy and terms before accounts or payments launch.
 5. **Real-device testing:** a mid-range Android phone to measure frame rate and load time against the spec budgets.
+
+## Launch-readiness additions
+| Item | Status | Notes |
+|---|---|---|
+| Performance overlay and budgets | ✅ tooling, 🧪 numbers | `src/perf.js`, `?perf=1`, table in [PERFORMANCE.md](PERFORMANCE.md) with empty result cells to fill on a real phone |
+| High-contrast mode | ✅ | Settings toggle; panels, buttons, inputs and landmark signs |
+| Language scaffold | 🟡 | `src/i18n.js`, `src/lang/`; English only is shown; stubs for Yoruba, Igbo, Hausa are hidden until reviewed |
+| SaveStore and cloud save design | 🟡 | `src/savestore.js`: local store (current behaviour), disabled remote stub, tested conflict rules; saves now carry `savedAt`. No backend, sign-in or UI yet: see [CLOUD_SAVE.md](CLOUD_SAVE.md) |
+| AI smoke test | ✅ mock, 🧪 real | `tools/ai-smoke.js`; real mode needs the deployed proxy and the owner's key on the server |
+| Content review kit | ✅ | `tools/export-content.js` and [REVIEW_KIT.md](REVIEW_KIT.md); reviewer sign-off still outstanding |

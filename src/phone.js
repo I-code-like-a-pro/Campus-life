@@ -1,6 +1,8 @@
 import { peopleSummary, ensurePeople } from './people.js';   // group people
 import { showModal } from './modal.js';
 import { settings, setSetting } from './settings.js';
+import { t, availableLanguages, getLanguage } from './i18n.js';
+import { perfToggleUnlocked } from './launch.js';
 import { aiConfigured } from './ainpc.js';
 import { ACHIEVEMENTS } from './meta.js';
 import { naira } from './needs.js';
@@ -13,9 +15,19 @@ const SAVE_STEP = 5000;
 const MUM_GIFT = 3000;
 const MUM_COOLDOWN_DAYS = 3;
 
-const onOff = v => (v ? 'On' : 'Off');
+const onOff = v => t(v ? 'common.on' : 'common.off');
 const QUALITY = ['low', 'medium', 'high'];
 const TEXT_SIZES = [0.9, 1, 1.15, 1.3];
+
+async function languageMenu() {
+  const langs = availableLanguages();      // only reviewed languages appear here
+  const pick = await showModal({
+    title: t('settings.languageTitle'),
+    lines: [t('settings.languageNote')],
+    buttons: [...langs.map(l => ({ label: `${l.code === getLanguage() ? '✓ ' : ''}${l.native}`, value: l.code })), { label: t('common.back'), value: 'b', secondary: true }]
+  });
+  if (pick !== 'b') setSetting('language', pick);
+}
 const next = (list, v) => list[(list.indexOf(v) + 1) % list.length];
 
 /**
@@ -212,27 +224,31 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
   async function settingsMenu() {
     for (;;) {
       const pick = await showModal({
-        title: '⚙️ Settings',
-        lines: ['Tap an option to change it.'],
+        title: t('settings.title'),
+        lines: [t('settings.intro')],
         buttons: [
-          { label: `🔊 Sound effects: ${onOff(settings.sound)}`, value: 'sound' },
-          { label: `🎵 Music: ${onOff(settings.music)}`, value: 'music' },
-          { label: `📳 Vibration: ${onOff(settings.vibration)}`, value: 'vibration' },
-          { label: `🖼️ Graphics: ${settings.quality}`, value: 'quality' },
-          { label: `🔤 Text size: ${Math.round(settings.textSize * 100)}%`, value: 'textSize' },
-          { label: `✋ Joystick on the ${settings.leftHanded ? 'right' : 'left'}`, value: 'leftHanded' },
-          { label: `🐢 Reduced motion: ${onOff(settings.reducedMotion)}`, value: 'reducedMotion' },
-          { label: `💡 Tutorial hints: ${onOff(settings.hints)}`, value: 'hints' },
-          { label: `🗺️ Minimap: ${onOff(settings.minimap)}`, value: 'minimap' },
+          { label: t('settings.sound', { state: onOff(settings.sound) }), value: 'sound' },
+          { label: t('settings.music', { state: onOff(settings.music) }), value: 'music' },
+          { label: t('settings.vibration', { state: onOff(settings.vibration) }), value: 'vibration' },
+          { label: t('settings.quality', { value: t(`quality.${settings.quality}`) }), value: 'quality' },
+          { label: t('settings.textSize', { value: Math.round(settings.textSize * 100) }), value: 'textSize' },
+          { label: t('settings.highContrast', { state: onOff(settings.highContrast) }), value: 'highContrast' },
+          { label: t(settings.leftHanded ? 'settings.joystickRight' : 'settings.joystickLeft'), value: 'leftHanded' },
+          { label: t('settings.reducedMotion', { state: onOff(settings.reducedMotion) }), value: 'reducedMotion' },
+          { label: t('settings.hints', { state: onOff(settings.hints) }), value: 'hints' },
+          { label: t('settings.minimap', { state: onOff(settings.minimap) }), value: 'minimap' },
           { label: `💞 Crushes and dates (light, age-appropriate): ${onOff(settings.crushes)}`, value: 'crushes' },   // group people
-          ...(aiConfigured() ? [{ label: `🤖 AI chat with NPCs: ${onOff(settings.aiChat)}`, value: 'aiChat' }] : []),
-          { label: `📊 Share anonymous usage data: ${onOff(settings.analytics)}`, value: 'analytics' },
-          { label: '💾 Export my save', value: 'export' },
-          { label: '📥 Import a save', value: 'import' },
-          { label: '← Back', value: 'b', secondary: true }
+          ...(aiConfigured() ? [{ label: t('settings.aiChat', { state: onOff(settings.aiChat) }), value: 'aiChat' }] : []),
+          { label: t('settings.analytics', { state: onOff(settings.analytics) }), value: 'analytics' },
+          { label: t('settings.language', { value: availableLanguages().find(l => l.code === getLanguage())?.native || 'English' }), value: 'language' },
+          ...(perfToggleUnlocked() ? [{ label: t('settings.perf', { state: onOff(settings.perfOverlay) }), value: 'perfOverlay' }] : []),
+          { label: t('settings.export'), value: 'export' },
+          { label: t('settings.import'), value: 'import' },
+          { label: t('common.back'), value: 'b', secondary: true }
         ]
       });
       if (pick === 'b') return;
+      if (pick === 'language') { await languageMenu(); continue; }
       if (pick === 'export') { await exportSaveScreen(); continue; }
       if (pick === 'import') { await importSaveScreen(); continue; }
       const v = settings[pick];
@@ -245,18 +261,18 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
     for (;;) {
       const u = meta.unread();
       const buttons = [
-        ...(state.academic ? [{ label: '🎓 Student portal', value: 'portal' }] : []),
-        { label: '🗺️ Map and travel', value: 'map' },
-        ...(state.hostel || state.meta.bills.length ? [{ label: '🏠 My room and bills', value: 'room' }] : []),
-        { label: '🏦 Bank', value: 'bank' },
-        { label: '👥 Friends', value: 'friends' },
-        ...(state.academic ? [{ label: '🎪 Clubs', value: 'clubs' }] : []),
-        { label: `💬 Messages${u ? ` (${u} new)` : ''}`, value: 'messages' },
-        { label: '🏆 Goals and achievements', value: 'goals' },
-        { label: '⚙️ Settings', value: 'settings' },
-        { label: 'Close', value: 'x', secondary: true }
+        ...(state.academic ? [{ label: t('phone.portal'), value: 'portal' }] : []),
+        { label: t('phone.map'), value: 'map' },
+        ...(state.hostel || state.meta.bills.length ? [{ label: t('phone.room'), value: 'room' }] : []),
+        { label: t('phone.bank'), value: 'bank' },
+        { label: t('phone.friends'), value: 'friends' },
+        ...(state.academic ? [{ label: t('phone.clubs'), value: 'clubs' }] : []),
+        { label: u ? t('phone.messagesNew', { n: u }) : t('phone.messages'), value: 'messages' },
+        { label: t('phone.goals'), value: 'goals' },
+        { label: t('phone.settings'), value: 'settings' },
+        { label: t('common.close'), value: 'x', secondary: true }
       ];
-      const pick = await showModal({ title: '📱 Phone', lines: [`${state.name} · ${naira(state.money)}`], buttons });
+      const pick = await showModal({ title: t('phone.title'), lines: [`${state.name} · ${naira(state.money)}`], buttons });
       if (pick === 'x') return;
       if (pick === 'map') { onOpenMap(); return; }
       if (pick === 'portal') await academics.openPortal();
