@@ -30,6 +30,7 @@ import { createMoney } from './moneyui.js';             // group money
 import { DESKS, nextStep } from './clearance.js';
 import { clearanceFacts } from './documents.js';
 import { createScenes } from './scenes.js';
+import { createHomeVisit } from './homevisit.js';      // group cycle
 import { createAcademics } from './academics.js';
 import { createMeta } from './meta.js';
 import { ALLOWANCE, FARE, TRANSPORT_GIFT } from './economy.js';
@@ -184,6 +185,7 @@ async function main() {
     const story = currentStory();
     if (ceremony) {
       if (kind === 'graduated') {
+        await scenes.convocation();      // group cycle: the gown, the procession and the family photo come first
         await showModal({
           title: '🎓 Convocation day',
           lines: ['The hall is full. Parents are waving phones and the band is playing.', `${state.name}, ${story.course}, ${campus.name}.`, honoursText(state.academic.cgpa), `Degree class: ${story.degree} · CGPA ${story.cgpa.toFixed(2)}`],
@@ -238,6 +240,7 @@ async function main() {
     },
     consume: a => consume(a),
     toast,
+    goHome: () => homeVisit.start(),      // group cycle: the portal offers a trip home during the break
     onEvent: (name, info) => {
       switch (name) {
         case 'lecture': meta.track('lectures'); break;
@@ -301,6 +304,28 @@ async function main() {
     weakest: () => state.academic?.courses.slice().sort((x, y) => x.knowledge - y.knowledge)[0]?.code || '',
     boost: (code, n) => academics.boostCourse(code, n), warmup: code => academics.warmup(code), attendEntry: (t, late) => academics.attendEntry(t, late),
     rhythm: () => academics.facts().find(l => l.startsWith('Weekly rhythm'))?.replace(/^Weekly rhythm: /, 'Every semester week runs on this rhythm: ') || ''
+  });
+
+  // group cycle: a trip home for the break (bus or flight out of the main gate, a home scene, back through the gate on the same save)
+  const homeVisit = createHomeVisit({
+    state, meta, day, minutes: () => dayNight.state.minutes, uni: campus.id, naira, campusName: campus.name, name: () => state.name || 'Student',
+    pay: payQuiet, give: n => { state.money += n; meta.ledger('Gift at home', n); }, consume: a => consume(a), met: id => campusStory.met(id),
+    leave: async kind => {
+      if (inside) leavePlace(true);
+      player.group.position.set(ARRIVAL.x, 0, ARRIVAL.z);
+      await rideAway(kind);
+      fadeEl.classList.add('on');
+      await new Promise(r => setTimeout(r, 500));
+    },
+    skipTime: minutes => { const prevDay = dayNight.state.day; tickNeeds(state.needs, minutes); applyEffects(state.needs, { hunger: 40, energy: 45, hygiene: 20 }); afterTime(dayNight.skip(minutes), prevDay); },
+    back: async kind => {
+      rides.clear();
+      const from = { x: ARRIVAL.x, z: kind === 'plane' ? ARRIVAL.z + 120 : ARRIVAL.z + 52 };
+      player.group.position.set(from.x, 0, from.z);
+      engine.camera.position.set(from.x, 18, from.z + 24);
+      fadeEl.classList.remove('on');
+      await rides.arrive({ kind, from, path: [{ x: ARRIVAL.x, z: ARRIVAL.z + 10 }], dest: { x: ARRIVAL.x, z: ARRIVAL.z }, plane: kind === 'plane' ? 'landing' : null });
+    }
   });
 
   const events = createEvents(engine.scene, () => {});

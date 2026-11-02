@@ -47,6 +47,9 @@ export function applyStanding(a, gpa) {
   return { probation: a.probation, withdrawn: !!a.withdrawn };
 }
 
+/** The day the next semester begins: a week after this one started, or later if a trip home stretched the break (`breakUntil`). */
+export const nextStartDay = a => Math.max(a.startDay + 7, a.breakUntil || 0);
+
 export function degreeClass(cgpa) {
   if (cgpa >= 4.5) return 'First Class';
   if (cgpa >= 3.5) return 'Second Class Upper';
@@ -60,7 +63,7 @@ export function degreeClass(cgpa) {
  * deps: { state, day(), minutes(), venues() -> lecture building names, consume({minutes, fx}), toast(text) }
  * The academic record lives in state.academic and is saved with the game.
  */
-export function createAcademics({ state, day, minutes, venues, consume, toast, onEvent = () => {} }) {
+export function createAcademics({ state, day, minutes, venues, consume, toast, onEvent = () => {}, goHome = null }) {
   const A = () => state.academic;
 
   /* ---------- setup ---------- */
@@ -83,6 +86,10 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     a.caTaken = false;
     a.examTaken = false;
     a.lastViewed = false;
+    if (a.studyPlan) {      // group cycle: a study plan made on results day gives a head start in every course
+      for (const c of a.courses) c.knowledge = Math.min(100, c.knowledge + a.studyPlan);
+      a.studyPlan = 0;
+    }
   }
 
   /** Called when clearance is complete: the first semester starts the next day. */
@@ -141,7 +148,8 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
   function nextSemester() {
     const a = A();
     if (a.term === 1) a.term = 2; else { a.year += 1; a.term = 1; }
-    a.startDay += 7;
+    a.startDay = nextStartDay(a);
+    a.breakUntil = 0;
     a.phase = 'semester';
     buildSemester(a);
     onEvent('semesterStart', { year: a.year, term: a.term, startDay: a.startDay });
@@ -162,7 +170,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
       events.push('results');
       if (a.graduated) events.push('graduated');
       if (a.withdrawn) events.push('withdrawn');
-    } else if (a.phase === 'break' && sd >= 8 && !a.graduated && !a.withdrawn) {
+    } else if (a.phase === 'break' && day() >= nextStartDay(a) && !a.graduated && !a.withdrawn) {
       nextSemester();
     }
     return events;
@@ -183,7 +191,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     if (a.withdrawn) return '📄 You withdrew from the university';
     if (a.phase === 'pre') return orientationLine(a, 0) || `🎓 Semester starts on Day ${a.startDay}`;
     const sd = semDay(), now = minutes();
-    if (a.phase === 'break') return a.lastViewed ? '😴 Break day: next semester starts tomorrow' : '📄 Results are out! Open the portal 📱';
+    if (a.phase === 'break') return a.lastViewed ? (nextStartDay(a) > day() + 1 ? `😴 Break: the next semester starts on Day ${nextStartDay(a)}` : '😴 Break day: next semester starts tomorrow') : '📄 Results are out! Open the portal 📱';
     if (sd === EXAM_DAY && !a.examTaken && now < 20 * 60) return '🧪 Exams today! Go to a lecture hall';
     if (sd === CA_DAY && !a.caTaken && now < 18 * 60) return '📝 CA tests today! Go to a lecture hall';
     const next = nextLecture();
@@ -339,10 +347,12 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
           { label: '🗓️ Timetable', value: 'tt' },
           { label: '📚 Courses and assignments', value: 'courses' },
           { label: '📄 Results and CGPA', value: 'results' },
+          ...(goHome && a.phase === 'break' && !a.graduated && !a.withdrawn ? [{ label: '🏠 Go home for the break', value: 'home' }] : []),      // group cycle
           { label: 'Close', value: 'x', secondary: true }
         ]
       });
       if (pick === 'x') return;
+      if (pick === 'home') { await goHome(); return; }
 
       let title = '', lines = [];
       if (pick === 'tt') {

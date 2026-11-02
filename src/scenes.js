@@ -3,13 +3,17 @@ import { CLUBS, clubSchedule, CLUB_DUES, MAX_CLUBS } from './social.js';
 import { hash01 } from './eventengine.js';
 import { seedOf } from './clearance.js';
 import { matricPages, MATRIC_FX } from './campuslife-events.js';
+import { DEPTS } from './courses.js';
+import { MILESTONES, CONVOCATION } from './milestones.js';      // group cycle: year-structure scenes (results, resumption, exams, projects...)
 
 /*
  * Scenes: story events that happen at a real place and a real time. The player is told when and where, can walk there and
  * attend, or skip it. Skipping is a genuine choice (a lecture may clash, or the player may be tired); it simply means the
  * moment passes. Pure scheduling rules are exported for tests; createScenes() wires them to the game.
  *
- * State lives in state.academic.scenes[id] = { notified: day, status: 'attended' | 'missed' }.
+ * State lives in state.academic.scenes[key] = { notified: day, status: 'attended' | 'missed' }.
+ * The key is the scene id for the nine first-week scenes. A scene with `repeat: true` runs in later semesters too and its key is
+ * `id@year.term`, so each semester has its own status. Such a scene gives `active(a)` to say in which semesters it runs.
  */
 
 const pad = n => String(n).padStart(2, '0');
@@ -338,17 +342,27 @@ export const SCENES = [
   },
 ];
 
+SCENES.push(...MILESTONES);                  // group cycle
+
 export const sceneById = id => SCENES.find(s => s.id === id);
 
 /* ---------------- scheduling rules (pure) ---------------- */
 
 export const sceneState = (a, id) => a?.scenes?.[id] || {};
-export const windowsOf = (def, a) => (a && a.year === 1 && a.term === 1 ? def.windows(a) : []);      // first semester only
+/** Where a scene's status is stored: its id, or `id@year.term` for scenes that repeat every semester. */
+export const keyOf = (def, a) => (def.repeat && a ? `${def.id}@${a.year}.${a.term}` : def.id);
+const stateOf = (def, a) => sceneState(a, keyOf(def, a));
+/** The first-week scenes run in year 1, semester 1 only; a `repeat` scene decides with `active(a)` (default: every semester). */
+export const windowsOf = (def, a) => {
+  if (!a) return [];
+  const on = def.repeat ? (def.active ? def.active(a) : true) : a.year === 1 && a.term === 1;
+  return on ? def.windows(a) : [];
+};
 const inWindow = (w, day, hour) => w.day === day && hour >= w.from && hour < w.to;
 
 /** Is this scene on right now (inside one of its windows) and not yet attended or missed? */
 export function isOpen(def, a, day, hour) {
-  return !!a && !sceneState(a, def.id).status && !def.done?.(a) && windowsOf(def, a).some(w => inWindow(w, day, hour));
+  return !!a && !stateOf(def, a).status && !def.done?.(a) && windowsOf(def, a).some(w => inWindow(w, day, hour));
 }
 
 /** The next window that has not passed yet (or null). */
@@ -358,7 +372,7 @@ export function nextWindow(def, a, day, hour) {
 
 /** True once every window has passed without the player going. */
 export function isOverdue(def, a, day, hour) {
-  if (!a || sceneState(a, def.id).status || def.done?.(a)) return false;
+  if (!a || stateOf(def, a).status || def.done?.(a)) return false;
   const ws = windowsOf(def, a);
   return ws.length > 0 && ws.every(w => w.day < day || (w.day === day && hour >= w.to));
 }
@@ -388,6 +402,7 @@ export async function playScene(def, ctx) {
     if (!beat.choices) {
       await showModal({ title: beat.title, lines: beat.lines, buttons: [{ label: 'Next', value: 0 }] });
       if (beat.fx) ctx.consume({ minutes: 0, fx: beat.fx });
+      if (beat.run) beat.run(ctx);      // group cycle
       if (beat.give) { ctx.give(beat.give); done.push(`Received ₦${beat.give.toLocaleString('en-NG')}`); }
       if (beat.cost) { if (ctx.pay(beat.cost)) done.push(`Paid ₦${beat.cost.toLocaleString('en-NG')}`); else ctx.consume({ minutes: 0, fx: { stress: 2 } }); }
       continue;
@@ -400,6 +415,8 @@ export async function playScene(def, ctx) {
       if (ctx.pay(ch.cost)) done.push(`Paid ₦${ch.cost.toLocaleString('en-NG')}`);
       else { text = ch.poor || 'You do not have the money for that.'; fx = {}; ok = false; }
     }
+    if (ok && ch.give) { ctx.give(ch.give); done.push(`Received ₦${ch.give.toLocaleString('en-NG')}`); }      // group cycle
+    if (ok && ch.run) { const extra = ch.run(ctx); if (extra) text = `${text} ${extra}`; }
     if (ok && ch.join && ctx.joinClub(ch.join).ok) done.push(`Joined the ${ctx.clubs.find(c => c.id === ch.join).name}`);
     if (ok && ch.risk != null && ctx.roll(ch.label) < ch.risk) { text = `${text} ${ch.caught}`; fx = { ...fx, ...ch.caughtFx }; ctx.warn(); done.push('Warning recorded'); }
     if (ch.pick) { ctx.flags.pick = ch.pick; (ctx.flags.seen || (ctx.flags.seen = [])).push(ch.pick); }
@@ -426,7 +443,7 @@ export function createScenes(deps) {
     if (def.venue === 'class') return firstEntry(A())?.venue || deps.venuePlace('lecture');     // the department's first lecture hall
     return deps.venuePlace('auditorium');
   };
-  const rec = id => { const a = A(); a.scenes = a.scenes || {}; return (a.scenes[id] = a.scenes[id] || {}); };
+  const rec = def => { const a = A(); a.scenes = a.scenes || {}; const k = keyOf(def, a); return (a.scenes[k] = a.scenes[k] || {}); };
   const spawned = new Map();            // scene id -> npc ids currently standing in the venue
   let askedHere = false;                // already offered for this visit to the venue
 
@@ -461,8 +478,9 @@ export function createScenes(deps) {
     const a = A();
     if (!a) return;
     const d = deps.day(), h = hour();
+    if (a.programmeYears == null) a.programmeYears = DEPTS[state.course]?.years || 4;      // group cycle: lets final-year scenes know the last year
     for (const def of SCENES) {
-      const r = rec(def.id);
+      const r = rec(def);
       if (!r.status && def.done?.(a)) r.status = 'attended';
       if (r.status) { clearCrowd(def.id); continue; }
       const w = windowsOf(def, a).find(x => inWindow(x, d, h));
@@ -473,10 +491,37 @@ export function createScenes(deps) {
       if (!w && spawned.has(def.id)) clearCrowd(def.id);
       if (isOverdue(def, a, d, h)) {
         r.status = 'missed';
+        if (def.repeat && !r.notified) continue;      // an older save, or a night spent asleep: later-semester scenes pass quietly
         if (def.missFx) deps.consume({ minutes: 0, fx: def.missFx });
         meta.notify({ icon: '⏱️', title: `You missed the ${def.short.toLowerCase()}`, text: def.matric ? 'The Registry will sort out your matriculation later.' : def.id === 'courseReg' ? 'You are not registered yet. Visit the department office as soon as you can.' : def.id === 'firstCA' ? 'The CA test was not written. That mark will count as zero.' : 'It is over now. Maybe next time.' });
       }
     }
+  }
+
+  /** Everything a scene's beats may use: the player, the real academic record, money, time and relationships. */
+  function makeCtx(first = null) {
+    const a = A();
+    return {
+      name: deps.name(), campusName: deps.campusName, courseName: deps.courseName(), hostelName: deps.hostelName(), rhythm: deps.rhythm(),
+      pay: deps.pay, consume: deps.consume, met: deps.met,
+      flags: {}, give: deps.give, room: deps.room,
+      clubs: CLUBS.map(c => ({ id: c.id, icon: c.icon, name: c.name, schedule: clubSchedule(c) })), clubDues: CLUB_DUES, maxClubs: MAX_CLUBS,
+      canJoin: deps.canJoin, joinClub: deps.joinClub, warn: deps.warn, boostWeakest: n => deps.boostWeakest(n),
+      roll: key => hash01(seedOf(`${deps.name()}|${deps.day()}`), key),
+      courses: deps.courseLines(), weakest: deps.weakest(), first, boost: n => first && deps.boost(first.code, n),
+      warmup: () => first && deps.warmup(first.code),
+      a, day: deps.day(), money: () => state.money, hometown: state.hometown
+    };
+  }
+
+  /** Plays the graduation ceremony (a gown, the procession, the family photo) before the story card. Always safe to call. */
+  async function convocation() {
+    const a = A();
+    if (!a) return [];
+    const done = await playScene(CONVOCATION, makeCtx());
+    deps.consume({ minutes: CONVOCATION.minutes, fx: CONVOCATION.fx });
+    if (done.length) await showModal({ title: `${CONVOCATION.emoji} After the ceremony`, lines: done, buttons: [{ label: 'Continue', value: 1 }] });
+    return done;
   }
 
   /** Should the "take a seat?" prompt appear now? (once per visit) */
@@ -499,18 +544,9 @@ export function createScenes(deps) {
     const entry = firstEntry(a);
     const first = entry && { ...entry, title: deps.courseTitle(entry.code) };
     const late = !!first && hour() > first.hour + 0.4;      // judged on arrival, before the scene spends time
-    const summary = await playScene(def, {
-      name: deps.name(), campusName: deps.campusName, courseName: deps.courseName(), hostelName: deps.hostelName(), rhythm: deps.rhythm(),
-      pay: deps.pay, consume: deps.consume, met: deps.met,
-      flags: {}, give: deps.give, room: deps.room,
-      clubs: CLUBS.map(c => ({ id: c.id, icon: c.icon, name: c.name, schedule: clubSchedule(c) })), clubDues: CLUB_DUES, maxClubs: MAX_CLUBS,
-      canJoin: deps.canJoin, joinClub: deps.joinClub, warn: deps.warn, boostWeakest: n => deps.boostWeakest(n),
-      roll: key => hash01(seedOf(`${deps.name()}|${deps.day()}`), key),
-      courses: deps.courseLines(), weakest: deps.weakest(), first, boost: n => first && deps.boost(first.code, n),
-      warmup: () => first && deps.warmup(first.code)
-    });
-    deps.consume({ minutes: def.minutes, fx: def.matric ? MATRIC_FX : def.fx });
-    rec(def.id).status = 'attended';
+    const summary = await playScene(def, makeCtx(first));
+    deps.consume({ minutes: def.minutes, fx: def.matric ? MATRIC_FX : def.fx, sleep: !!def.noDrain });
+    rec(def).status = 'attended';
     await def.onAttend?.({
       takeCa: () => deps.takeCa(),
       setRegistered: () => { a.registered = true; },
@@ -520,7 +556,7 @@ export function createScenes(deps) {
     clearCrowd(def.id);
     await showModal({
       title: `${def.emoji} ${def.title} is over`,
-      lines: [def.matric ? 'You are now a matriculated student. Welcome to the university family.' : def.id === 'courseReg' ? 'You are registered for the semester.' : def.id === 'firstCA' ? 'The first CA test is behind you. Results come at the end of the semester.' : def.id === 'clubfair' ? 'The fair is winding down and your arms are full of flyers.' : def.id === 'party' ? 'You will remember tonight for a long time.' : def.id === 'inspection' ? 'The warden has moved on to the next room.' : def.id === 'firstLecture' ? `${first?.code} is now counted as attended, and you already know the lecturer's name.` : 'That was time well spent.', ...summary],
+      lines: [def.closing ? (typeof def.closing === 'function' ? def.closing(A()) : def.closing) : def.matric ? 'You are now a matriculated student. Welcome to the university family.' : def.id === 'courseReg' ? 'You are registered for the semester.' : def.id === 'firstCA' ? 'The first CA test is behind you. Results come at the end of the semester.' : def.id === 'clubfair' ? 'The fair is winding down and your arms are full of flyers.' : def.id === 'party' ? 'You will remember tonight for a long time.' : def.id === 'inspection' ? 'The warden has moved on to the next room.' : def.id === 'firstLecture' ? `${first?.code} is now counted as attended, and you already know the lecturer's name.` : 'That was time well spent.', ...summary],
       buttons: [{ label: 'Continue', value: 1 }]
     });
     return true;
@@ -533,7 +569,7 @@ export function createScenes(deps) {
     const d = deps.day(), h = hour();
     const open = SCENES.find(def => isOpen(def, a, d, h));
     if (open) return `${open.emoji} ${open.short} now at ${venueName(open) || 'campus'} (until ${clock(windowsOf(open, a).find(w => inWindow(w, d, h)).to)})`;
-    const soon = SCENES.map(def => ({ def, w: !sceneState(a, def.id).status ? nextWindow(def, a, d, h) : null }))
+    const soon = SCENES.map(def => ({ def, w: !stateOf(def, a).status ? nextWindow(def, a, d, h) : null }))
       .filter(x => x.w && (x.w.day === d || x.w.day === d + 1)).sort((x, y) => x.w.day - y.w.day || x.w.from - y.w.from)[0];
     return soon ? `📅 ${soon.def.short}: ${venueName(soon.def) || 'campus'}, ${whenText(soon.w, a)}` : '';
   }
@@ -543,7 +579,7 @@ export function createScenes(deps) {
     const a = A();
     if (!a) return [];
     return SCENES.map(def => {
-      const s = sceneState(a, def.id).status;
+      const s = stateOf(def, a).status;
       const w = nextWindow(def, a, deps.day(), hour());
       if (s === 'attended') return `${def.short}: the player attended it.`;
       if (s === 'missed' || !w) return `${def.short}: it is over and the player did not attend.`;
@@ -551,5 +587,5 @@ export function createScenes(deps) {
     });
   }
 
-  return { tick, entered, left, shouldOffer, offer, goalLine, facts, openAt };
+  return { tick, entered, left, shouldOffer, offer, goalLine, facts, openAt, convocation, makeCtx };
 }
