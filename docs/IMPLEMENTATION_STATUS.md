@@ -49,7 +49,7 @@ performance testing and legal sign-off. Those are listed as 🔒 below, with wha
 |---|---|---|
 | F-040 Three launch campuses | 🟡 | Three named campuses with their own buildings and features. Layouts share a template and are not verified maps |
 | F-041 Final art pass | 🔒 | Needs the art set |
-| F-042 Interiors | 🟡 | Hostel, home, canteen, library, lecture hall, cyber cafe, Business Centre, Health Centre. Missing: bank, bookshop, chapel/mosque |
+| F-042 Interiors | 🟡 | Hostel, home, canteen, library, lecture hall, cyber cafe, Business Centre, Health Centre. Chapel and Mosque (walk-in, all three campuses). Missing: bank, bookshop |
 | F-043 Wayfinding | ✅ | Guide marker, corner minimap (toggle in settings), full map screen, tap a building or spot to walk there automatically (A* pathfinding), or ride |
 | F-044 Day/night, weather, seasons | ✅ | Harmattan (hazy) in semester 1, rainy season with afternoon showers in semester 2, all derived from the calendar |
 | F-045 Off-campus world | ⬜ | |
@@ -65,7 +65,7 @@ performance testing and legal sign-off. Those are listed as 🔒 below, with wha
 | F-063 Assessment variety | ⬜ | Multiple choice only |
 | F-064 Academic standing | 🟡 | Warning and probation notices; no withdrawal or extra year |
 | F-065 Make-up rules | ⬜ | |
-| F-066 Study groups and handouts | 🟡 | Handouts at the Business Centre raise preparation. No study groups |
+| F-066 Study groups and handouts | ✅ | Handouts at the Business Centre raise preparation. Study groups of up to three coursemates give a boosted session each week |
 | F-067 SIWES, F-068 Final project, F-069 NYSC, F-070 Postgraduate | ⬜ | |
 | ASUU strike (event) | ✅ | Decided per semester, announced the evening before, suspends Thursday and Friday lectures without hurting attendance |
 
@@ -96,11 +96,12 @@ performance testing and legal sign-off. Those are listed as 🔒 below, with wha
 | F-120 NPC friendships | ✅ | Five levels from Stranger to Best friend, growing through daily chats, tones, gifts, study sessions and events; a Friends list in the phone |
 | F-121 Conversation system | ✅ | Choice-based, with three tones that each personality likes or dislikes, gifts, and favours that unlock with friendship (study together, lecture notes, loans) |
 | F-122 Phone | 🟡 | Student portal, map, my room and bills, bank, friends, clubs, messages, goals and achievements, settings. No camera, contacts or social feed |
-| F-123 Romance | ⬜ | Not built |
+| F-123 Romance | 🟡 | A light, optional storyline, off by default behind a setting: three small steps (walk, share a snack, cultural night with friends), PG, easy to say no. No dating or physical contact |
 | F-124 Clubs and societies | 🟡 | Five clubs (debate, drama, tech, enterprise, football), join up to two, weekly evening meetings with effects. No ranks or club events |
 | F-125 Student union politics | ⬜ | |
 | F-126 Parties and events | 🟡 | Hostel night (Fri), inter-hostel match (Sat) and Sunday fellowship, each on a fixed day and time. Attending warms nearby people to you |
-| F-127 Reputation, F-128 Rivalries | ⬜ | |
+| F-127 Reputation | ⬜ | |
+| F-128 Rivalries | 🟡 | One friendly coursemate rival who compares CA and result scores kindly. Nothing hostile |
 
 ## 4.8 NPCs and AI
 | ID | Status | Notes |

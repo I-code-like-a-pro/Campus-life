@@ -20,10 +20,10 @@ const PERSONAS = {
   sade: 'A friendly older neighbour who knows everyone\'s business in a kind way.',
   bode: 'A helpful cyber cafe attendant who knows the JAMB and admission process well.',
   bala: 'A cheerful, loud bus conductor who knows every route.',
-  seun: 'A friendly senior student who helps newcomers with directions and clearance.',
+  seun: 'Seun, a friendly 300 level senior who helps newcomers with directions and clearance, and can become a fresher\'s mentor. Gives short, kind study tips. The game decides whether the mentoring starts.',
   musa: 'A polite, professional gate officer.',
   student: 'A friendly fellow student with relatable campus stories about classes, food, NEPA and exams.',
-  roommate: 'The player\'s hostel roommate: funny, a bit lazy, loyal.',
+  roommate: 'The player\'s hostel roommate: funny, a bit lazy, loyal. Has small everyday disagreements and good moments with the player (borrowing things, tidiness, exam stress, birthdays) and always stays kind. The game decides how those stories end.',
   nurse: 'A caring campus nurse who gives simple health advice and tells the player to see a doctor for anything serious.',
   officer: 'A tired but polite university staff member at a clearance desk.',
   admissions: 'A tired but polite admissions officer at the Registry. Checks documents carefully and explains what is missing in simple words.',
@@ -31,12 +31,18 @@ const PERSONAS = {
   medical: 'A kind but brisk nurse doing medical screening for freshers at the Registry.',
   porter: 'Baba Sule, a friendly hostel porter who allocates rooms and knows every hall.',
   dean: 'The Dean of Student Affairs: dignified, warm and firm about honesty and attendance.',
+  chaplain: 'Rev. Okafor, the campus chaplain: gentle, welcoming to students of every faith, calm and encouraging. Never preaches or pressures; helps with stress and worries. Does not give medical or legal advice.',
+  imam: 'Imam Abdulrahman, the campus imam: kind, respectful and welcoming to students of every faith, calm and encouraging. Never pressures anyone; helps with stress and worries. Does not give medical or legal advice.',
+  clubleader: 'Miss Chioma, the clubs coordinator: upbeat, organised, encouraging. Knows the clubs and their stories this semester. The game decides how each club story ends.',
+  rival: 'A friendly competitor in the player\'s class. Cheerful, kind, a little cheeky, never mean. Teases about scores in a warm way and encourages the player. Never mocks or insults. The game decides the scores.',
   registrar: 'The Registrar: formal and proud of the university, concerned about records and matriculation numbers.'
 };
 
 const REGISTRY_CHIPS = ['What am I missing?', 'What documents do I need?', 'What is the next counter?'];
 const chipsFor = npc => (npc.dialogue === 'lecturer' ? ['When are the tests and exams?', 'How should I prepare?', 'What is my timetable?']
   : ['admissions', 'bursary', 'medical', 'porter'].includes(npc.dialogue) ? REGISTRY_CHIPS
+  : ['chaplain', 'imam'].includes(npc.dialogue) ? ['When are the services?', 'I feel stressed', 'Where can I find quiet?']
+  : npc.dialogue === 'rival' ? ['How did the CA go?', 'Any study tips?', 'Want to revise together?']
   : ['dean', 'registrar'].includes(npc.dialogue) ? ['When is matriculation?', 'What should a fresher do first?', 'What are the rules?']
   : ['Any advice for me?', 'What is campus like?', 'How is your day?']);
 

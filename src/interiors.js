@@ -3,7 +3,7 @@ import { createSign } from './world.js';
 
 const lam = c => new THREE.MeshLambertMaterial({ color: c });
 
-export const ENTERABLE = new Set(['hostel', 'home', 'cafe', 'canteen', 'library', 'lecture', 'biz', 'clinic', 'registry', 'auditorium']);
+export const ENTERABLE = new Set(['hostel', 'home', 'cafe', 'canteen', 'library', 'lecture', 'biz', 'clinic', 'registry', 'auditorium', 'chapel', 'mosque']);   // chapel, mosque: group people
 
 /** Where the four clearance counters stand inside the Registry (x offsets from the room centre). */
 export const REGISTRY_SLOTS = [-7.5, -2.5, 2.5, 7.5];
@@ -205,6 +205,30 @@ export function buildInterior(scene, place, ox) {
       box(4.6, 2.2, 0.08, 0xf6f1e4, 0, 3.6, -D / 2 + 0.22);
       tag('🕗', 'Open 8:00 to 17:00', 0, 5.6, -D / 2 + 0.6);
     },
+    chapel() {          // group people: pews, an altar table and a plain cross
+      for (let r = 0; r < 4; r++) [-5.2, 5.2].forEach(x => {
+        box(6.4, 0.5, 0.8, 0x7a5a38, x, 0.25, -1.4 + r * 2.2);
+        box(6.4, 0.9, 0.18, 0x6b4a2b, x, 0.9, -1.8 + r * 2.2);
+      });
+      box(8, 0.5, 3, 0xe9e2d0, 0, 0.25, -6.2);                                // raised floor
+      solid(3, 1.1, 1.2, 0xf4f1ea, 0, 1.05, -6.4);                              // altar table
+      box(0.35, 4.2, 0.2, 0x8a5a3a, 0, 4.2, -D / 2 + 0.2); box(2.2, 0.35, 0.2, 0x8a5a3a, 0, 4.7, -D / 2 + 0.2);   // cross on the back wall
+      [-6.5, 6.5].forEach(x => box(1.8, 3.2, 0.1, 0x7cc4ff, x, 3.8, -D / 2 + 0.05));                              // tall blue windows
+      spot('Quiet pew', '🧘', -5.2, 1.4, 3.4, ['reflect'], 'A quiet place for anyone. Everyone is welcome.');
+      spot('Service area', '🙏', 5.2, 1.4, 3.4, ['service'], '');
+      tag('⛪', 'Campus Chapel', 0, 6, -D / 2 + 0.6);
+    },
+    mosque() {          // group people: carpeted prayer hall, a mihrab niche and a shoe rack
+      box(15, 0.05, 11, 0x1f7a4f, 0, 0.03, -1.6);                               // carpet
+      for (let i = 0; i < 6; i++) box(14, 0.02, 0.18, 0xe9e2d0, 0, 0.07, -5.8 + i * 1.8);   // prayer lines
+      box(4, 5, 0.5, 0xe9e2d0, 0, 2.5, -D / 2 + 0.3); box(2.6, 4, 0.2, 0x2a6f55, 0, 2.2, -D / 2 + 0.6);   // mihrab niche
+      solid(1.6, 2.2, 1.4, 0x7a5a38, 5.8, 1.1, -6.6);                           // minbar
+      solid(3.6, 1.0, 1.0, 0x8a5a3a, -7, 0.5, 5.8);                             // shoe rack by the entrance
+      [-7, 7].forEach(x => box(1.8, 3.2, 0.1, 0xbfe3ff, x, 3.8, -D / 2 + 0.05));
+      spot('Quiet corner', '🧘', -5.5, 0.4, 3.4, ['reflect'], 'A quiet place for anyone. Everyone is welcome.');
+      spot('Prayer hall', '🕌', 4.5, 0.4, 3.4, ['service'], '');
+      tag('🕌', 'Campus Mosque', 0, 6, -D / 2 + 0.6);
+    },
     auditorium() {
       // stage with a podium and banner, and rows of seats either side of a central aisle (seats are walk-through, so a crowd fits)
       box(15, 0.7, 4.4, 0x7a5a38, 0, 0.35, -D / 2 + 2.2);
@@ -241,6 +265,8 @@ export function buildInterior(scene, place, ox) {
     clinic:  { x: ox + 0.5, z: -3.0 },
     registry: { x: ox, z: -6.4 },
     auditorium: { x: ox, z: -6.4 },
+    chapel:  { x: ox - 3, z: -5.2 },       // group people
+    mosque:  { x: ox - 3, z: -5.2 },
     hostel:  { x: ox + 1.5, z: -2.5 },
     home:    { x: ox + 1.5, z: -2.5 }
   };

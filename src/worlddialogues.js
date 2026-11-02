@@ -1,6 +1,7 @@
 import { converse, asks, tip } from './dialogues.js';
 import { townOf, townGist, townPlace } from './towns.js';
 import { allMissing, fixDoc } from './documents.js';
+import { peopleOptions } from './peopledialogues.js';   // group people
 import { traitOf, levelOf, TONES, toneDelta, toneReply, GIFTS, giftDelta, FAVOURS, canAsk } from './social.js';
 
 /*
@@ -121,6 +122,7 @@ export async function student(c, npc) {
   const sit = situationLines(c);
   const open = sit.length && Math.random() < 0.65 ? pickLine(`sit-${npc.id}`, sit) : pickLine('gist', Math.random() < 0.25 ? [...hometownLines(c), ...GIST] : GIST);
   await converse(c, npc, `Hey! ${open}`, () => [
+    ...peopleOptions(c, npc, 'student'),   // group people
     { label: '💞 Spend time together', run: async () => { await socialMenu(c, npc); } },
     { label: '💬 Any more gist?', run: () => gistOrSituation(c) },
     asks(c)(npc),
@@ -132,6 +134,7 @@ export async function roommate(c, npc) {
   const sit = situationLines(c);
   const open = sit.length ? pickLine(`room-${npc.id}`, sit) : 'Ah, my roommate! How was your day?';
   await converse(c, npc, open, () => [
+    ...peopleOptions(c, npc, 'roommate'),   // group people
     { label: '🍜 Share some noodles', run: () => {
       const ok = c.doAction({ id: 'shareFood', label: 'Share noodles', minutes: 15, fx: { hunger: 12, fun: 8, stress: -4 }, limit: 1, msg: 'You shared noodles with your roommate. Good company.' });
       if (!ok) return 'You already shared today. Do not finish my food!';
@@ -178,6 +181,7 @@ export async function librarian(c, npc) {
       weakest.knowledge = Math.min(100, weakest.knowledge + 3);
       return `Try the reference shelf for ${weakest.code}. (Preparation +3%)`;
     } }] : []),
+    ...peopleOptions(c, npc, 'librarian'),   // group people
     { label: '🤫 Can I study here?', run: () => 'Of course. The study desks are in the middle of the room.' },
     { label: '🧭 Where is the Business Centre?', run: () => c.directionsTo('Business Centre') }
   ]);

@@ -3,6 +3,7 @@ import { createSign, resolveCollisions } from './world.js';
 import { DESKS } from './clearance.js';
 import { OFFICE_HOURS } from './documents.js';
 import { REGISTRY_SLOTS } from './interiors.js';
+import { roommateNameFor, peopleStaff } from './people.js';   // group people
 
 const SKINS = [0x8d5a3b, 0x5a3a26, 0x3b2418, 0xb07a54, 0x6b4a2f];
 const SHIRTS = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf1c40f, 0x9b59b6, 0xe67e22, 0x1abc9c, 0xecf0f1, 0xff7aa8];
@@ -217,8 +218,8 @@ export function interiorNpcDefs(place, interior) {
       // the four clearance officers, one behind each counter, working office hours
       return DESKS.map((d, i) => ({ ...d.npc, ...base, x: interior.ox + REGISTRY_SLOTS[i], z: -6.4, hours: [OFFICE_HOURS] }));
     case 'hostel':
-      return [{ ...base, id: `room-${place.name}`, name: pickFrom(['Emeka', 'Dami', 'Kunle', 'Chuka'], place.name.length), hours: [[0, 9], [16, 24]], role: 'Roommate', emoji: '🛏️', dialogue: 'roommate', shirt: 0x34495e, skin: 0x8d5a3b }];
+      return [{ ...base, id: `room-${place.name}`, name: roommateNameFor(place.name), hours: [[0, 9], [16, 24]], role: 'Roommate', emoji: '🛏️', dialogue: 'roommate', shirt: 0x34495e, skin: 0x8d5a3b }];
     default:
-      return [];
+      return peopleStaff(place, base);   // group people: chaplain, imam, clubs coordinator, rival
   }
 }
