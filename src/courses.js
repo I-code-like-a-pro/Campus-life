@@ -46,13 +46,27 @@ export const DEPTS = {
 // General studies course taken in 100 level only (higher levels get a departmental elective instead).
 export const GST = [['GST 111', 'Use of English I'], ['GST 112', 'Use of English II']];
 
+// Subject banks for shared first-year courses, by code prefix. Other prefixes use their department bank.
+export const SUBJECT_BANKS = { MTH: 'maths', PHY: 'phy', CHM: 'chm', BIO: 'bio', STA: 'sta', BUS: 'bus', ECO: 'economics', GST: 'gst' };
+
+/** The question bank for a course code. Upper-level banks ('dept@level') are kept as they are. */
+export function bankForCode(code, deptId) {
+  return SUBJECT_BANKS[String(code).split(' ')[0]] || deptId;
+}
+
+/** Bank of a saved course object; repairs saves made before subject banks existed. */
+export function bankOf(c) {
+  if (c.bank && c.bank.includes('@')) return c.bank;
+  return bankForCode(c.code, c.bank);
+}
+
 /** Course objects for one semester. `carry` is the list of failed courses to retake (at most two are added). */
 export function buildCourses(deptId, year, term, carry = []) {
   const d = DEPTS[deptId];
   const fresh = course => ({ ...course, att: { ok: 0, late: 0 }, knowledge: 0, assign: { progress: 0, done: false }, ca: null, exam: null, usedQ: [] });
   let out;
   if (year === 1) {
-    out = d.courses[term - 1].map(([code, title]) => fresh({ code, title, bank: deptId, units: 3, carry: false }));
+    out = d.courses[term - 1].map(([code, title]) => fresh({ code, title, bank: bankForCode(code, deptId), units: 3, carry: false }));
     const [code, title] = GST[term - 1];
     out.push(fresh({ code, title, bank: 'gst', units: 2, carry: false }));
   } else {

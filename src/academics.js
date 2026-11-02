@@ -1,5 +1,5 @@
 import { showModal } from './modal.js';
-import { DEPTS, buildCourses } from './courses.js';
+import { DEPTS, buildCourses, bankOf } from './courses.js';
 import { QUESTIONS, shuffle } from './questions.js';
 import { courseOf } from './admissions.js';
 import { semesterHasStrike, strikeDays } from './eventengine.js';
@@ -243,7 +243,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     const a = A();
     const scores = {};
     for (const c of a.courses) {
-      const bank = QUESTIONS[c.bank] || QUESTIONS[c.bank.split('@')[0]];
+      const bank = QUESTIONS[bankOf(c)] || QUESTIONS[bankOf(c).split('@')[0]];
       let pool = bank.map((_, i) => i).filter(i => !c.usedQ.includes(i));
       if (pool.length < perCourse) pool = bank.map((_, i) => i);
       const picks = shuffle(pool).slice(0, perCourse);
@@ -418,7 +418,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
   /** A warm-up question from the course's own bank for the lecturer to ask the room: { q, options: [{ t, ok }] } or null. */
   function warmup(code) {
     const c = A()?.courses.find(x => x.code === code);
-    const bank = c && (QUESTIONS[c.bank] || QUESTIONS[c.bank.split('@')[0]]);
+    const bank = c && (QUESTIONS[bankOf(c)] || QUESTIONS[bankOf(c).split('@')[0]]);
     if (!bank?.length) return null;
     const [q, correct, ...wrong] = bank[Math.floor(Math.random() * bank.length)];
     return { q, options: shuffle([{ t: correct, ok: true }, ...shuffle(wrong).slice(0, 2).map(t => ({ t, ok: false }))]) };
