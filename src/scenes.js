@@ -3,6 +3,7 @@ import { CLUBS, clubSchedule, CLUB_DUES, MAX_CLUBS } from './social.js';
 import { hash01 } from './eventengine.js';
 import { seedOf } from './clearance.js';
 import { matricPages, MATRIC_FX } from './campuslife-events.js';
+import { TROUBLE_SCENES } from './trouble.js';       // group trouble: hearings, Dean's visits, counselling, community service
 
 /*
  * Scenes: story events that happen at a real place and a real time. The player is told when and where, can walk there and
@@ -336,6 +337,7 @@ export const SCENES = [
       }
     ]
   },
+  ...TROUBLE_SCENES,
 ];
 
 export const sceneById = id => SCENES.find(s => s.id === id);

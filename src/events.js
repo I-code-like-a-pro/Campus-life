@@ -5,6 +5,7 @@ export const DEFS = {
   nepa:      { icon: '💡', title: 'Power cut!', msg: 'Total blackout across campus. Phone torch time 🔦', dur: 25, end: 'Power is back! 🎉' },
   rain:      { icon: '🌧️', title: 'It is raining', msg: 'Run to a shelter before you get soaked!', dur: 35, end: 'The rain has stopped. The sun is out again ☀️', weather: true },
   harmattan: { icon: '🌫️', title: 'Harmattan has arrived', msg: 'Dust everywhere, dry lips and cold morning!', dur: 40, end: 'The harmattan haze is clearing', weather: true },
+  flood:     { icon: '🌊', title: 'Flooding on campus', msg: 'Water is across the paths.', dur: 40, end: 'The water is draining.' },
   strike:    { icon: '📢', title: 'ASUU strike!', msg: 'Lecturers have downed tools. No lectures until further notice 😭', dur: 14 }
 };
 
@@ -31,6 +32,11 @@ export function createEvents(scene, onAnnounce) {
   rain.frustumCulled = false;
   rain.visible = false;
   scene.add(rain);
+
+  // flood water lying on the paths (group trouble): a thin, see-through sheet just above the ground
+  const flood = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshBasicMaterial({ color: 0x6fa8dc, transparent: true, opacity: 0.3, depthWrite: false }));
+  flood.rotation.x = -Math.PI / 2; flood.position.y = 0.05; flood.visible = false; flood.frustumCulled = false;
+  scene.add(flood);
 
   function start(id, override = {}) {
     const d = DEFS[id];
@@ -59,6 +65,8 @@ export function createEvents(scene, onAnnounce) {
       }
     }
 
+    flood.visible = !!active.flood && !indoors;
+    if (flood.visible) { flood.position.x = focus.x; flood.position.z = focus.z; }
     rain.visible = !!active.rain && !indoors;
     if (rain.visible) {
       for (let i = 0; i < COUNT; i++) {
@@ -78,6 +86,7 @@ export function createEvents(scene, onAnnounce) {
     get raining() { return !!active.rain; },
     get haze() { return !!active.harmattan; },
     get blackout() { return !!active.nepa; },
+    get flooded() { return !!active.flood; },
     get strike() { return !!active.strike; }
   };
 }

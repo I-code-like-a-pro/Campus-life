@@ -28,6 +28,7 @@ import { WORLD_DIALOGUES } from './worlddialogues.js';
 import { DESKS, nextStep } from './clearance.js';
 import { clearanceFacts } from './documents.js';
 import { createScenes } from './scenes.js';
+import { createTrouble } from './trouble.js';       // group trouble
 import { createAcademics } from './academics.js';
 import { createMeta } from './meta.js';
 import { ALLOWANCE, FARE, TRANSPORT_GIFT } from './economy.js';
@@ -298,6 +299,15 @@ async function main() {
     rhythm: () => academics.facts().find(l => l.startsWith('Weekly rhythm'))?.replace(/^Weekly rhythm: /, 'Every semester week runs on this rhythm: ') || ''
   });
 
+  // group trouble: hearings, Dean's visits, counselling, medical deferment and campus events (see trouble.js)
+  const trouble = createTrouble({
+    state, meta, day, minutes: () => dayNight.state.minutes, consume: a => consume(a), pay: payQuiet, hostelName: () => state.hostel || '',
+    atHostel: () => !!inside && (inside.place.name === state.hostel || inside.place.type === 'home'),
+    sendHome: () => { leavePlace(true); const h = places.find(p => p.type === 'hostel' || p.type === 'home') || places[0]; player.group.position.set(h.door.x, 0, h.door.z); },
+    boostAll: n => academics.boostAll(n),
+    boostWeakest: n => { const c = state.academic?.courses.slice().sort((x, y) => x.knowledge - y.knowledge)[0]; if (c) academics.boostCourse(c.code, n); }
+  });
+
   const events = createEvents(engine.scene, () => {});
   const eventEngine = createEventEngine({
     events, meta, sound: sfx,
@@ -435,7 +445,7 @@ async function main() {
   function goalText() {
     if (state.admission) return `🚌 Go to the Motor Park and take a bus to ${CAMPUSES[state.admission.uni].short}`;
     if (state.clearance && !state.clearance.done) return `📋 Registry (8:00–17:00): ${nextStep(state.clearance).name} counter`;
-    if (state.academic) return scenes.goalLine() || academics.goal();
+    if (state.academic) return trouble.goalLine() || scenes.goalLine() || academics.goal();      // group trouble
     const a = state.aspirant;
     if (!a) return state.course ? `🎓 ${courseOf(state.course).name} · ${campus.short}` : '';
     if (!a.jambSeen) return day() < a.jambDay ? `📅 JAMB result: Day ${a.jambDay}` : '📄 JAMB result is out! Check the cyber cafe';
@@ -705,7 +715,7 @@ async function main() {
         place: inside ? inside.place.name : campus.name,
         mood: `${m.label}; energy ${Math.round(state.needs.energy)}/100, stress ${Math.round(state.needs.stress)}/100`,
         facts: state.clearance && !state.clearance.done ? clearanceFacts(state.clearance, { hour: dayNight.state.minutes / 60 })
-          : a ? [...academics.facts(), ...scenes.facts()] : state.aspirant
+          : a ? [...academics.facts(), ...scenes.facts(), ...trouble.facts()] : state.aspirant      // group trouble
           ? [`The player is a JAMB aspirant. Result day is ${state.aspirant.jambDay}, admission list day ${state.aspirant.admitDay}. Today is day ${day()}.`]
           : ['The player is preparing to travel to university.']
       };
@@ -885,6 +895,7 @@ async function main() {
     if (a.id === 'talk') { runTalk(a.npc); return; }
     if (a.id === 'fbjoin') { if (canDo(a) && football?.startMatch()) toast('📣 Kick-off! 2 minutes 30. You are in blue, attacking east (right).'); else toast('You are too tired to play.'); return; }
     if (a.id === 'fbquit') { football?.endMatch(true); return; }
+    if (a.id === 'medreport' || a.id === 'defer') { runModal(() => trouble.run(a)); return; }      // group trouble
     if (ACADEMIC_ACTIONS.has(a.id)) { runModal(() => academics.run(a)); return; }
     execute(a);
   }
@@ -1072,6 +1083,7 @@ async function main() {
       if (ev === 'withdrawn') runModal(() => runEnding('withdrawn'));
     }
     if (state.academic) scenes.tick();
+    if (state.academic) { trouble.tick(); if (!paused && !transitioning && !rides.active && trouble.hasPrompt()) runModal(() => trouble.prompt()); }      // group trouble
     if (inside && !paused && !transitioning && scenes.shouldOffer(inside.place.name)) runModal(() => scenes.offer(inside.place));
     storyBtn.hidden = !(state.academic && (state.academic.graduated || state.academic.withdrawn));
     const unread = meta.unread();
@@ -1145,11 +1157,12 @@ async function main() {
           note = best.note || '';
           if (best.actionIds.includes('lecture')) {
             const r = academics.lectureActions(inside.place.name);
-            actions = r.actions; note = r.note;
+            actions = [...r.actions, ...trouble.hallActions()]; note = r.note;      // group trouble: make-up papers and deferment
           } else if (best.actionIds.includes('library')) {
             const r = academics.libraryActions();
             actions = [...r.actions, ...(ACTIONS.library || [])]; note = r.note;
           }
+          if (best.actionIds.includes('consult')) actions = [...actions, ...trouble.clinicActions('clinic')];      // group trouble: medical report
           if (best.actionIds.includes('results')) {
             const r = resultsAction();
             if (r) actions = [r, ...actions];
@@ -1256,7 +1269,7 @@ async function main() {
   window.__campus = {
     start: events.start, rides, setHour: dayNight.setHour, setDay: d => { dayNight.state.day = d; },
     state, places, player, npcs, guide, enter: enterPlace, leave: leavePlace, get inside() { return inside; },
-    scenes, checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
+    scenes, trouble, checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
     football, runEnding, mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
     addRelation, relation, boostNearby, engine, colliders, resolveCollisions

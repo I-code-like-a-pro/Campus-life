@@ -2,7 +2,8 @@ import { showModal } from './modal.js';
 import { DEPTS, buildCourses } from './courses.js';
 import { QUESTIONS, shuffle } from './questions.js';
 import { courseOf } from './admissions.js';
-import { semesterHasStrike, strikeDays } from './eventengine.js';
+import { semesterHasStrike, strikeDays, lateGraceMinutes, seasonFor } from './eventengine.js';
+import { makeupHold } from './trouble.js';       // group trouble
 import { orientationLine } from './campuslife-events.js';
 
 /*
@@ -156,7 +157,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
       if (day() >= a.startDay) { a.phase = 'semester'; onEvent('semesterStart', { year: a.year, term: a.term, startDay: a.startDay }); } else return events;
     }
     const sd = semDay();
-    if (a.phase === 'semester' && sd >= 7) {
+    if (a.phase === 'semester' && sd >= 7 + makeupHold(a, sd)) {       // group trouble: a medical make-up exam keeps the break day open
       finalize();
       a.phase = 'break';
       events.push('results');
@@ -205,7 +206,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     const live = a.timetable.find(t => t.day === sd && t.venue === place && !t.cancelled && !a.attended[key(t)]
       && now >= t.hour * 60 - 15 && now < (t.hour + LECTURE_HOURS) * 60);
     if (live) {
-      const late = now > live.hour * 60 + 15;
+      const late = now > live.hour * 60 + 15 + lateGraceMinutes(day(), now / 60, seasonFor({ term: a.term, day: day() }));     // group trouble: flood delay
       actions.push({ id: 'attend', label: `🎓 Attend ${live.code}${late ? ' (late)' : ''}`, entry: live, late });
     }
     if (sd === CA_DAY && !a.caTaken && now >= 8 * 60 && now < 18 * 60) actions.push({ id: 'ca', label: '📝 Take CA tests' });
