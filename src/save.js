@@ -6,6 +6,8 @@
 //  - export/import codes to move a save between devices or keep a copy
 //  - writeSave reports failure (for example storage full) so the game can warn the player
 
+import { newPeople } from './people.js';
+
 const KEY = 'campuslife.save.v1';       // storage key kept stable across versions
 const BACKUP_KEY = 'campuslife.save.backup';
 const BACKUP_EVERY_MS = 60_000;
@@ -30,7 +32,8 @@ export function newMeta() {
     room: {},                  // decorations bought for the hostel room
     bills: [],                 // [{ id, label, amount, due, paid }]
     relations: {},             // npc id -> { points, lastTalk, lastGift }
-    clubs: []                  // joined club ids
+    clubs: [],                 // joined club ids
+    people: newPeople()        // roommate stories, mentor, study group, rival, club stories (group people)
   };
 }
 

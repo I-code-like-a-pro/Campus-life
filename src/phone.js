@@ -1,3 +1,4 @@
+import { peopleSummary, ensurePeople } from './people.js';   // group people
 import { showModal } from './modal.js';
 import { settings, setSetting } from './settings.js';
 import { aiConfigured } from './ainpc.js';
@@ -83,9 +84,10 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
     const list = Object.values(state.meta.relations).filter(r => r.points > 0).sort((a, b) => b.points - a.points);
     await showModal({
       title: '👥 Friends',
-      lines: list.length
+      lines: [...peopleSummary(ensurePeople(state.meta)).map(t => `⭐ ${t}`),   // group people
+        ...(list.length
         ? list.slice(0, 25).map(r => `${levelOf(r.points).icon} ${r.name}: ${levelOf(r.points).name} (${r.points} points)`)
-        : ['You have not made any friends yet. Chat with people and tap "Spend time together".'],
+        : ['You have not made any friends yet. Chat with people and tap "Spend time together".'])],
       buttons: back
     });
   }
@@ -222,6 +224,7 @@ export function createPhone({ state, meta, academics, day, give, spend, onSettin
           { label: `🐢 Reduced motion: ${onOff(settings.reducedMotion)}`, value: 'reducedMotion' },
           { label: `💡 Tutorial hints: ${onOff(settings.hints)}`, value: 'hints' },
           { label: `🗺️ Minimap: ${onOff(settings.minimap)}`, value: 'minimap' },
+          { label: `💞 Crushes and dates (light, age-appropriate): ${onOff(settings.crushes)}`, value: 'crushes' },   // group people
           ...(aiConfigured() ? [{ label: `🤖 AI chat with NPCs: ${onOff(settings.aiChat)}`, value: 'aiChat' }] : []),
           { label: `📊 Share anonymous usage data: ${onOff(settings.analytics)}`, value: 'analytics' },
           { label: '💾 Export my save', value: 'export' },

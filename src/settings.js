@@ -12,6 +12,7 @@ export const DEFAULTS = {
   reducedMotion: false,     // no UI animations
   hints: true,              // in-game tutorial hints
   minimap: true,            // small map in the corner
+  crushes: false,           // light, age-appropriate crush storyline (group people), off until the player opts in
   aiChat: true,             // NPCs can answer typed questions with AI (only if the game has an AI server configured)
   analytics: false          // anonymous usage and crash data (off until the player opts in)
 };

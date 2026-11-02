@@ -65,6 +65,10 @@ Rough cost: each chat is one short request and one short reply. Check the provid
 - The privacy page tells players that typed AI messages and game context go to an AI provider. Keep it accurate if you change providers.
 - Add a **Report a reply** link to your feedback form if you can, so you can tighten the prompt.
 
+## People and community personas
+
+`src/ainpc.js` has personas for the chaplain, the imam, the clubs coordinator and the friendly rival, and richer ones for the roommate and Seun (the mentor). The prompts keep them kind and welcoming to every faith; the game, not the AI, decides outcomes such as club results, scores, mentoring and friendships. See [PEOPLE.md](PEOPLE.md).
+
 ## Not included (yet)
 
 - AI-generated exam questions. Exam content is still written and reviewed by hand, so grades stay fair.

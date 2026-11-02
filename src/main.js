@@ -49,8 +49,10 @@ import { createRides } from './rides.js';
 import { stopShort } from './vehicles.js';
 import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS, joinClub, MAX_CLUBS } from './social.js';
 import { createCampusStory, waterAdjust } from './campuslife-events.js';   // group B: story beats
+import { ensurePeople, setRivalSeed, faithPanel, FAITH_TYPES } from './people.js';   // group people
+import { PEOPLE_DIALOGUES, rivalNews } from './peopledialogues.js';   // group people
 
-const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES, ...MONEY_DIALOGUES };   // group money
+const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES, ...MONEY_DIALOGUES, ...PEOPLE_DIALOGUES };   // group money, group people
 
 const SPEED = 9;
 const REACH = 5;              // how close you must be to a building to use it
@@ -248,7 +250,7 @@ async function main() {
         case 'study': meta.track('studies'); break;
         case 'assignmentSession': meta.track('assignmentSessions'); break;
         case 'assignmentDone': meta.track('assignments'); break;
-        case 'ca': meta.track('caTests'); break;
+        case 'ca': meta.track('caTests'); rivalNews('ca', { state, meta }); break;   // group people
         case 'exam': meta.track('exams'); break;
         case 'graduated': meta.track('graduated'); if (state.academic.cgpa >= 4.5) meta.track('firstClass'); break;
         case 'semesterStart':
@@ -262,6 +264,7 @@ async function main() {
           meta.track('gradeA', info.rows.filter(r => r.grade === 'A').length);
           if (info.gpa >= 4.5) meta.track('deansList');
           campusStory.results(info.gpa);                  // group B: bursary award (GPA >= 4.5, once a year)
+          rivalNews('results', { state, meta, info });    // group people: friendly gist from the rival
           if (!info.rows.some(r => r.grade === 'F')) meta.track('cleanSemesters');
           if (info.carryPassed) meta.track('carryPassed', info.carryPassed);
           if (info.probation) meta.notify({ icon: '⚠️', title: 'Academic probation', text: 'Your GPA this semester was below 1.0. One more semester like that and you will be asked to withdraw.' });
@@ -786,6 +789,15 @@ async function main() {
     give: n => { state.money += n; meta.ledger('Money received', n); }
   };
 
+  // group people: roommate stories, mentor, study group, rival, club stories, faith spaces (src/people.js)
+  ensurePeople(state.meta);
+  setRivalSeed(`${state.name}|${state.course}`);
+  Object.assign(talkContext, {
+    semDay: () => academics.semDay(),
+    boostPrep: n => { const w = weakestCourse(); if (w) w.knowledge = Math.min(100, w.knowledge + n); },
+    crushesOn: () => settings.crushes
+  });
+
   async function runTalk(npc) {
     if (paused || transitioning || rides.active) return;
     const run = ALL_DIALOGUES[npc.dialogue];
@@ -1191,6 +1203,7 @@ async function main() {
           panelPlace = { name: best.name, emoji: best.emoji };
           actions = (ACTIONS[inside.place.type] || []).filter(a => best.actionIds.includes(a.id));
           note = best.note || '';
+          if (FAITH_TYPES.has(inside.place.type)) ({ actions, note } = faithPanel(inside.place.type, best.actionIds[0], { sd: academics.semDay() || day(), hour: dayNight.state.minutes / 60 }));   // group people
           if (best.actionIds.includes('lecture')) {
             const r = academics.lectureActions(inside.place.name);
             actions = [...r.actions, ...trouble.hallActions()]; note = r.note;      // group trouble: make-up papers and deferment
@@ -1310,7 +1323,7 @@ async function main() {
     scenes, trouble, checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
     football, runEnding, mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
-    addRelation, relation, boostNearby, engine, colliders, resolveCollisions
+    addRelation, relation, boostNearby, engine, colliders, resolveCollisions, talkContext   // group people: talkContext
   };
 }
 

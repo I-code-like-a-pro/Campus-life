@@ -57,10 +57,19 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | Hostel dues and bills | ✅ | |
 | Room decor | ✅ | |
 | Roommate NPC | ✅ | |
+| Roommate story arcs (borrowing, tidiness, exam stress, birthday) | ✅ | Four arcs with 2 to 3 choices that change friendship and mood. See [PEOPLE.md](PEOPLE.md) |
 | Water shortage / NEPA | ✅ | About 1 day in 5 the taps run dry in the morning; hostel baths become bucket baths |
 | Chores and laundry | ⬜ 🔮 | |
 | Curfew and hostel rules | ⬜ 🔮 | |
 | Off-campus housing | ⬜ 🔮 | |
+
+## Community, faith and friendship (see [PEOPLE.md](PEOPLE.md))
+| System | Status | Notes |
+|---|---|---|
+| Club storylines (three chapters per club) | ✅ | Told by the clubs coordinator in the main auditorium |
+| Friendship events (cultural night, birthday surprise, moving in) | ✅ | Optional, easy to decline |
+| Chapel and Mosque on all three campuses | ✅ | Walk-in, service times, quiet reflection lowers stress, chaplain and imam |
+| Light "crush" storyline (F-123) | 🟡 | Off by default (Settings: Crushes and dates, light, age-appropriate). PG, consent-based, easy to say no |
 
 ## Stage 5. Academic life
 | System | Status | Notes |
@@ -71,7 +80,10 @@ Game time: 1 game day is about 10 real minutes. A semester is 6 days plus a Sund
 | GPA/CGPA on a 5.0 scale, carryovers, portal | ✅ | |
 | Question banks | 🟡 | 100L: 15 per department. 200L to 400L: 8 per department per level (216 new). 🎯 grow to 20+ per bank and have them reviewed |
 | Courses by level (100L to 400L) | ✅ | Named course lists for every department, 4 courses per semester. 5th/6th years reuse 400L |
-| Handouts, past questions, study groups | 🟡 | Handouts exist; 🎯 past questions and group study |
+| Handouts, past questions | 🟡 | Handouts exist; 🎯 past questions |
+| Study groups | ✅ | Up to three coursemates, one boosted session a week, members remembered |
+| Mentors (a senior gives a weekly tip and sometimes notes) | ✅ | Ask Seun after a couple of chats |
+| Friendly rival (gist after CA tests and results) | ✅ | Never mean; the game picks the scores |
 | ASUU strike | ✅ | |
 | Lecturer personalities, attendance checks, surprise tests | ⬜ 🎯 | |
 | Final-year project and supervisor | ⬜ 🎯 | The 400L storyline |

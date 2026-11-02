@@ -1,3 +1,4 @@
+import { FAITH_BUILDINGS } from './people.js';
 // Campus definitions. Layouts are loosely inspired by each school (names and landmarks), not exact maps.
 // Building types decide what you can do there: hostel, canteen, sports, lecture, library, auditorium.
 // Coordinates: x/z in world units; main path runs along x = 0, cross path along z = 0.
@@ -100,3 +101,6 @@ for (const id of CAMPUS_ORDER) {
   );
 }
 CAMPUSES.home.buildings.push({ name: 'Chemist', emoji: '💊', type: 'clinic', x: 26, z: 44, w: 10, d: 8, h: 5, color: 0xe8f4ee, roof: 0x2d8f6f });
+
+// group people: a chapel and a mosque on every campus (east side, clear of the sports field, the faculties and the bookshop and bank on the west)
+for (const id of CAMPUS_ORDER) CAMPUSES[id].buildings.push(...FAITH_BUILDINGS.map(b => ({ ...b })));

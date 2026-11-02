@@ -2,6 +2,7 @@ import { durationText, townGist, townPlace } from './towns.js';
 import { DESKS, CLEARANCE_FEE, nextStep, seedOf } from './clearance.js';
 import { docsFor, checkDesk, ensureDocs, detailsCard } from './documents.js';
 import { naira } from './needs.js';
+import { peopleOptions } from './peopledialogues.js';   // group people
 
 /*
  * Conversations. Each one is `async (c, npc) => {...}`; `c` is the context built in main.js:
@@ -139,6 +140,7 @@ async function seun(c, npc) {
   const next = cl && !cl.done ? nextStep(cl) : null;
   await converse(c, npc, next ? `Hey, fresher! I'm Seun, 300 level. Don't worry, I'll help you find your way.` : 'Hey! How is school treating you?', () => [
     ...(next ? [{ label: '📋 Where do I go for clearance?', run: () => c.directionsTo('Registry') }] : []),
+    ...peopleOptions(c, npc, 'senior'),   // group people: mentor
     asks(c)(npc),
     { label: '💡 Any advice?', run: () => `Sure. ${tip()}` },
     { label: '😎 What is campus life like?', run: () => 'Lectures, hostel drama, nice food at the canteen, parties, and plenty of stories. You will love it. And hate it. Both.' }
