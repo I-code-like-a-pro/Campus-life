@@ -16,7 +16,9 @@ import { VEHICLES, buildVehicle, pathLength, turnToward, stepAlong, toWorld, pla
 const ease = k => k * k * (3 - 2 * k);
 const BOARD_SECONDS = 0.7, ALIGHT_SECONDS = 0.8;
 
-export function createRides({ scene, camera, player, sfx = () => {} }) {
+const NO_AUDIO = { engineStart() {}, engineUpdate() {}, engineStop() {}, horn() {} };
+
+export function createRides({ scene, camera, player, sfx = () => {}, audio = NO_AUDIO }) {   // group sound: audio = engine and horn sounds
   let active = null;
   const leaving = [];
 
@@ -52,6 +54,7 @@ export function createRides({ scene, camera, player, sfx = () => {} }) {
     player.group.visible = true;
     skipBtn.hidden = true;
     active = null;
+    audio.engineStop();   // group sound
     // the vehicle drives off a little way, then disappears
     leaving.push({ r, t: 0 });
     r.resolve();
@@ -82,6 +85,7 @@ export function createRides({ scene, camera, player, sfx = () => {} }) {
     if (spec.hidePlayer && arrival) player.group.visible = false;
     skipBtn.hidden = false;
     sfx('door');
+    audio.engineStart(kind);   // group sound
     return new Promise(resolve => { r.resolve = resolve; active = r; });
   }
 
@@ -111,6 +115,7 @@ export function createRides({ scene, camera, player, sfx = () => {} }) {
       if (k >= 1) {
         r.phase = 'drive'; r.t = 0;
         if (r.spec.hidePlayer) player.group.visible = false;
+        audio.horn(r.kind, r.wobble);   // group sound: keke and bus pull away with a horn, a scare ride swerves with one
       }
     } else if (r.phase === 'drive') {
       const remaining = Math.max(0, r.total - r.travelled);
@@ -137,7 +142,7 @@ export function createRides({ scene, camera, player, sfx = () => {} }) {
       player.group.position.set(seat.x, seat.y, seat.z);
       player.group.rotation.y = r.heading;
       if (step.done) {
-        if (r.stay) { r.phase = 'done'; r.resolve(); skipBtn.hidden = true; }
+        if (r.stay) { r.phase = 'done'; r.resolve(); skipBtn.hidden = true; audio.engineStop(); }
         else { r.phase = 'alight'; r.t = 0; r.alightFrom = { x: player.group.position.x, y: player.group.position.y, z: player.group.position.z }; player.group.visible = true; sfx('door'); }
       }
     } else if (r.phase === 'alight') {
@@ -147,6 +152,7 @@ export function createRides({ scene, camera, player, sfx = () => {} }) {
       if (k >= 1) { player.group.position.set(d.x, 0, d.z); finish(r); }
     }
 
+    audio.engineUpdate(r.phase === 'drive' ? r.v : 0, r.spec.speed);   // group sound: pitch and volume follow the speed
     // camera follows the vehicle from behind and above (a little further back for the big ones)
     const far = r.kind === 'bus' || r.kind === 'plane';
     const target = new THREE.Vector3(r.pos.x, (far ? 18 : 15) + r.alt * 0.4, r.pos.z + (far ? 24 : 17));
@@ -158,6 +164,7 @@ export function createRides({ scene, camera, player, sfx = () => {} }) {
   function skip() {
     const r = active;
     if (!r) return;
+    audio.engineStop();   // group sound
     if (r.stay) { r.phase = 'done'; skipBtn.hidden = true; r.resolve(); return; }
     scene.remove(r.model.group);
     player.group.position.set(r.dest.x, 0, r.dest.z);
@@ -169,6 +176,7 @@ export function createRides({ scene, camera, player, sfx = () => {} }) {
 
   /** Removes the vehicle of a ride that stayed aboard (after the caller has finished with it). */
   function clear() {
+    audio.engineStop();   // group sound
     if (active && active.phase === 'done') { scene.remove(active.model.group); active = null; }
     player.group.visible = true;
   }
