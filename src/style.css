@@ -241,3 +241,8 @@ button { touch-action:manipulation; }
   #tour { position:fixed; left:236px; bottom:max(10px,env(safe-area-inset-bottom)); width:176px; }
   .left-handed #tour { left:252px; }
 }
+
+/* Ride: skip button (keke, okada, bus, plane) */
+#skipride { position:fixed; top:max(64px,calc(env(safe-area-inset-top) + 56px)); left:50%; transform:translateX(-50%); z-index:14; min-height:44px; padding:10px 18px;
+  border:0; border-radius:999px; background:rgba(20,30,40,.78); color:#fff; font-size:15px; backdrop-filter:blur(6px); cursor:pointer; }
+#skipride[hidden] { display:none; }

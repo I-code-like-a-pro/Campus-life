@@ -40,6 +40,8 @@ import { openFeedback } from './feedback.js';
 import { buildGrid, findPath } from './pathfind.js';
 import { createMapUI, createMinimap } from './map.js';
 import { MODES, fareFor, minutesFor, okadaScare } from './transport.js';
+import { createRides } from './rides.js';
+import { stopShort } from './vehicles.js';
 import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS, joinClub, MAX_CLUBS } from './social.js';
 import { createCampusStory, waterAdjust } from './campuslife-events.js';   // group B: story beats
 
@@ -118,6 +120,7 @@ async function main() {
   player.group.position.set(state.x, 0, state.z);
   addXray(player.group);
   engine.scene.add(player.group);
+  const rides = createRides({ scene: engine.scene, camera: engine.camera, player, sfx });     // keke, okada, bus and plane rides
 
   const navGrid = buildGrid(colliders, BOUNDS);
   const npcs = createNpcs(engine.scene, colliders, { grid: navGrid, findPath, places });
@@ -319,7 +322,7 @@ async function main() {
     }, 260);
   }
   function enterPlace(place) {
-    if (transitioning || inside) return;
+    if (transitioning || inside || rides.active) return;
     fadeThrough(() => {
       let it = interiors.get(place.name);
       if (!it) {
@@ -358,7 +361,7 @@ async function main() {
   /* ---- saving ---- */
   let enrolling = false;                   // set once we travel, so unloading can't overwrite the new save
   function snapshot() {
-    const p = inside ? { x: inside.place.door.x, z: inside.place.door.z } : player.group.position;
+    const p = inside ? { x: inside.place.door.x, z: inside.place.door.z } : rides.restPos() || player.group.position;
     return {
       campusId: state.campusId, hometown: state.hometown, name: state.name, money: state.money, needs: state.needs,
       minutes: dayNight.state.minutes, day: dayNight.state.day, x: p.x, z: p.z,
@@ -539,16 +542,23 @@ async function main() {
   }
 
   /** Writes the new save and reloads straight into the campus (autoResume skips the start screen). */
-  function enroll(uni, course) {
+  function enroll(uni, course, arrival = null) {
     enrolling = true;
     writeSave({
       campusId: uni, hometown: state.hometown, name: state.name, money: state.money, needs: state.needs,
       minutes: dayNight.state.minutes, day: dayNight.state.day, x: ARRIVAL.x, z: ARRIVAL.z,
       course, aspirant: null, admission: null, hostel: null, meta: state.meta,
       clearance: { admissions: false, bursary: false, medical: false, hostel: false, done: false },
-      autoResume: true
+      autoResume: true, arrivalRide: arrival
     });
     location.reload();
+  }
+
+  /** The bus or plane drives off with the player aboard (the player stays in it; the caller carries on from the road). */
+  function rideAway(kind) {
+    const p = player.group.position;
+    const far = kind === 'plane' ? 150 : 90;
+    return rides.start({ kind, from: { x: p.x, z: p.z }, path: [{ x: 0, z: p.z + 6 }, { x: 0, z: p.z + far }], dest: { x: p.x, z: p.z }, stay: true, plane: kind === 'plane' ? 'takeoff' : null });
   }
 
   async function travel() {
@@ -571,6 +581,10 @@ async function main() {
     meta.track('busRides');
     const ev = roadEvent(pick.mode, Math.random());
     if (ev.cost) { state.money = Math.max(0, state.money - ev.cost); meta.ledger('Roadside snacks', -ev.cost); }
+    const kind = pick.mode === 'flight' ? 'plane' : 'bus';
+    await rideAway(kind);                                       // you climb aboard and the vehicle drives off with you
+    fadeEl.classList.add('on');
+    await new Promise(r => setTimeout(r, 500));
     await showModal({
       title: pick.mode === 'flight' ? '✈️ In the air' : '🚌 On the road',
       lines: [pick.mode === 'flight' ? 'You find your seat and fasten your belt. Your bags are small but your hopes are big.' : 'You squeeze into the bus. Loud music, tight seats, one very talkative passenger.',
@@ -584,7 +598,7 @@ async function main() {
     afterTime(dayNight.skip(pick.minutes), prevDay);
     fadeEl.classList.add('on');
     await new Promise(r => setTimeout(r, 700));
-    enroll(adm.uni, adm.course);
+    enroll(adm.uni, adm.course, kind);
     return '';
   }
 
@@ -731,7 +745,7 @@ async function main() {
   };
 
   async function runTalk(npc) {
-    if (paused || transitioning) return;
+    if (paused || transitioning || rides.active) return;
     const run = ALL_DIALOGUES[npc.dialogue];
     if (!run) return;
     paused = true;
@@ -746,7 +760,7 @@ async function main() {
 
   /* ---- phone and dialogs (these pause the game while open) ---- */
   async function runModal(fn) {
-    if (paused || transitioning) return;
+    if (paused || transitioning || rides.active) return;
     paused = true;
     try { await fn(); }
     finally { paused = false; save(); }
@@ -963,7 +977,9 @@ async function main() {
 
   function rideTo(dest, modeId) {
     if (inside) { toast('Step outside first.'); return false; }
-    const dist = Math.hypot(dest.x - player.group.position.x, dest.z - player.group.position.z);
+    if (rides.active) return false;
+    const from = { x: player.group.position.x, z: player.group.position.z };
+    const dist = Math.hypot(dest.x - from.x, dest.z - from.z);
     const fare = fareFor(modeId, dist);
     if (state.money < fare) { toast('You do not have enough money for that ride. Try walking!'); return false; }
     state.money -= fare;
@@ -972,13 +988,22 @@ async function main() {
     const scare = modeId === 'okada' && okadaScare(Math.random());
     consume({ minutes: minutesFor(modeId, dist), fx: { stress: scare ? 8 : modeId === 'okada' ? 2 : 0, energy: -1 } });
     autoWalk = null;
-    fadeThrough(() => {
-      player.group.position.set(dest.x, 0, dest.z);
-      resolveCollisions(player.group.position, colliders);
-      engine.camera.position.set(dest.x, 15, dest.z + 17);
-    });
-    toast(scare ? '🛵 The rider zig-zagged through traffic. You arrived shaken!' : `${MODES[modeId].icon} You arrived at ${dest.label}.`);
-    save();
+    const arrived = () => {
+      toast(scare ? '🛵 The rider zig-zagged through traffic. You arrived shaken!' : `${MODES[modeId].icon} You arrived at ${dest.label}.`);
+      save();
+    };
+    const route = findPath(navGrid, from, dest);
+    if (!route) {                                   // no road through: fall back to the quick hop
+      fadeThrough(() => {
+        player.group.position.set(dest.x, 0, dest.z);
+        resolveCollisions(player.group.position, colliders);
+        engine.camera.position.set(dest.x, 15, dest.z + 17);
+      });
+      arrived();
+      return true;
+    }
+    toast(`${MODES[modeId].icon} Hop in! Tap Skip ride to jump ahead.`);
+    rides.start({ kind: modeId, from, path: stopShort(from, route, 3.5), dest: { x: dest.x, z: dest.z }, wobble: scare ? 2.4 : 0 }).then(arrived);
     return true;
   }
 
@@ -1059,7 +1084,7 @@ async function main() {
     });
 
     // movement
-    const v = driveAutoWalk(input.read());
+    const v = rides.active ? { x: 0, y: 0, len: 0 } : driveAutoWalk(input.read());
     const solids = inside ? inside.interior.colliders : colliders;
     const limits = inside ? inside.interior.bounds : undefined;
     if (v.len > 0.08) {
@@ -1071,7 +1096,7 @@ async function main() {
         player.group.position.z += v.y * stride / steps;
         resolveCollisions(player.group.position, solids, 0.75, limits);
       }
-    } else resolveCollisions(player.group.position, solids, 0.75, limits);
+    } else if (!rides.active) resolveCollisions(player.group.position, solids, 0.75, limits);
     player.update(dt, v.len);
     const where = inside ? inside.place.name : null;
     if (!inside) updateDoors(places, player.group.position, dt);
@@ -1153,6 +1178,7 @@ async function main() {
         }
       }
     }
+    if (rides.active) { panelPlace = null; actions = []; note = ''; activePlace = null; }      // nothing to do while riding
     hud.setPlace(panelPlace, actions, note, perform);
     hud.refreshButtons(canDo);
 
@@ -1172,13 +1198,13 @@ async function main() {
       if (state.meta.health.sick) hints.show('health');
     }
     // guided first day (hints.js): one call per frame, hides itself while a dialog is open
-    hints.tour.update({ x: p.x, z: p.z, paused, npc: !!npc, inside: !!inside, hour: dayNight.state.minutes / 60, day: dayNight.state.day });
+    hints.tour.update({ x: p.x, z: p.z, paused: paused || rides.active, npc: !!npc, inside: !!inside, hour: dayNight.state.minutes / 60, day: dayNight.state.day });
 
     updateSigns(engine.camera.position);
     minimap.update(performance.now());
 
-    // follow camera
-    if (inside) {
+    // follow camera (rides move the camera themselves)
+    if (rides.active) { /* see rides.update */ } else if (inside) {
       const ox = inside.interior.exit.x;
       const cx = ox + (p.x - ox) * 0.75, cz = p.z * 0.3;
       camTarget.set(cx, 17, cz + 15);
@@ -1195,14 +1221,23 @@ async function main() {
   }
 
   function frame(now) {
-    const dt = paused ? 0 : Math.min(0.05, (now - prev) / 1000);
+    const real = Math.min(0.05, (now - prev) / 1000);
+    const dt = paused ? 0 : real;
     prev = now;
     update(dt);
+    rides.update(real);
     engine.renderer.render(engine.scene, engine.camera);
     requestAnimationFrame(frame);
   }
 
   engine.camera.position.set(state.x, 15, state.z + 17);
+  if (saved?.arrivalRide && campus.id !== 'home') {         // the bus (or plane) from home drives you in through the main gate
+    const kind = saved.arrivalRide === 'plane' ? 'plane' : 'bus';
+    const from = { x: ARRIVAL.x, z: kind === 'plane' ? ARRIVAL.z + 120 : ARRIVAL.z + 52 };
+    player.group.position.set(from.x, 0, from.z);
+    engine.camera.position.set(from.x, 18, from.z + 24);
+    rides.arrive({ kind, from, path: [{ x: ARRIVAL.x, z: ARRIVAL.z + 10 }], dest: { x: ARRIVAL.x, z: ARRIVAL.z }, plane: kind === 'plane' ? 'landing' : null });
+  }
   if (state.admission) {                      // reloaded while preparing to travel: point at the motor park again
     const park = places.find(p => p.type === 'park');
     if (park) guide.set({ x: park.door.x, z: park.door.z, label: 'Motor Park' });
@@ -1219,7 +1254,7 @@ async function main() {
 
   // Debug helpers: __campus.setHour(19), __campus.setDay(3), __campus.state, __campus.enter(place) ...
   window.__campus = {
-    start: events.start, setHour: dayNight.setHour, setDay: d => { dayNight.state.day = d; },
+    start: events.start, rides, setHour: dayNight.setHour, setDay: d => { dayNight.state.day = d; },
     state, places, player, npcs, guide, enter: enterPlace, leave: leavePlace, get inside() { return inside; },
     scenes, checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
