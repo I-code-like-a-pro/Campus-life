@@ -41,7 +41,8 @@ export function conditions({ day, minutes, season }) {
     powerCut = hour >= start && hour < start + length;
   }
   const waterShort = waterShortage(day, hour);
-  return { season, raining, haze, powerCut, waterShort };
+  const flooded = isFlooded(day, hour, season);
+  return { season, raining, haze, powerCut, waterShort, flooded };
 }
 
 /** Water shortage: about 1 day in 5 the hostel taps run dry from early morning until early afternoon. */
@@ -49,6 +50,39 @@ export function waterShortage(day, hour) {
   if (hash01(day, 'water') >= 0.2) return false;
   const start = 5 + Math.floor(hash01(day, 'water-start') * 3);               // 05:00 to 07:59
   return hour >= start && hour < start + 7;
+}
+
+/* ---- trouble events (group trouble): seeded like the rest, so the same day always brings the same event ---- */
+
+/** A flood: on about one rainy day in five the afternoon shower is heavy and the paths stay under water for four hours. */
+export function floodWindow(day, season) {
+  if (season !== 'rainy' || day < 3 || hash01(day, 'rain') >= 0.5 || hash01(day, 'flood') >= 0.4) return null;
+  const from = 12 + Math.floor(hash01(day, 'rain-start') * 5) + 1;           // an hour into the shower
+  return { from, to: from + 4 };
+}
+export const isFlooded = (day, hour, season) => { const w = floodWindow(day, season); return !!w && hour >= w.from && hour < w.to; };
+/** While the paths are flooded nobody is marked late: lectures start about an hour behind. */
+export const FLOOD_LATE_GRACE = 60;
+export const lateGraceMinutes = (day, hour, season) => (isFlooded(day, hour, season) ? FLOOD_LATE_GRACE : 0);
+
+/** A hostel fire drill (about one evening in 16) or a small kitchen fire alarm (about one in 25). */
+export function fireAlarm(day) {
+  if (day < 4) return null;
+  if (hash01(day, 'drill') < 0.06) return { kind: 'drill', hour: 21 };
+  if (hash01(day, 'kitchen') < 0.04) return { kind: 'kitchen', hour: 22.5 };
+  return null;
+}
+
+/** A peaceful student union protest on a lecture day (not CA or exam day): about one lecture day in 12. */
+export function protestOn(day, semDay) {
+  if (![1, 2, 4, 5].includes(semDay) || hash01(day, 'protest') >= 0.08) return null;
+  return { topic: hash01(day, 'protest-topic') < 0.5 ? 'fees' : 'nepa', from: 11, to: 14 };
+}
+
+/** An unconfirmed security report: a curfew evening about one in 25. Notice at 18:30, curfew 20:00 until 06:00 next day. */
+export function securityAlert(day) {
+  if (day < 5 || hash01(day, 'alert') >= 0.04) return null;
+  return { notice: 18.5, curfew: 20, end: 6 };
 }
 
 export const strikeDays = { from: 4, to: 5 };                                // Thursday and Friday
@@ -71,6 +105,8 @@ export function createEventEngine({ events, meta, sound = () => {}, getContext }
     if (prev === null) return;                                               // first frame: just set the scene
     if (now.powerCut && !prev.powerCut) { meta.notify({ icon: '💡', title: 'Power cut!', text: 'No power: phones, laptops and browsing are off until it returns.' }); sound('power'); }
     if (!now.powerCut && prev.powerCut) meta.notify({ icon: '🎉', title: 'Power is back!', text: 'Power is back.' });
+    if (now.flooded && !prev.flooded) meta.notify({ icon: '🌊', title: 'Flooding on campus', text: 'Water is across the main paths. Lectures start about an hour behind and nobody is marked late.' });
+    if (!now.flooded && prev.flooded) meta.notify({ icon: '🌤️', title: 'The water is draining', text: 'The paths are passable again.' });
     if (now.raining && !prev.raining) meta.notify({ icon: '🌧️', title: 'It is raining', text: 'A shower for the next two hours.' });
     if (!now.raining && prev.raining) meta.notify({ icon: '☀️', title: 'The rain has stopped', text: 'The sky is clearing.' });
     if (now.waterShort && !prev.waterShort) meta.notify({ icon: '🚰', title: 'Water shortage', text: 'The hostel taps are dry. Baths are bucket baths until the afternoon.' });
@@ -99,11 +135,12 @@ export function createEventEngine({ events, meta, sound = () => {}, getContext }
     const season = seasonFor({ term: ctx.term, day: ctx.day });
     const now = conditions({ day: ctx.day, minutes: ctx.minutes, season });
 
-    if (!last || last.powerCut !== now.powerCut || last.raining !== now.raining || last.haze !== now.haze || last.waterShort !== now.waterShort) {
+    if (!last || last.powerCut !== now.powerCut || last.raining !== now.raining || last.haze !== now.haze || last.waterShort !== now.waterShort || last.flooded !== now.flooded) {
       announce(last, now, ctx);
       events.set('nepa', now.powerCut);
       events.set('rain', now.raining);
       events.set('harmattan', now.haze && !now.raining);
+      events.set('flood', now.flooded);
     }
     lastSeason = lastSeason ?? season;
     if (lastSeason !== season) { announce({ ...now }, now, ctx); lastSeason = season; }
