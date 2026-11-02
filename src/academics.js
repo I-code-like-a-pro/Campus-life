@@ -3,6 +3,7 @@ import { DEPTS, buildCourses, bankOf } from './courses.js';
 import { QUESTIONS, shuffle } from './questions.js';
 import { courseOf } from './admissions.js';
 import { semesterHasStrike, strikeDays } from './eventengine.js';
+import { createAcademicLife, resetSemester, lecturerFacts } from './academic-life.js';
 import { orientationLine } from './campuslife-events.js';
 
 /*
@@ -60,8 +61,10 @@ export function degreeClass(cgpa) {
  * deps: { state, day(), minutes(), venues() -> lecture building names, consume({minutes, fx}), toast(text) }
  * The academic record lives in state.academic and is saved with the game.
  */
-export function createAcademics({ state, day, minutes, venues, consume, toast, onEvent = () => {} }) {
+export function createAcademics({ state, day, minutes, venues, consume, toast, pay = () => false, onEvent = () => {} }) {
   const A = () => state.academic;
+  // group academic: lecturers, handouts, group work, labs, tutorials
+  const life = createAcademicLife({ A, consume, toast, pay, boost: (code, n) => boostCourse(code, n), minutes, semDay: () => semDay() });
 
   /* ---------- setup ---------- */
   function buildSemester(a) {
@@ -78,6 +81,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     // an ASUU strike suspends the lectures on its days; they don't count against attendance
     a.strike = semesterHasStrike(a.year, a.term) ? { from: strikeDays.from, to: strikeDays.to } : null;
     if (a.strike) for (const t of a.timetable) t.cancelled = t.day >= a.strike.from && t.day <= a.strike.to;
+    resetSemester(a);
     a.reminded = {};
     a.attended = {};
     a.caTaken = false;
@@ -210,6 +214,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     }
     if (sd === CA_DAY && !a.caTaken && now >= 8 * 60 && now < 18 * 60) actions.push({ id: 'ca', label: '📝 Take CA tests' });
     if (sd === EXAM_DAY && !a.examTaken && now >= 8 * 60 && now < 20 * 60) actions.push({ id: 'exam', label: '🧪 Write exams' });
+    actions.push(...life.actions('lecture'));
     if (actions.length) return { actions, note: '' };
     if (a.strike && sd >= a.strike.from && sd <= a.strike.to) return { actions: [], note: '📢 ASUU strike: lectures are suspended until Saturday.' };
 
@@ -227,6 +232,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     if (a.phase === 'semester' && sd >= 1 && sd <= ASSIGNMENT_DUE && a.courses.some(c => !c.assign.done)) {
       actions.push({ id: 'assign', label: '📝 Work on an assignment' });
     }
+    actions.push(...life.actions('library'));
     return { actions, note: '' };
   }
 
@@ -277,6 +283,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
   async function run(action) {
     const a = A();
     if (!a) return;
+    if (life.handles(action.id)) { await life.run(action); return; }   // group academic (checked first so lecture/CA actions stay synchronous)
 
     if (action.id === 'attend') {
       const t = action.entry;
@@ -284,9 +291,12 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
       a.attended[key(t)] = action.late ? 'late' : 'ok';
       c.att[action.late ? 'late' : 'ok'] += 1;
       c.knowledge = Math.min(100, c.knowledge + 6);
-      const left = Math.max(30, (t.hour + LECTURE_HOURS) * 60 - minutes());
-      consume({ minutes: left, fx: { energy: -8, hunger: -8, fun: -6, stress: 3 } });
-      toast(`🎓 You attended ${t.code}${action.late ? ' (late)' : ''}.`);
+      const style = life.attendHook(c, action.late);
+      const left = Math.max(30, (t.hour + LECTURE_HOURS) * 60 - minutes() - style.minutesBack);
+      const lfx = { energy: -8, hunger: -8, fun: -6, stress: 3 };
+      for (const [k, v] of Object.entries(style.fx)) lfx[k] = (lfx[k] || 0) + v;
+      consume({ minutes: left, fx: lfx });
+      toast(`🎓 You attended ${t.code}${action.late ? ' (late)' : ''}. ${style.line}`);
       onEvent('lecture');
     } else if (action.id === 'study') {
       const c = await chooseCourse('📚 Study', 'Which course do you want to study?', a.courses, x => `${x.code} · ${x.title} (${x.knowledge}%)`);
@@ -396,6 +406,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, o
     out.push(`Timetable: ${[...a.timetable].sort((x, y) => x.day - y.day || x.hour - y.hour).map(t => `${WEEKDAYS[t.day - 1]} ${hhmm(t.hour)} ${t.code} at ${t.venue}${t.cancelled ? ' (cancelled by strike)' : ''}`).join('; ')}.`);
     if (a.strike) out.push(`An ASUU strike affects days ${a.strike.from} to ${a.strike.to} of this semester.`);
     if (a.cgpa != null) out.push(`The player's CGPA is ${a.cgpa.toFixed(2)}.`);
+    out.push(`Lecturers: ${lecturerFacts(a).join('; ')}.`);
     if (a.carryovers?.length) out.push(`Carryovers to retake: ${a.carryovers.map(c => c.code).join(', ')}.`);
     return out;
   }

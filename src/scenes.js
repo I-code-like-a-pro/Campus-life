@@ -3,6 +3,7 @@ import { CLUBS, clubSchedule, CLUB_DUES, MAX_CLUBS } from './social.js';
 import { hash01 } from './eventengine.js';
 import { seedOf } from './clearance.js';
 import { matricPages, MATRIC_FX } from './campuslife-events.js';
+import { ACADEMIC_SCENES } from './scenes-academic.js';
 
 /*
  * Scenes: story events that happen at a real place and a real time. The player is told when and where, can walk there and
@@ -338,6 +339,7 @@ export const SCENES = [
   },
 ];
 
+SCENES.push(...ACADEMIC_SCENES);   // group academic
 export const sceneById = id => SCENES.find(s => s.id === id);
 
 /* ---------------- scheduling rules (pure) ---------------- */
