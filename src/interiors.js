@@ -3,7 +3,7 @@ import { createSign } from './world.js';
 
 const lam = c => new THREE.MeshLambertMaterial({ color: c });
 
-export const ENTERABLE = new Set(['hostel', 'home', 'cafe', 'canteen', 'library', 'lecture', 'biz', 'clinic', 'registry', 'auditorium']);
+export const ENTERABLE = new Set(['hostel', 'home', 'cafe', 'canteen', 'library', 'lecture', 'biz', 'clinic', 'registry', 'auditorium', 'books', 'bank']);
 
 /** Where the four clearance counters stand inside the Registry (x offsets from the room centre). */
 export const REGISTRY_SLOTS = [-7.5, -2.5, 2.5, 7.5];
@@ -188,6 +188,31 @@ export function buildInterior(scene, place, ox) {
       });
       spot('Study desks', '📚', 0, 0.6, 5.5, ['library'], '');   // actions come from academics.js
     },
+    books() {
+      // shelves of textbooks along the back wall, a stationery rack, a tutoring table and the till
+      solid(15, 4.6, 1, 0x7a5a38, 0, 2.3, -7.2);
+      [0xc0392b, 0x2f6fd0, 0x27ae60, 0xe5a52a].forEach((c, i) => box(14.6, 0.8, 0.7, c, 0, 0.95 + i * 1.05, -7.1));
+      solid(5, 1.2, 1.4, 0xd6a96a, -5.5, 0.6, -3.6);                      // till counter
+      box(1.2, 0.9, 0.1, 0x222a35, -5.5, 1.7, -3.9);
+      solid(4.2, 3.2, 1, 0xb98a5a, 6.5, 1.6, -3.2);                       // stationery rack
+      [0x2f6fd0, 0xe5a52a, 0xc0392b].forEach((c, i) => box(3.8, 0.25, 0.5, c, 6.5, 0.9 + i * 0.9, -3.0));
+      solid(5, 0.2, 2.2, 0xb98a5a, 4.5, 1.3, 2.4);                        // tutoring table with stools
+      [2.2, 6.8].forEach(x => box(0.9, 0.7, 0.9, 0x2f6fd0, x, 0.35, 4.2));
+      spot('Textbooks & stationery', '📚', -2, -1.2, 4.6, ['textbooks', 'stationery']);
+      spot('Tutoring table', '🧑🏾‍🏫', 4.5, 4.4, 3.2, ['tutor']);
+    },
+    bank() {
+      // teller counter behind a glass screen, two ATMs against the right wall, a queue rope and a bench
+      solid(10, 1.3, 1.4, 0x8a5a3a, -3, 0.65, -5.6);
+      box(10, 1.6, 0.1, 0xbcdff0, -3, 2.2, -5.1);
+      [3.4, 6.6].forEach(x => {
+        solid(1.8, 3.2, 1.4, 0x1f4f7a, x + 1.8, 1.6, -6.6);
+        box(1.3, 0.9, 0.1, 0x7cc4ff, x + 1.8, 2.4, -5.85);
+      });
+      solid(6, 0.5, 1.2, 0x6b4a2b, -4, 0.25, 3.6);                        // bench
+      box(14, 2.2, 0.15, 0x1f4d33, 0, 4.4, -D / 2 + 0.15);                // rates board
+      spot('ATM', '🏧', 7, -3.6, 3.6, ['atm']);
+    },
     registry() {
       // four counters in a row, each with a sign; officers stand behind them (see interiorNpcDefs)
       REGISTRY_SLOTS.forEach((x, i) => {
@@ -204,6 +229,7 @@ export function buildInterior(scene, place, ox) {
       box(5, 2.6, 0.12, 0x6b4a2b, 0, 3.6, -D / 2 + 0.15);
       box(4.6, 2.2, 0.08, 0xf6f1e4, 0, 3.6, -D / 2 + 0.22);
       tag('🕗', 'Open 8:00 to 17:00', 0, 5.6, -D / 2 + 0.6);
+      spot('Pay school fees', '💳', REGISTRY_SLOTS[1], -1.2, 3.0, ['payfees'], 'Pay your school fees here, or in full or half from your phone.');   // group money
     },
     auditorium() {
       // stage with a podium and banner, and rows of seats either side of a central aisle (seats are walk-through, so a crowd fits)
@@ -240,6 +266,8 @@ export function buildInterior(scene, place, ox) {
     biz:     { x: ox + 7, z: -3.5 },
     clinic:  { x: ox + 0.5, z: -3.0 },
     registry: { x: ox, z: -6.4 },
+    books:   { x: ox - 5.5, z: -5.4 },
+    bank:    { x: ox - 3, z: -7.0 },
     auditorium: { x: ox, z: -6.4 },
     hostel:  { x: ox + 1.5, z: -2.5 },
     home:    { x: ox + 1.5, z: -2.5 }

@@ -56,9 +56,23 @@ export const ACTIONS = {
   lecture: [],
   library: [
     { id: 'shelve', label: '📚 Shelve books (2 hrs)', pay: 2000, minutes: 120, limit: 2, needs: { energy: 20 },
-      fx: { energy: -10, fun: -6, stress: 2, hunger: -5 }, msg: 'The shelves look neat. The librarian pays a little money.' }
+      fx: { energy: -10, fun: -6, stress: 2, hunger: -5 }, msg: 'The shelves look neat. The librarian pays a little money.' },
+    { id: 'libassist', label: '🗂️ Library assistant desk (3 hrs)', pay: 3500, minutes: 180, limit: 1, needs: { energy: 25 },
+      fx: { energy: -13, fun: -7, stress: 3, hunger: -7 }, msg: 'You stamped returns and answered questions all afternoon. The library paid your stipend.' }
   ],
-  auditorium: []
+  auditorium: [],
+  registry: [
+    { id: 'payfees', label: '💳 Pay school fees', money: 'fees', minutes: 0 }
+  ],
+  books: [
+    { id: 'textbooks', label: '📚 Browse textbooks', money: 'textbooks', minutes: 0, needsAcademic: true },
+    { id: 'stationery', label: '✏️ Stationery pack', cost: 1500, money: 'stationery', minutes: 0, needsAcademic: true },
+    { id: 'tutor', label: '🧑🏾‍🏫 Tutor juniors (2 hrs)', pay: 3000, minutes: 120, limit: 1, needsAcademic: true, needs: { energy: 20 },
+      fx: { energy: -12, fun: -4, stress: 4, hunger: -6 }, msg: 'You explained the same topic four times. The juniors paid you and said thank you.' }
+  ],
+  bank: [
+    { id: 'atm', label: '🏧 Use the ATM', money: 'atm', minutes: 0 }
+  ]
 };
 
 export const COMING_SOON = {
