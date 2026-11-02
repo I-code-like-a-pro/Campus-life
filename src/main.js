@@ -35,6 +35,7 @@ import { createPhone, openAbout } from './phone.js';
 import { createHints } from './hints.js';
 import { settings, onSettingChange, applySettings } from './settings.js';
 import { unlockAudio, sfx, syncAudio } from './audio.js';
+import { engineStart, engineUpdate, engineStop, horn, soundTick } from './soundscape.js';   // group sound
 import { installErrorHandlers, track } from './telemetry.js';
 import { openFeedback } from './feedback.js';
 import { buildGrid, findPath } from './pathfind.js';
@@ -120,7 +121,7 @@ async function main() {
   player.group.position.set(state.x, 0, state.z);
   addXray(player.group);
   engine.scene.add(player.group);
-  const rides = createRides({ scene: engine.scene, camera: engine.camera, player, sfx });     // keke, okada, bus and plane rides
+  const rides = createRides({ scene: engine.scene, camera: engine.camera, player, sfx, audio: { engineStart, engineUpdate, engineStop, horn } });   // group sound     // keke, okada, bus and plane rides
 
   const navGrid = buildGrid(colliders, BOUNDS);
   const npcs = createNpcs(engine.scene, colliders, { grid: navGrid, findPath, places });
@@ -336,7 +337,7 @@ async function main() {
       player.group.rotation.y = Math.PI;                                       // face the back wall
       events.setIndoors(true);
       engine.camera.position.set(it.spawn.x, 17, 16);
-      sfx('door');
+      sfx('doorOpen');   // group sound
       meta.track('enters');
       meta.trackOnce('place', place.name, 'placesSeen');
       campusStory.visited(place.type);                  // group B: orientation week goals
@@ -353,7 +354,7 @@ async function main() {
       player.group.rotation.y = 0;
       events.setIndoors(false);
       engine.camera.position.set(place.door.x, 15, place.door.z + 17);
-      sfx('door');
+      sfx('doorShut');   // group sound
     };
     if (instant) out(); else if (!transitioning) fadeThrough(out);
   }
@@ -1087,6 +1088,7 @@ async function main() {
     const v = rides.active ? { x: 0, y: 0, len: 0 } : driveAutoWalk(input.read());
     const solids = inside ? inside.interior.colliders : colliders;
     const limits = inside ? inside.interior.bounds : undefined;
+    lastMoveLen = v.len;   // group sound
     if (v.len > 0.08) {
       player.group.rotation.y = Math.atan2(v.x, v.y);
       // move in small steps (at most 0.3 units) and resolve each one, so no frame rate can carry you through a wall
@@ -1220,12 +1222,14 @@ async function main() {
     if (saveTimer > 5) { saveTimer = 0; save(); }
   }
 
+  let lastMoveLen = 0;   // group sound
   function frame(now) {
     const real = Math.min(0.05, (now - prev) / 1000);
     const dt = paused ? 0 : real;
     prev = now;
     update(dt);
     rides.update(real);
+    soundTick({ dt: real, hour: dayNight.state.minutes / 60, inside: !!inside, placeType: inside?.place.type, sceneOn: !!(inside && scenes.openAt(inside.place.name)), riding: rides.active, raining: events.raining, walking: lastMoveLen > 0.08, stride: lastMoveLen });   // group sound
     engine.renderer.render(engine.scene, engine.camera);
     requestAnimationFrame(frame);
   }

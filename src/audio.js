@@ -51,10 +51,44 @@ function tone(freq, { dur = 0.12, type = 'sine', gain = 0.2, at = 0, slideTo = n
   osc.stop(t0 + dur + 0.02);
 }
 
+/** For soundscape.js: the audio context and master gain (null until the first tap), and shared helpers. */
+export const audioCore = () => (ensure() ? { ctx, master, noise: noiseBuffer() } : null);
+
+let noiseBuf = null;
+function noiseBuffer() {
+  if (noiseBuf) return noiseBuf;
+  noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  return noiseBuf;
+}
+
+/** A short band-limited puff of noise (door whoosh, footstep). */
+export function puff(dur, gain, freq, at = 0) {
+  const c = ensure();
+  if (!c || !settings.sound) return;
+  const t0 = c.currentTime + at;
+  const src = c.createBufferSource();
+  src.buffer = noiseBuffer();
+  const f = c.createBiquadFilter();
+  f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = 0.8;
+  const g = c.createGain();
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(f).connect(g).connect(master);
+  src.start(t0, Math.random());
+  src.stop(t0 + dur + 0.05);
+}
+export const audioRunning = () => !!ctx && ctx.state === 'running';
+export { tone };
+
 const SFX = {
   click:   () => tone(660, { dur: 0.06, type: 'square', gain: 0.08 }),
-  toast:   () => tone(880, { dur: 0.08, type: 'sine', gain: 0.1 }),
-  door:    () => tone(140, { dur: 0.18, type: 'triangle', gain: 0.18, slideTo: 90 }),
+  toast:   () => { tone(784, { dur: 0.16, gain: 0.07 }); tone(1175, { dur: 0.3, gain: 0.06, at: 0.09 }); },   // soft two-note chime
+  door:    () => { tone(150, { dur: 0.16, type: 'triangle', gain: 0.12, slideTo: 95 }); tone(95, { dur: 0.1, type: 'sine', gain: 0.1, at: 0.12 }); puff(0.12, 0.05, 700); },
+  doorOpen: () => { tone(110, { dur: 0.22, type: 'triangle', gain: 0.05, slideTo: 170 }); puff(0.14, 0.04, 900); },
+  doorShut: () => { tone(120, { dur: 0.12, type: 'triangle', gain: 0.1, slideTo: 80 }); puff(0.08, 0.05, 600); },
   coin:    () => { tone(988, { dur: 0.07, gain: 0.12 }); tone(1319, { dur: 0.14, gain: 0.12, at: 0.07 }); },
   success: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, { dur: 0.14, gain: 0.12, at: i * 0.08 })),
   fail:    () => { tone(330, { dur: 0.18, type: 'sawtooth', gain: 0.1 }); tone(220, { dur: 0.3, type: 'sawtooth', gain: 0.1, at: 0.15 }); },
