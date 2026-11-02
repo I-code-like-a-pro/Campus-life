@@ -44,6 +44,7 @@ import { createRides } from './rides.js';
 import { stopShort } from './vehicles.js';
 import { getRel, addPoints, dailyChat, levelOf, loanBill, socialActions, FAVOURS, joinClub, MAX_CLUBS } from './social.js';
 import { createCampusStory, waterAdjust } from './campuslife-events.js';   // group B: story beats
+import { initLaunch, createLaunch } from './launch.js';   // group launch
 
 const ALL_DIALOGUES = { ...DIALOGUES, ...WORLD_DIALOGUES };
 
@@ -58,6 +59,7 @@ const MEAL_IDS = new Set(['jollof', 'pie', 'zobo', 'momfood', 'snack', 'vendorha
 const CROWD_BY_QUALITY = { low: 4, medium: 8, high: 12 };
 
 installErrorHandlers();
+initLaunch();   // group launch
 
 async function main() {
   // ---- start: new game, continue, or straight into the campus after the bus ride ----
@@ -105,6 +107,7 @@ async function main() {
 
   const engine = createEngine();
   applySettings(engine);
+  const launch = createLaunch(engine, () => (inside ? inside.place.type : 'campus'));   // group launch
   const { colliders, places } = buildCampus(engine.scene, campus, []);
   const input = createInput();
   const hud = createHud();
@@ -1227,6 +1230,7 @@ async function main() {
     update(dt);
     rides.update(real);
     engine.renderer.render(engine.scene, engine.camera);
+    launch.frame(now, inside, interiors);   // group launch
     requestAnimationFrame(frame);
   }
 
@@ -1259,7 +1263,8 @@ async function main() {
     scenes, checkResults, admitted, runTalk, academics, consume, meta, eventEngine, execute, phone, hints,
     openPhone: () => runModal(() => phone.open()),
     football, runEnding, mapUI, startWalk, rideTo, navGrid, get autoWalk() { return autoWalk; },
-    addRelation, relation, boostNearby, engine, colliders, resolveCollisions
+    addRelation, relation, boostNearby, engine, colliders, resolveCollisions,
+    launch   // group launch: launch.report() prints a performance row
   };
 }
 

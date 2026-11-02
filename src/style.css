@@ -246,3 +246,33 @@ button { touch-action:manipulation; }
 #skipride { position:fixed; top:max(64px,calc(env(safe-area-inset-top) + 56px)); left:50%; transform:translateX(-50%); z-index:14; min-height:44px; padding:10px 18px;
   border:0; border-radius:999px; background:rgba(20,30,40,.78); color:#fff; font-size:15px; backdrop-filter:blur(6px); cursor:pointer; }
 #skipride[hidden] { display:none; }
+
+/* ---- High contrast (Settings): solid dark panels, pure white text, strong borders, no translucent blur ---- */
+.high-contrast { --panel:#000; --text:#fff; --accent:#005a2f; }
+.high-contrast .pill, .high-contrast #needs, .high-contrast #panel, .high-contrast #menu, .high-contrast #log,
+.high-contrast .mbox, .high-contrast #tour, .high-contrast #wallet {
+  background:#000; backdrop-filter:none; -webkit-backdrop-filter:none; color:#fff; border:2px solid #fff; }
+.high-contrast #banner.show, .high-contrast #toast.show { background:#000; border:2px solid #fff; opacity:1; }
+.high-contrast #acts button, .high-contrast #mBtns button, .high-contrast #menu button, .high-contrast .tourbtns button,
+.high-contrast .primary { background:#005a2f; color:#fff; border:2px solid #fff; font-weight:800; }
+.high-contrast #mBtns button.secondary, .high-contrast #menu button.danger, .high-contrast .tourbtns button.skip, .high-contrast .ghost {
+  background:#000; color:#fff; border:2px solid #fff; }
+.high-contrast #acts button:disabled, .high-contrast .primary:disabled { background:#222; color:#e6e6e6; border-style:dashed; }
+.high-contrast .field input, .high-contrast .field select, .high-contrast .askinput { background:#000; color:#fff; border:2px solid #fff; }
+.high-contrast .uni { border:2px solid #fff; background:#000; }
+.high-contrast .uni.sel { background:#003d20; box-shadow:0 0 0 3px #fff inset; }
+.high-contrast .sub, .high-contrast .field, .high-contrast .preview-note, .high-contrast .legal-links { opacity:1; color:#fff; }
+.high-contrast a { color:#8fd3ff; text-decoration:underline; }
+.high-contrast :focus-visible { outline:3px solid #ffe600; outline-offset:2px; }
+.high-contrast #pad { border:3px solid #fff; background:rgba(0,0,0,.6); }
+
+/* ---- Large text (Settings: 115% and 130%) on phones: the page is zoomed, so keep the top bar, joystick and action panel from colliding ---- */
+@media (max-width:480px) {
+  .text-large #top { zoom:.8; }                                                       /* 44px buttons stay about 46px after zoom */
+  .text-large #goal, .text-large #guide { max-width:calc((100vw - 160px) / var(--ui-scale, 1.3)); }   /* stop before the minimap */
+  .text-large #needs { flex-wrap:wrap; max-width:calc((100vw - 24px) / var(--ui-scale, 1.3)); }       /* the one-row needs bar wraps instead of running off the screen */
+  .text-large #panel { width:calc((100vw - 190px) / var(--ui-scale, 1.3)); }          /* stay clear of the joystick */
+}
+@media (max-width:480px), (max-height:520px) {
+  .text-large #pad { zoom:calc(1 / var(--ui-scale, 1.3)); }                          /* the joystick keeps its normal size */
+}

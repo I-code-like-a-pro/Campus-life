@@ -2,6 +2,8 @@ import { CAMPUSES, CAMPUS_ORDER } from './campuses.js';
 import { COURSES, BACKGROUNDS, CUTOFFS, CUTOFF_SOURCE } from './admissions.js';
 import { TOWNS } from './towns.js';
 
+import { t } from './i18n.js';
+
 const $ = id => document.getElementById(id);
 
 function el(tag, props = {}, ...children) {
@@ -50,7 +52,7 @@ export async function showStart(save) {
       const label = save.aspirant ? 'JAMB aspirant' : `${CAMPUSES[save.campusId]?.short || ''}`;
       const cont = $('continue');
       cont.hidden = false;
-      cont.textContent = `Continue as ${save.name} (${label}, Day ${save.day})`;
+      cont.textContent = t('start.continue', { name: save.name, label, day: save.day });
       cont.addEventListener('click', () => resolve({ resume: true }));
     }
   });

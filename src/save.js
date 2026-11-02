@@ -89,7 +89,7 @@ let lastBackupAt = 0;
 export function writeSave(data) {
   const ls = store();
   if (!ls) return false;
-  const json = JSON.stringify({ ...data, v: SCHEMA_VERSION });
+  const json = JSON.stringify({ ...data, v: SCHEMA_VERSION, savedAt: Date.now() });   // savedAt lets a cloud copy and this copy be compared (src/savestore.js)
   try {
     const previous = ls.getItem(KEY);
     ls.setItem(KEY, json);
@@ -110,7 +110,7 @@ export function clearSave() {
 
 /* ---------------- export and import ---------------- */
 
-function checksum(text) {
+export function checksum(text) {
   let h = 2166136261;
   for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
   return (h >>> 0).toString(36);

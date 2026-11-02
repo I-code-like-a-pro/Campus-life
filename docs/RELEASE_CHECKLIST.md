@@ -20,12 +20,15 @@ Tick each box in the release PR or a copy of this file. Owner = you, Dev = devel
 ## 3. Content and legal (Owner)
 - [ ] Disclaimer present on the start screen, About page and landing FAQ: fan-made, not affiliated with UNILAG, UI, OAU, JAMB or any institution; no logos or crests.
 - [ ] Privacy policy and terms read by a lawyer; changes applied. NDPA points covered (see [BACKEND_OPTIONS.md](BACKEND_OPTIONS.md)).
-- [ ] Question banks reviewed by subject reviewers; sign-off recorded.
+- [ ] Question banks reviewed by subject reviewers; sign-off recorded. Export with `node tools/export-content.js` and follow [REVIEW_KIT.md](REVIEW_KIT.md) (kit ready; reviewers still needed).
 - [ ] Landing page screenshot placeholders replaced with real captures.
 - [ ] Share image / social preview created.
 
 ## 4. Build and test (Dev)
-- [ ] `npx vitest run` passes.
+- [x] `npx vitest run` passes (re-run on the release candidate).
+- [ ] After the AI proxy is deployed: `AI_SMOKE_URL=<proxy url> node tools/ai-smoke.js` passes (see [AI_NPCS.md](AI_NPCS.md)). Mock mode is already built and passing.
+- [ ] High-contrast mode and the largest text size checked on a real phone at 375px and in landscape.
+- [ ] Language picker shows only reviewed languages (English at launch unless native-speaker review is finished).
 - [ ] `npx vite build` passes; `dist` contains `index.html`, `landing.html`, `about.html`, `privacy.html`, `terms.html`.
 - [ ] [QA_CHECKLIST.md](QA_CHECKLIST.md) run on at least 3 real phones (one low-end Android) and iPhone Safari.
 - [ ] Played start to graduation once on the production build.
@@ -36,6 +39,8 @@ The service worker (`public/sw.js`) names its cache (`const CACHE = 'campus-life
 - [ ] After deploy, load the site once, close all tabs, reopen, and confirm the new version number shows on the start screen.
 - [ ] Confirm `/sw.js` is served with `Cache-Control: no-cache` (set in `vercel.json`).
 - [ ] Confirm the game loads offline after a first visit.
+
+- [ ] Cloud save stays OFF for launch unless the owner has completed every step in [CLOUD_SAVE.md](CLOUD_SAVE.md) (default: off, no network calls).
 
 ## 6. Rollback plan
 - [ ] Know the previous good deployment (Vercel and Netlify keep old deployments; promote or "rollback" in the dashboard, about one minute).
@@ -60,7 +65,7 @@ Run the beta on the real host with 20 to 50 testers for at least 5 days. Launch 
 - [ ] No reported soft-lock (a state where the player cannot continue) in the last 3 days; zero open soft-lock bugs.
 - [ ] No reported loss of save progress in the last 3 days; zero open data-loss bugs.
 - [ ] Crash-free sessions of at least 99% among opt-in sessions (if fewer than 100 opt-in sessions, rely on the other criteria and say so).
-- [ ] Median frame rate of at least 30 fps on the low-end test phone, or the Low graphics preset reaches it.
+- [ ] Median frame rate of at least 30 fps on the low-end test phone, or the Low graphics preset reaches it. Measure with `?perf=1` and fill the table in [PERFORMANCE.md](PERFORMANCE.md) (tooling is ready; no phone result yet).
 - [ ] First load under 10 seconds on a mid-range phone on a typical mobile connection (measure, do not guess).
 - [ ] At least 70% of testers say they would recommend it or would play again (simple yes/no in the form).
 - [ ] No unresolved top-5 usability issue (first minute confusion, unreadable text, buttons too small).

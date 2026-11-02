@@ -1,5 +1,6 @@
 import { formatTime } from './daynight.js';
 import { NEEDS, mood, naira } from './needs.js';
+import { t } from './i18n.js';
 
 const $ = id => document.getElementById(id);
 
@@ -87,7 +88,7 @@ export function createHud() {
     $('goal').hidden = !goal;
     if (goal) $('goal').textContent = goal;
     $('time').textContent = formatTime(minutes);
-    $('day').textContent = weekday ? `Day ${day} · ${weekday}` : `Day ${day}`;
+    $('day').textContent = weekday ? `${t('hud.day', { n: day })} · ${weekday}` : t('hud.day', { n: day });
     $('sun').textContent = hour >= 6 && hour < 18 ? '🌞' : '🌙';
     $('weather').textContent = weatherIcon;
     $('dark').style.opacity = blackoutAmount.toFixed(2);

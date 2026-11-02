@@ -19,6 +19,7 @@ const signs = [];
 // cached per emoji / per label, so two buildings of the same kind share one canvas.
 const FONT = 'system-ui,"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
 const badgeCache = new Map(), labelCache = new Map();
+let highContrast = false;                  // High contrast setting: solid black plates and a thicker white rim (see setSignContrast)
 const NEAR_ON = 34, NEAR_OFF = 38;          // distance where the name appears / disappears (hysteresis stops flicker)
 const FULL_W = 8, FULL_H = 3, BADGE = 2.1;  // world size of the full label and of the emoji-only badge
 
@@ -28,9 +29,9 @@ function roundRect(g, x, y, w, h, r) {
 }
 
 function paintBadge(g, cx, cy, r, emoji) {
-  g.fillStyle = 'rgba(10,25,20,.88)';
+  g.fillStyle = highContrast ? '#000' : 'rgba(10,25,20,.88)';
   g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill();
-  g.lineWidth = Math.max(3, r * 0.08);
+  g.lineWidth = Math.max(3, r * (highContrast ? 0.15 : 0.08));
   g.strokeStyle = '#ffffff';
   g.beginPath(); g.arc(cx, cy, r - g.lineWidth / 2, 0, Math.PI * 2); g.stroke();
   g.fillStyle = '#fff';
@@ -64,8 +65,9 @@ function labelTexture(emoji, text) {
   c.width = 512; c.height = 192;
   const g = c.getContext('2d');
   paintBadge(g, 256, 62, 60, emoji);
-  g.fillStyle = 'rgba(10,25,20,.88)';
+  g.fillStyle = highContrast ? '#000' : 'rgba(10,25,20,.88)';
   roundRect(g, 4, 130, 504, 58, 29); g.fill();
+  if (highContrast) { g.lineWidth = 5; g.strokeStyle = '#fff'; roundRect(g, 4, 130, 504, 58, 29); g.stroke(); }
   g.fillStyle = '#fff';
   g.textAlign = 'center'; g.textBaseline = 'middle';
   let size = 40;
@@ -105,14 +107,32 @@ export function updateSigns(camPos) {
   }
 }
 
+/** High contrast for signs: repaints every landmark badge with a solid black plate and a thick white rim. Safe to call any time. */
+export function setSignContrast(on) {
+  if (highContrast === !!on) return;
+  highContrast = !!on;
+  for (const t of badgeCache.values()) t.dispose();
+  for (const t of labelCache.values()) t.dispose();
+  badgeCache.clear(); labelCache.clear();
+  for (const g of signs) {
+    const u = g.userData, sp = g.children[0];
+    if (!u.spec) continue;
+    u.labelTex = labelTexture(u.spec.emoji, u.spec.text);
+    u.badgeTex = badgeTexture(u.spec.emoji);
+    sp.material.map = u.full ? u.labelTex : u.badgeTex;
+    sp.material.needsUpdate = true;
+  }
+}
+
 /** A floating landmark badge (emoji + name). Returns a Group so callers can position and scale it freely. */
 export function createSign(emoji, text) {
   const g = new THREE.Group();
   const labelTex = labelTexture(emoji, text), badgeTex = badgeTexture(emoji);
+  const spec = { emoji, text };
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: labelTex, transparent: true, depthWrite: false, fog: false }));
   sp.scale.set(FULL_W, FULL_H, 1);
   g.add(sp);
-  g.userData = { full: true, labelTex, badgeTex };
+  g.userData = { full: true, labelTex, badgeTex, spec };
   signs.push(g);
   return g;
 }
