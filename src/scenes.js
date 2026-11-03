@@ -21,6 +21,13 @@ import { ACADEMIC_SCENES } from './scenes-academic.js';
 const pad = n => String(n).padStart(2, '0');
 export const clock = h => `${pad(Math.floor(h))}:${pad(Math.round((h % 1) * 60))}`;
 
+/** A friendly length for the Attend button: "30 minutes", "an hour", "1.5 hours", "2 hours". */
+export function durationLabel(minutes) {
+  if (minutes <= 75) return minutes === 60 ? 'an hour' : `${Math.max(5, Math.round(minutes / 5) * 5)} minutes`;
+  const h = Math.round(minutes / 30) / 2;
+  return h === 1 ? 'an hour' : `${h} hours`;
+}
+
 /** `windows(a)` lists { day, from, to } (hours). `venue` is 'auditorium' (the main hall) or 'hostel' (the player's own hall). */
 
 /* ---- club fair helpers: two rounds of "visit a stall, then decide whether to join" ---- */
@@ -541,7 +548,7 @@ export function createScenes(deps) {
     const pick = await showModal({
       title: `${def.emoji} ${def.title}`,
       lines: [`${def.short} is happening here now. Do you want to take a seat?`, 'You can also skip it and carry on with your day.'],
-      buttons: [{ label: `Attend (about ${Math.round(def.minutes / 60 * 10) / 10} hours)`, value: 'go' }, { label: 'Not now', value: 'no', secondary: true }]
+      buttons: [{ label: `Attend (about ${durationLabel(def.minutes)})`, value: 'go' }, { label: 'Not now', value: 'no', secondary: true }]
     });
     if (pick !== 'go') return false;
     const a = A();

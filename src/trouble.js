@@ -335,6 +335,8 @@ function counselBeats(ctx) {
   ];
 }
 
+const CLOSING = { hearing: 'The hearing is over. You walk out into the sunlight, slightly lighter.', service: 'The work is done and your hands are tired but your file is cleaner.', deanvisit: 'You thank the Dean and step back outside.', counsel: 'You leave with a plan and a lighter step.' };
+
 const KINDS = {
   hearing: { emoji: '⚖️', title: 'Disciplinary hearing', short: 'Disciplinary hearing', minutes: 30, fx: {}, beats: hearingBeats, crowd: deanCrowd },
   service: { emoji: '🧹', title: 'Community service', short: 'Community service', minutes: SERVICE_HOURS * 60, fx: { energy: -8, hygiene: -8 }, beats: serviceBeats,
@@ -348,7 +350,7 @@ const KINDS = {
 export const TROUBLE_SCENES = Object.entries(KINDS).flatMap(([kind, k]) => Array.from({ length: MAX_PER_KIND }, (_, i) => {
   const id = `${kind}-${i + 1}`;
   return {
-    id, repeat: true, emoji: k.emoji, title: k.title, short: k.short, venue: 'auditorium', minutes: k.minutes, fx: k.fx,     // repeat: runs in any semester (timing comes from absolute days)
+    id, repeat: true, closing: CLOSING[kind], emoji: k.emoji, title: k.title, short: k.short, venue: 'auditorium', minutes: k.minutes, fx: k.fx,     // repeat: runs in any semester (timing comes from absolute days)
     windows: windowsFor(id), crowd: k.crowd,
     beats: ctx => k.beats({ ...ctx, sceneId: id })
   };

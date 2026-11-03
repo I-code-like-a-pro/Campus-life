@@ -39,7 +39,7 @@ export function examBlock(bills) {
 }
 
 export const examBlockMessage = bill =>
-  `🚫 You cannot write exams until your ${bill.label.toLowerCase()} is settled. Pay in full, or pay half now as an instalment, in your phone under My room and bills or at the Bursary counter in the Registry.`;
+  `🚫 You cannot write exams until your ${bill.label.charAt(0).toLowerCase()}${bill.label.slice(1)} is settled. Pay in full, or pay half now as an instalment, in your phone under My room and bills or at the Bursary counter in the Registry.`;
 
 /** What paying half now costs. */
 export const instalmentCost = bill => Math.ceil(owed(bill) * INSTALMENT_SHARE);

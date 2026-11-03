@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { DOCS, docsFor, rollMissing, ensureDocs, checkDesk, fixDoc, allMissing, clearanceFacts, detailsCard, OFFICE_HOURS } from '../src/documents.js';
 import { seedOf } from '../src/clearance.js';
-import { SCENES, sceneById, isOpen, isOverdue, nextWindow, windowsOf, clock, firstEntry } from '../src/scenes.js';
+import { durationLabel, SCENES, sceneById, isOpen, isOverdue, nextWindow, windowsOf, clock, firstEntry } from '../src/scenes.js';
 
 describe('clearance documents', () => {
   it('rolls the same missing papers for the same seed, never more than two, never the always-held ones', () => {
@@ -203,5 +203,15 @@ describe('scenes', () => {
       expect(cheat.risk).toBeGreaterThan(0);
       expect(cheat.caughtFx.stress).toBeGreaterThan(5);
     });
+  });
+});
+
+describe('duration label', () => {
+  it('reads naturally', () => {
+    expect(durationLabel(30)).toBe('30 minutes');
+    expect(durationLabel(60)).toBe('an hour');
+    expect(durationLabel(90)).toBe('1.5 hours');
+    expect(durationLabel(105)).toBe('2 hours');
+    expect(durationLabel(150)).toBe('2.5 hours');
   });
 });
