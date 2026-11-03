@@ -51,7 +51,7 @@ Spec ceiling (docs/GAME_SPEC.md): at most 150 draw calls, 250 000 triangles, 30 
 | chapel | 80 | 80000 | 30 |  |  |
 | mosque | 80 | 80000 | 30 |  |  |
 
-Earlier desktop notes (not phone results): worst campus measured at 87 to 88 draw calls (UNILAG), interiors about 40, bundle about 208 KB gzipped.
+Earlier desktop notes (not phone results): worst campus measured at 87 to 88 draw calls (UNILAG), interiors about 40, bundle about 328 KB gzipped (1.07 MB raw) after the year-structure, people, money, trouble and academic groups were merged. That is far inside the 5 MB first-load target in the spec, so no code splitting is needed yet; measure real load time on a phone before deciding.
 
 ## 4. Optimisations already in the code
 
@@ -68,3 +68,6 @@ Ideas not done (need phone data first): lower the draw distance on Low, drop NPC
 ## 5. What is unverified
 
 Everything about real devices: actual FPS, thermal throttling, memory on 2 GB phones, load time on mobile data, and whether the `OVER BUDGET` limits are realistic. The overlay was checked in a desktop browser only (campus and Family House readings there: about 70 draw calls and 23k triangles at 60 fps, which says nothing about a phone). High contrast and the largest text size were checked at 375x812, 320x568 and 667x375 in a desktop browser with emulated sizes.
+
+## Layout check (desktop browser, emulated sizes)
+Checked after the merge of all groups at 320x568, 667x375 and 375x812: the phone menu, Settings, My room and bills, Student portal, Courses, the textbook list, the Registry officer, and the chapel, bookshop and bank conversations. Every dialog either fits or scrolls, every button is at least 44px tall, there is no horizontal overflow and no clipped button. One transient tutorial hint was seen touching the action panel for a moment at 375x812. Not checked on a real phone.
