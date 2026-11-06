@@ -1,0 +1,998 @@
+[
+  {
+    "id": "id-name",
+    "path": "identity.name",
+    "value": "University of Lagos",
+    "source": {
+      "url": "https://unilag.edu.ng/unilag-historical-odyssey/",
+      "title": "UNILAG Historical Odyssey",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "high",
+    "verified": false,
+    "note": "Official name as used across UNILAG pages."
+  },
+  {
+    "id": "id-short",
+    "path": "identity.shortName",
+    "value": "UNILAG",
+    "source": {
+      "url": "https://unilag.edu.ng/about/",
+      "title": "About - University of Lagos",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "high",
+    "verified": false,
+    "note": "Short form used officially and in common speech."
+  },
+  {
+    "id": "id-founded",
+    "path": "identity.founded",
+    "value": 1962,
+    "source": {
+      "url": "https://unilag.edu.ng/unilag-historical-odyssey/",
+      "title": "UNILAG Historical Odyssey",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "high",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Established by the University of Lagos Act of 1962. Sources give two start-of-teaching dates (22 Oct 1962 vs 3 Oct 1962); only the year is recorded here."
+  },
+  {
+    "id": "id-motto",
+    "path": "identity.motto",
+    "value": "In deed and in truth",
+    "source": {
+      "url": "https://unilag.edu.ng/wp-content/uploads/2025/04/SERVICOM_CHARTER_23_07_24.pdf",
+      "title": "UNILAG Service Charter (2024)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "high",
+    "verified": false,
+    "note": "Wikipedia gives the same wording. The Service Charter also uses the slogan \"University of First Choice and the Nation's Pride\"."
+  },
+  {
+    "id": "id-slogan",
+    "path": "identity.slogan",
+    "value": "University of First Choice and the Nation's Pride",
+    "source": {
+      "url": "https://unilag.edu.ng/wp-content/uploads/2025/04/SERVICOM_CHARTER_23_07_24.pdf",
+      "title": "UNILAG Service Charter (2024)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Slogan quoted in a search summary of the charter; wording not seen in full."
+  },
+  {
+    "id": "id-location",
+    "path": "identity.location",
+    "value": "Akoka, Yaba, Lagos, Nigeria (main campus on the Lagos mainland, largely bordered by the Lagos Lagoon)",
+    "source": {
+      "url": "https://en.wikipedia.org/wiki/University_of_Lagos",
+      "title": "University of Lagos - Wikipedia",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "high",
+    "verified": false,
+    "note": "Official pages confirm Akoka main campus."
+  },
+  {
+    "id": "id-campuses",
+    "path": "identity.campuses",
+    "value": [
+      "Akoka (main campus)",
+      "Idi-Araba, Surulere (College of Medicine)",
+      "Yaba (School of Radiography site)"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/unilag-historical-odyssey/",
+      "title": "UNILAG Historical Odyssey",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Three sites per a summary of the official history page and Wikipedia. The Yaba site is described as hosting the School of Radiography."
+  },
+  {
+    "id": "id-colours",
+    "path": "identity.colours",
+    "value": [
+      "gold",
+      "maroon"
+    ],
+    "source": {
+      "url": "https://en.wikipedia.org/wiki/University_of_Lagos",
+      "title": "University of Lagos - Wikipedia",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Only Wikipedia was seen; no official UNILAG page found stating the university colours. Do not confuse with the 19 new faculty colours."
+  },
+  {
+    "id": "id-nickname",
+    "path": "identity.nicknames",
+    "value": null,
+    "source": {
+      "url": "https://en.wikipedia.org/wiki/University_of_Lagos",
+      "title": "University of Lagos - Wikipedia",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "none",
+    "verified": false,
+    "note": "Searched official and Wikipedia pages; no well-sourced nickname found. Common student nicknames (for example \"Akokites\") were not confirmed by any source I opened, so none is recorded."
+  },
+  {
+    "id": "fac-count",
+    "path": "structure.facultyCount",
+    "value": 19,
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "high",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Expanded from 12 to 19 faculties; official list effective Friday 1 Aug 2025. Older pages (About: nine faculties; Academics and Times Higher Education: 12) are out of date. An unofficial blog (studentsdash.com, Dec 2025) lists 19 completely different faculties such as Aviation Studies and Film; it contradicts the official list and was NOT used."
+  },
+  {
+    "id": "fac-list",
+    "path": "structure.faculties",
+    "value": [
+      "Architecture",
+      "Arts",
+      "Basic Clinical Sciences",
+      "Basic Medical Sciences",
+      "Clinical Sciences",
+      "Communication and Media Studies",
+      "Computing and Informatics",
+      "Creative Arts",
+      "Dental Sciences",
+      "Education",
+      "Engineering",
+      "Environmental Sciences",
+      "Health Professions",
+      "Law",
+      "Life Sciences",
+      "Management Sciences",
+      "Pharmacy",
+      "Physical and Earth Sciences",
+      "Social Sciences"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Same 19 names appear in two search summaries of the announcement and of the Faculties page. The Faculties page summary used \"Art\" instead of \"Arts\" and omitted Physical and Earth Sciences, so the live Faculties page may lag the announcement. Publication year of list: 2025."
+  },
+  {
+    "id": "fac-new",
+    "path": "structure.newFacultiesFrom2025",
+    "value": [
+      "Architecture",
+      "Basic Clinical Sciences",
+      "Communication and Media Studies",
+      "Computing and Informatics",
+      "Creative Arts",
+      "Health Professions",
+      "Life Sciences",
+      "Physical and Earth Sciences"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "The announcement is said to name these as new. That is 8 names although 19 minus 12 is 7; one may be a pre-existing faculty renamed. Reviewer please check. Legit.ng (5 Sep 2025) says six faculties were split to make 19."
+  },
+  {
+    "id": "dept-architecture",
+    "path": "structure.departments.architecture",
+    "value": [
+      "Architecture",
+      "Landscape Architecture and Urban Design",
+      "Interior Architecture and Design"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. New faculty from 1 Aug 2025. A separate UNILAG news item says it was unveiled 26 Aug 2025. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-arts",
+    "path": "structure.departments.arts",
+    "value": [
+      "English",
+      "European Languages and Integration Studies",
+      "History and Strategic Studies",
+      "Linguistics",
+      "African and Asian Studies",
+      "Philosophy",
+      "Religious Studies"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. The Faculties page spells it \"Art\"; the announcement says \"Arts\". Older third-party lists (Russian, Chinese, French as separate departments) predate restructuring. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-basic-clinical-sciences",
+    "path": "structure.departments.basic-clinical-sciences",
+    "value": [
+      "Anatomic and Molecular Pathology",
+      "Haematology and Blood Transfusion",
+      "Medical Microbiology and Parasitology",
+      "Clinical Pathology",
+      "Clinical Pharmacology"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. New faculty. Five departments confirmed by a UNILAG retreat report. The fourth name is recorded as it appeared in the summary (Clinical Pathology); it may officially be Chemical Pathology, so please check. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-basic-medical-sciences",
+    "path": "structure.departments.basic-medical-sciences",
+    "value": [
+      "Anatomy",
+      "Physiology",
+      "Medical Biochemistry",
+      "Pharmacology, Therapeutics and Toxicology"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Older UNILAG faculty page lists a broader set (Anatomic and Molecular Pathology, Biochemistry, Biomedical Engineering and others) that predates restructuring. The 2025 list appears to have moved several out. Exact current list uncertain. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-clinical-sciences",
+    "path": "structure.departments.clinical-sciences",
+    "value": [
+      "Anaesthesia",
+      "Community Health and Primary Care",
+      "Medicine",
+      "Obstetrics and Gynaecology",
+      "Ophthalmology",
+      "Paediatrics",
+      "Psychiatry",
+      "Radiation Biology, Radiotherapy and Radiodiagnosis",
+      "Surgery"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Possibly incomplete (for example Otorhinolaryngology or other clinical departments may exist). Union of the summary only. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-communication-and-media-studies",
+    "path": "structure.departments.communication-and-media-studies",
+    "value": [
+      "Mass Communication"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. New faculty. Only one department seen; others (for example Film or Public Relations) may exist. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-computing-and-informatics",
+    "path": "structure.departments.computing-and-informatics",
+    "value": [
+      "Computer Science",
+      "Intelligent Systems and Robotics",
+      "Cybersecurity and Software Engineering"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. New faculty. Three departments per the official list as summarised. A reader comment on the official post suggested Intelligent Systems and Robotics belongs elsewhere; not an official decision. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-creative-arts",
+    "path": "structure.departments.creative-arts",
+    "value": [
+      "Music and Sound Production",
+      "Theatre Arts and Film Studies",
+      "Fine and Applied Arts"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. New faculty (\"Creatives Arts\" in one official spelling). Other sources use Theatre Arts, Music and Visual Arts. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-dental-sciences",
+    "path": "structure.departments.dental-sciences",
+    "value": [
+      "Child Dental Health",
+      "Oral and Maxillofacial Pathology and Biology",
+      "Oral and Maxillofacial Surgery",
+      "Preventive Dentistry",
+      "Restorative Dentistry"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Existing faculty (College of Medicine). List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-education",
+    "path": "structure.departments.education",
+    "value": [
+      "Adult Education",
+      "Arts Education",
+      "Educational Foundations",
+      "Educational Management",
+      "Science Education"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. PARTIAL list only; the full department list was not visible. Do not treat as complete (for example Human Kinetics and Health Education is a likely member but not confirmed). List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-engineering",
+    "path": "structure.departments.engineering",
+    "value": [
+      "Biomedical Engineering",
+      "Chemical Engineering",
+      "Civil and Environmental Engineering",
+      "Computer Engineering",
+      "Electrical and Electronics Engineering",
+      "Mechanical Engineering",
+      "Metallurgical and Materials Engineering",
+      "Petroleum and Gas Engineering",
+      "Surveying and Geoinformatics",
+      "Systems Engineering"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Assembled: older faculty site lists 8 (no Computer, no Petroleum); a Jan 2026 convocation report counts 10 departments including Computer, Petroleum and Gas, and Surveying and Geoinformatics. The 2025 announcement summary said \"nine departments\" - sources disagree. Exact official names not confirmed. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-environmental-sciences",
+    "path": "structure.departments.environmental-sciences",
+    "value": [
+      "Building",
+      "Estate Management",
+      "Quantity Surveying",
+      "Urban and Regional Planning"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Probably PARTIAL (Architecture was split out; other members not confirmed). List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-health-professions",
+    "path": "structure.departments.health-professions",
+    "value": [
+      "Medical Laboratory Science",
+      "Nursing Science",
+      "Physiotherapy",
+      "Radiography"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. New faculty; a UNILAG Sun interview and the official list agree on four departments. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-law",
+    "path": "structure.departments.law",
+    "value": [
+      "Commercial and Industrial Law",
+      "Jurisprudence and International Law",
+      "Private and Property Law",
+      "Public Law"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Existing faculty. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-life-sciences",
+    "path": "structure.departments.life-sciences",
+    "value": [
+      "Biochemistry",
+      "Botany",
+      "Cell Biology and Genetics",
+      "Marine Science",
+      "Microbiology",
+      "Zoology",
+      "Fisheries and Aquaculture"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. New faculty carved from the former Faculty of Science; its dean reportedly oversees nearly 20 programmes. One source calls it \"Biological and Life Sciences\". List may be incomplete. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-management-sciences",
+    "path": "structure.departments.management-sciences",
+    "value": [
+      "Accounting",
+      "Actuarial Science and Insurance",
+      "Business Administration",
+      "Employment Relations and Human Resource Management",
+      "Finance"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Existing faculty. A UNILAG news item mentions a new Faculty of Management Sciences building. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-pharmacy",
+    "path": "structure.departments.pharmacy",
+    "value": [
+      "Clinical Pharmacy and Biopharmacy",
+      "Pharmaceutical Chemistry",
+      "Pharmaceutical Microbiology and Biotechnology",
+      "Pharmaceutics and Pharmaceutical Technology",
+      "Pharmacognosy"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Existing faculty; a UNILAG reply confirms Pharmacy is its own faculty. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-physical-and-earth-sciences",
+    "path": "structure.departments.physical-and-earth-sciences",
+    "value": [
+      "Chemistry",
+      "Geosciences",
+      "Mathematics",
+      "Physics",
+      "Statistics"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. New faculty from the former Faculty of Science. One source writes \"Earth and Physical Sciences\". The Faculties page summary omitted it, so that page may lag. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "dept-social-sciences",
+    "path": "structure.departments.social-sciences",
+    "value": [
+      "Economics",
+      "Geography",
+      "Library and Information Science",
+      "Political Science",
+      "Psychology",
+      "Social Work",
+      "Sociology"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/when-the-future-calls-unilag-answers-with-new-faculties-and-a-new-vision/",
+      "title": "When the Future Calls, UNILAG Answers with New Faculties and a New Vision (UNILAG, 2025; list effective 1 Aug 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Direct page fetch of unilag.edu.ng failed (DNS error in the research environment); the content was read through web-search result summaries of the official page, so wording may be incomplete. Existing faculty. List year: 2025 (effective 1 Aug 2025)."
+  },
+  {
+    "id": "fac-colours-source",
+    "path": "structure.facultyColours",
+    "value": null,
+    "source": {
+      "url": "https://unilag.edu.ng/unilag-faculty-colours-revealed/",
+      "title": "UNILAG Faculty Colours Revealed!",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "none",
+    "verified": false,
+    "note": "UNILAG published colours for the 19 faculties but the colour codes were not visible. Legit.ng (5 Sep 2025) gave colours for 10 of them (Education light yellow, Engineering orange, Environmental Sciences light grey, Health Professions bright red, Law sky blue, Life Sciences golden yellow, Management Sciences lime green, Pharmacy purple, Physical and Earth Sciences light taupe, Social Sciences mint green) but its hex codes contain typos. Not recorded as a value."
+  },
+  {
+    "id": "res-count",
+    "path": "residence.undergraduateHallCount",
+    "value": 16,
+    "source": {
+      "url": "https://unilag.edu.ng/wp-content/uploads/2025/04/Student-Life-Cycle-GUIDELINES-Hyperlinked.pdf",
+      "title": "Student Life Cycle Guidelines, Directorate of Academic Affairs (UNILAG, 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "The policy document reportedly says 16 undergraduate halls across three campuses. One older page says 13 undergraduate and 2 postgraduate halls. Sources disagree."
+  },
+  {
+    "id": "res-names",
+    "path": "residence.halls",
+    "value": [
+      "Mariere",
+      "Eni-Njoku",
+      "Saburi Biobaku",
+      "Shodeinde",
+      "Makama Bida",
+      "Queen Amina",
+      "Honours",
+      "Moremi",
+      "Fagunwa",
+      "Kofo Ademola",
+      "Madam Tinubu",
+      "King Jaja"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/important-notice-update-on-movement-into-halls-of-residence/",
+      "title": "Update on Movement into Halls of Residence (UNILAG, 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Names seen in official 2025 notices; this is 12 of the roughly 16 halls, so the list is incomplete. Spelling: official notices use \"Shodeinde\" where other sources use \"Sodeinde\". Other names seen in non-official guides: Fagunwa, Jaja (King Jaja). Halls named for people are historical figures."
+  },
+  {
+    "id": "res-gender",
+    "path": "residence.hallGender",
+    "value": {
+      "Mariere": "male",
+      "King Jaja": "male",
+      "Saburi Biobaku": "male",
+      "Eni-Njoku": "male",
+      "Shodeinde": "male",
+      "Moremi": "female",
+      "Kofo Ademola": "female",
+      "Makama Bida": "female",
+      "Fagunwa": "unclear"
+    },
+    "source": {
+      "url": "https://www.pulse.ng/communities/student/5-top-hostels-in-university-of-lagos-id7886144.html",
+      "title": "Pulse.ng - 5 top hostels in University of Lagos",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Only Mariere male is confirmed on an official page. The rest come from student-oriented guides (Pulse.ng, Wikipedia-derived lists) that disagree with each other (Fagunwa listed as female in some, male-listed elsewhere). Several halls are described as mixed-era or recently renovated. Needs owner verification."
+  },
+  {
+    "id": "res-firstyear",
+    "path": "residence.firstYearsUsuallyHoused",
+    "value": false,
+    "source": {
+      "url": "https://unilag.edu.ng/update-on-student-accommodation-balloting-exercise-for-2025-2026-academic-session/",
+      "title": "Update on Student Accommodation Balloting Exercise for 2025/2026 (UNILAG)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "The 2025/26 hostel balloting was open to 200-500 level students who had completed first-semester registration, which implies fresh first-years are not routinely balloted into halls. Reviewer: confirm whether fresh students get allocation by another route."
+  },
+  {
+    "id": "res-allocation",
+    "path": "residence.allocationMethod",
+    "value": "Online application then balloting (2025/2026 exercise: application closed 27 Nov 2025, balloting 28 Nov 2025)",
+    "source": {
+      "url": "https://unilag.edu.ng/update-on-student-accommodation-balloting-exercise-for-2025-2026-academic-session/",
+      "title": "Update on Student Accommodation Balloting Exercise for 2025/2026 (UNILAG)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Nearby private/affiliated hostels (El-Kannemi, Gbajabiamila, UNILAG Women Society) were excluded from this exercise."
+  },
+  {
+    "id": "res-fees",
+    "path": "residence.hallFees",
+    "value": null,
+    "source": {
+      "url": "https://unilag.edu.ng/update-on-student-accommodation-balloting-exercise-for-2025-2026-academic-session/",
+      "title": "Update on Student Accommodation Balloting Exercise (UNILAG)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "none",
+    "verified": false,
+    "note": "No official hall fee schedule found. Student blogs quote amounts but they are unofficial and were not recorded."
+  },
+  {
+    "id": "cal-semesters",
+    "path": "calendar.semestersPerSession",
+    "value": 2,
+    "source": {
+      "url": "https://unilag.edu.ng/approved-academic-calendar-for-1st-and-2nd-semesters-2025-2026-academic-session/",
+      "title": "Approved Academic Calendar for 1st and 2nd Semesters, 2025/2026",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "high",
+    "verified": false,
+    "note": "First and second semester per official calendar."
+  },
+  {
+    "id": "cal-teaching",
+    "path": "calendar.teachingWeeks",
+    "value": 14,
+    "source": {
+      "url": "https://unilag.edu.ng/revised-unilag-academic-calendar-for-2025-2026-session/",
+      "title": "Revised UNILAG Academic Calendar for 2025/2026 Session",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "The revised calendar counts 14 weeks of lectures in each semester (first semester Nov 2025 to 27 Feb 2026 with a Dec break; second semester 27 Apr to 31 Jul 2026). Calendar has been revised several times (Aug 2025, Nov 2025, Feb 2026, Mar 2026), so dates are unstable."
+  },
+  {
+    "id": "cal-exams",
+    "path": "calendar.examPeriod",
+    "value": "About 3 weeks of undergraduate examinations after lectures end (2025/26: first semester 9 Mar to 2 Apr 2026; second semester 10 to 29 Aug 2026 per the March 2026 revision)",
+    "source": {
+      "url": "https://unilag.edu.ng/revised-unilag-academic-calendar-for-2025-2026-session/",
+      "title": "Revised UNILAG Academic Calendar for 2025/2026 Session",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Dates from a search summary; shape (about 3 weeks, all levels) is more reliable than exact dates."
+  },
+  {
+    "id": "cal-grade-scale",
+    "path": "calendar.gradingScale",
+    "value": {
+      "A": 5,
+      "B": 4,
+      "C": 3,
+      "D": 2,
+      "E": 1,
+      "F": 0
+    },
+    "source": {
+      "url": "https://scholarjoiner.com/how-to-calculate-gpa-and-cgpa-in-nigerian-universities/",
+      "title": "How to calculate GPA and CGPA in Nigerian universities (scholarjoiner.com, unofficial)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Unofficial 5-point scale. UNILAG letter-grade table with mark ranges (for example A = 70-100) was not visible in any official result. A \"40% pass mark\" and a 30-50% continuous assessment share appear in official regulations. Another scale with B+/C+/D+ exists in a non-UNILAG document and was not used. Owner should check the UNILAG student handbook."
+  },
+  {
+    "id": "cal-classes",
+    "path": "calendar.degreeClasses",
+    "value": {
+      "First Class": "4.50-5.00",
+      "Second Class Upper": "3.50-4.49",
+      "Second Class Lower": "2.40-3.49",
+      "Third Class": "1.50-2.39",
+      "Pass": "1.00-1.49"
+    },
+    "source": {
+      "url": "https://dli.unilag.edu.ng/wp-content/uploads/2021/04/Handbook-Management-Sciences-2021-2024.pdf",
+      "title": "UNILAG Distance Learning Institute Handbook, Management Sciences 2021-2024",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "The ICE regulations (ice.unilag.edu.ng/resources/studentguide.pdf) give Third Class as 1.50-2.49, so the upper limit of Third Class disagrees across UNILAG documents. First Class 4.50-5.00 is consistent everywhere."
+  },
+  {
+    "id": "cal-unit",
+    "path": "calendar.creditUnitSystem",
+    "value": null,
+    "source": {
+      "url": "https://unilag.edu.ng/wp-content/uploads/2025/04/Student-Life-Cycle-GUIDELINES-Hyperlinked.pdf",
+      "title": "Student Life Cycle Guidelines (UNILAG, 2025)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "none",
+    "verified": false,
+    "note": "Looked for units per course and per-semester unit limits; not found in readable form. The usual Nigerian system (credit units per course, GPA weighted by units) is standard but no UNILAG figure was seen, so null."
+  },
+  {
+    "id": "cal-codes",
+    "path": "calendar.courseCodePrefixes",
+    "value": null,
+    "source": {
+      "url": "https://unilag.edu.ng/degree-program-page/",
+      "title": "degree program page - University of Lagos",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "none",
+    "verified": false,
+    "note": "No UNILAG source confirming prefixes such as CSC or MTH was found; GST appears as a generic Nigerian prefix only in non-UNILAG material. Left null rather than guessed."
+  },
+  {
+    "id": "adm-routes",
+    "path": "admissions.routes",
+    "value": [
+      "UTME with Post-UTME screening",
+      "Direct Entry (JUPEB, IJMB, A-Level, ND, NCE, HND or degree holders for 200-300 level)"
+    ],
+    "source": {
+      "url": "https://unilag.edu.ng/important-notice-on-2025-2026-screening-registration-exercise/",
+      "title": "Important Notice on 2025/2026 Screening/Registration Exercise (UNILAG)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "High-level only. UTME candidates must choose UNILAG as first choice and score at least 200 to take the Post-UTME (2025/26). Entry to Year Two for ND, NCE, JUPEB, IJMB, A-Level holders appears in the admission requirements PDF."
+  },
+  {
+    "id": "adm-postutme",
+    "path": "admissions.postUtmeThreshold2025",
+    "value": 200,
+    "source": {
+      "url": "https://unilag.edu.ng/2025-2026-post-utme-screening-exercise/",
+      "title": "2025/2026 Post-UTME Screening Exercise (UNILAG)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Minimum UTME score 200 with UNILAG as first choice to be eligible for the 2025/26 online Post-UTME (held 1-4 Sep 2025). This is an eligibility mark, not a course cut-off."
+  },
+  {
+    "id": "adm-cutoffs",
+    "path": "admissions.courseCutoffs",
+    "value": null,
+    "source": {
+      "url": "https://unilag.edu.ng/unilag-releases-2025-2026-utme-merit-cut-off-marks/",
+      "title": "UNILAG Releases 2025/2026 UTME Merit Cut-Off Marks",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "none",
+    "verified": false,
+    "note": "An official cut-off notice exists but its table was not readable, so no per-course cut-off is recorded."
+  },
+  {
+    "id": "adm-intake",
+    "path": "admissions.matriculatedIntake2025",
+    "value": 9179,
+    "source": {
+      "url": "https://unilag.edu.ng/unilag-2025-2026matriculation-ceremony-9179-students-formally-begin-quest-for-tertiary-education/",
+      "title": "UNILAG 2025/2026 Matriculation Ceremony: 9,179 Students",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Number matriculated on 17 Dec 2025. The 2024/25 ceremony (April 2025) presented 7,628 students from the 12 faculties then in place."
+  },
+  {
+    "id": "fee-schedule",
+    "path": "fees.undergraduateTuition",
+    "value": null,
+    "source": {
+      "url": "https://unilag.edu.ng/",
+      "title": "University of Lagos official site",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "none",
+    "verified": false,
+    "note": "Tried web searches on unilag.edu.ng for an official undergraduate fee schedule; none surfaced. Third-party fee guides exist but are unofficial and were not recorded."
+  },
+  {
+    "id": "lm-library",
+    "path": "landmarks.library",
+    "value": "Main Library, near the Senate Building at Akoka; established with the university in 1962; lobby and makerspace remodelled and commissioned in 2023",
+    "source": {
+      "url": "https://unilag.edu.ng/?p=29647",
+      "title": "Official Commissioning of Remodelled UNILAG Main Library",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Date of the remodel commissioning came from a search summary."
+  },
+  {
+    "id": "lm-chapel",
+    "path": "landmarks.chapel",
+    "value": "Chapel of Christ Our Light, the university chapel used for services, including the 56th Convocation thanksgiving in January 2026",
+    "source": {
+      "url": "https://unilag.edu.ng/?p=68386",
+      "title": "UNILAG Concludes 56th Convocation Ceremonies with Thanksgiving Service",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Name seen in a search summary only."
+  },
+  {
+    "id": "lm-mosque",
+    "path": "landmarks.mosque",
+    "value": "UNILAG Central Mosque, with an Islamic Centre Hall used for Friday prayers and events",
+    "source": {
+      "url": "https://unilag.edu.ng/?m=20230728",
+      "title": "UMC special prayers and Madrasah extension (UNILAG, 2023)",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Described through a search summary."
+  },
+  {
+    "id": "lm-auditorium",
+    "path": "landmarks.mainAuditorium",
+    "value": "J. F. Ade Ajayi (Main) Auditorium, venue for convocation congregations",
+    "source": {
+      "url": "https://unilag.edu.ng/unilag-56th-convocation-ceremonies-4-626-bag-first-degrees-at-day-2/",
+      "title": "UNILAG 56th Convocation Ceremonies Day 2",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Named after a historian; place name only. Wikipedia also lists an Afe Babalola Auditorium; not confirmed on an official page."
+  },
+  {
+    "id": "lm-senate",
+    "path": "landmarks.senateBuilding",
+    "value": "Senate Building (Senate House), the administrative centre near the Main Library",
+    "source": {
+      "url": "https://en.wikipedia.org/wiki/University_of_Lagos",
+      "title": "University of Lagos - Wikipedia",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Wikipedia only; no official description found."
+  },
+  {
+    "id": "lm-lagoon",
+    "path": "landmarks.lagoonFront",
+    "value": "Lagoon Front, a waterfront area with a fountain and a view toward the Third Mainland Bridge",
+    "source": {
+      "url": "https://en.wikipedia.org/wiki/University_of_Lagos",
+      "title": "University of Lagos - Wikipedia",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Wikipedia only. The campus is largely surrounded by the Lagos Lagoon (about 802 acres)."
+  },
+  {
+    "id": "lm-sports",
+    "path": "landmarks.sportsCentre",
+    "value": "Sports Centre on the Akoka campus",
+    "source": {
+      "url": "https://en.wikipedia.org/wiki/University_of_Lagos",
+      "title": "University of Lagos - Wikipedia",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "low",
+    "verified": false,
+    "note": "Wikipedia only; no official page read. Facilities not described."
+  },
+  {
+    "id": "lm-medicine",
+    "path": "landmarks.collegeOfMedicine",
+    "value": "College of Medicine at Idi-Araba, Surulere, linked to the Lagos University Teaching Hospital",
+    "source": {
+      "url": "https://en.wikipedia.org/wiki/College_of_Medicine,_University_of_Lagos",
+      "title": "College of Medicine, University of Lagos - Wikipedia",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Teaching-hospital link is general knowledge in the source; check the wording."
+  },
+  {
+    "id": "tr-matric",
+    "path": "traditions.matriculation",
+    "value": "Annual matriculation ceremony where new students are presented to the Vice-Chancellor and swear the Matriculation Oath read by the Registrar",
+    "source": {
+      "url": "https://unilag.edu.ng/unilag-2025-2026matriculation-ceremony-9179-students-formally-begin-quest-for-tertiary-education/",
+      "title": "UNILAG 2025/2026 Matriculation Ceremony",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Held 17 Dec 2025 for 2025/26 and April 2025 for 2024/25, so timing varies with the calendar."
+  },
+  {
+    "id": "tr-convo",
+    "path": "traditions.convocation",
+    "value": "Annual multi-day convocation ceremonies held at the Main Auditorium, with graduating students inducted by faculty; 56th held January 2026, 55th January 2025",
+    "source": {
+      "url": "https://unilag.edu.ng/important-notice-fifty-sixth-56th-convocation-ceremonies/",
+      "title": "Important Notice: 56th Convocation Ceremonies",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "medium",
+    "verified": false,
+    "note": "Ends with a thanksgiving service at the chapel."
+  },
+  {
+    "id": "tr-sug",
+    "path": "traditions.studentUnion",
+    "value": null,
+    "source": {
+      "url": "https://unilag.edu.ng/",
+      "title": "University of Lagos official site",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "none",
+    "verified": false,
+    "note": "Searched for the structure of the UNILAG Students' Union Government and any representative council; no result described it. Left null. Student leader names are deliberately not recorded."
+  },
+  {
+    "id": "tr-events",
+    "path": "traditions.famousEvents",
+    "value": null,
+    "source": {
+      "url": "https://unilag.edu.ng/",
+      "title": "University of Lagos official site",
+      "accessed": "2026-11-06"
+    },
+    "confidence": "none",
+    "verified": false,
+    "note": "No well-sourced list of famous annual student events found. Anniversary celebrations (UNILAG at 60 in 2022) exist but nothing else was confirmed."
+  }
+]
