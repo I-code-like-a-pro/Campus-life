@@ -6,6 +6,8 @@
 //   UI and OAU: no official per-course figures were available, so these are GAME ESTIMATES anchored to
 //   what was reported (UI/OAU general minimum 200; Medicine, Law, Pharmacy and Engineering most competitive).
 
+import { PACKS, PACK_ORDER } from './packs/index.js';
+
 export const COURSES = [
   { id: 'medicine',    name: 'Medicine & Surgery', emoji: '🩺' },
   { id: 'law',         name: 'Law',                emoji: '⚖️' },
@@ -18,12 +20,8 @@ export const COURSES = [
   { id: 'maths',       name: 'Mathematics',        emoji: '➗' }
 ];
 
-export const CUTOFFS = {
-  unilag: { medicine: 85.025, law: 78.225, engineering: 75.625, cs: 83.425, accounting: 75.7, masscomm: 74.074, pharmacy: 76.4, economics: 73.475, maths: 63.675 },
-  ui:     { medicine: 86,     law: 80,     engineering: 76,     cs: 80,     accounting: 72,   masscomm: 70,     pharmacy: 77,   economics: 72,     maths: 58 },
-  oau:    { medicine: 84,     law: 77,     engineering: 74,     cs: 79,     accounting: 72,   masscomm: 71,     pharmacy: 75,   economics: 70,     maths: 56 }
-};
-export const CUTOFF_SOURCE = { unilag: 'official', ui: 'estimate', oau: 'estimate' };
+export const CUTOFFS = Object.fromEntries(PACK_ORDER.map(id => [id, { ...PACKS[id].admissions.cutoffs }]));
+export const CUTOFF_SOURCE = Object.fromEntries(PACK_ORDER.map(id => [id, PACKS[id].admissions.cutoffSource]));
 
 // jamb / post: [mean, spread]. money: starting naira.
 export const BACKGROUNDS = [

@@ -3,14 +3,19 @@
  * Distances are rough road distances in km (game estimates, not survey data).
  */
 
+import { PACKS, PACK_ORDER } from './packs/index.js';
+
+/** Road distance in km from a home town to each university, read from the university packs. */
+const kmFor = town => Object.fromEntries(PACK_ORDER.map(u => [u, PACKS[u].travel[town]]));
+
 export const TOWNS = [
-  { id: 'lagos',      name: 'Lagos',         emoji: '🌆', blurb: 'Busy, loud and never asleep.',            km: { unilag: 15,  ui: 130, oau: 200 } },
-  { id: 'ibadan',     name: 'Ibadan',        emoji: '🏘️', blurb: 'The big brown-roofed city.',              km: { unilag: 130, ui: 8,   oau: 90 } },
-  { id: 'ife',        name: 'Ile-Ife',       emoji: '🏛️', blurb: 'An ancient town with a lively campus.',   km: { unilag: 200, ui: 90,  oau: 5 } },
-  { id: 'uyo',        name: 'Uyo',           emoji: '🌴', blurb: 'Quiet, clean and green in Akwa Ibom.',    km: { unilag: 780, ui: 700, oau: 640 } },
-  { id: 'abuja',      name: 'Abuja',         emoji: '🏙️', blurb: 'The capital, with wide roads and hills.', km: { unilag: 760, ui: 640, oau: 580 } },
-  { id: 'portharcourt', name: 'Port Harcourt', emoji: '🛢️',          blurb: 'The Garden City by the delta.',           km: { unilag: 620, ui: 560, oau: 480 } },
-  { id: 'kano',       name: 'Kano',          emoji: '🕌', blurb: 'The old trading city of the north.',      km: { unilag: 1050, ui: 900, oau: 800 } }
+  { id: 'lagos',      name: 'Lagos',         emoji: '🌆', blurb: 'Busy, loud and never asleep.',            km: kmFor('lagos') },
+  { id: 'ibadan',     name: 'Ibadan',        emoji: '🏘️', blurb: 'The big brown-roofed city.',              km: kmFor('ibadan') },
+  { id: 'ife',        name: 'Ile-Ife',       emoji: '🏛️', blurb: 'An ancient town with a lively campus.',   km: kmFor('ife') },
+  { id: 'uyo',        name: 'Uyo',           emoji: '🌴', blurb: 'Quiet, clean and green in Akwa Ibom.',    km: kmFor('uyo') },
+  { id: 'abuja',      name: 'Abuja',         emoji: '🏙️', blurb: 'The capital, with wide roads and hills.', km: kmFor('abuja') },
+  { id: 'portharcourt', name: 'Port Harcourt', emoji: '🛢️',          blurb: 'The Garden City by the delta.',           km: kmFor('portharcourt') },
+  { id: 'kano',       name: 'Kano',          emoji: '🕌', blurb: 'The old trading city of the north.',      km: kmFor('kano') }
 ];
 
 /*

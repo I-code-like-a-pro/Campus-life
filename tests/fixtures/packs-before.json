@@ -1,0 +1,782 @@
+{
+ "order": [
+  "unilag",
+  "ui",
+  "oau"
+ ],
+ "campuses": {
+  "unilag": {
+   "id": "unilag",
+   "short": "UNILAG",
+   "name": "University of Lagos",
+   "tagline": "Lagoon-side campus in the heart of Lagos",
+   "accent": "#0a8f4f",
+   "ground": 7058778,
+   "trees": 26,
+   "features": [
+    "lagoon"
+   ],
+   "buildings": [
+    {
+     "name": "Faculty of Engineering",
+     "emoji": "⚙️",
+     "type": "lecture",
+     "x": -24,
+     "z": -24,
+     "w": 16,
+     "d": 12,
+     "h": 9,
+     "color": 15326402,
+     "roof": 9059115
+    },
+    {
+     "name": "Main Library",
+     "emoji": "📖",
+     "type": "library",
+     "x": 24,
+     "z": -24,
+     "w": 14,
+     "d": 12,
+     "h": 9,
+     "color": 14082799,
+     "roof": 3100538
+    },
+    {
+     "name": "Moremi Hall",
+     "emoji": "🛏️",
+     "type": "hostel",
+     "x": -26,
+     "z": 22,
+     "w": 16,
+     "d": 12,
+     "h": 10,
+     "color": 15911328,
+     "roof": 8014378
+    },
+    {
+     "name": "Jaja Hall",
+     "emoji": "🛏️",
+     "type": "hostel",
+     "x": 26,
+     "z": 42,
+     "w": 14,
+     "d": 10,
+     "h": 9,
+     "color": 15251866,
+     "roof": 6961706
+    },
+    {
+     "name": "Mama Put Canteen",
+     "emoji": "🍛",
+     "type": "canteen",
+     "x": 24,
+     "z": 22,
+     "w": 12,
+     "d": 10,
+     "h": 5,
+     "color": 16179322,
+     "roof": 11880479
+    },
+    {
+     "name": "Main Auditorium",
+     "emoji": "🎭",
+     "type": "auditorium",
+     "x": 0,
+     "z": -42,
+     "w": 18,
+     "d": 10,
+     "h": 12,
+     "color": 16052714,
+     "roof": 692047
+    },
+    {
+     "name": "Registry",
+     "emoji": "📋",
+     "type": "registry",
+     "x": -12,
+     "z": 36,
+     "w": 10,
+     "d": 8,
+     "h": 6,
+     "color": 15131350,
+     "roof": 3100538
+    },
+    {
+     "name": "Business Centre",
+     "emoji": "💼",
+     "type": "biz",
+     "x": -26,
+     "z": 42,
+     "w": 12,
+     "d": 10,
+     "h": 5,
+     "color": 14543088,
+     "roof": 3821414
+    },
+    {
+     "name": "Health Centre",
+     "emoji": "🏥",
+     "type": "clinic",
+     "x": -24,
+     "z": -44,
+     "w": 12,
+     "d": 9,
+     "h": 5,
+     "color": 15267054,
+     "roof": 2985839
+    },
+    {
+     "name": "Campus Market",
+     "emoji": "🛒",
+     "type": "shop",
+     "x": 26,
+     "z": -44,
+     "w": 12,
+     "d": 9,
+     "h": 4,
+     "color": 15784386,
+     "roof": 8014378
+    },
+    {
+     "name": "Campus Bookshop",
+     "emoji": "📚",
+     "type": "books",
+     "x": -40,
+     "z": -9,
+     "w": 9,
+     "d": 8,
+     "h": 5,
+     "color": 15982788,
+     "roof": 8010539
+    },
+    {
+     "name": "Campus Bank",
+     "emoji": "🏦",
+     "type": "bank",
+     "x": -40,
+     "z": 9,
+     "w": 9,
+     "d": 8,
+     "h": 5,
+     "color": 14674160,
+     "roof": 2051962
+    },
+    {
+     "name": "Campus Chapel",
+     "emoji": "⛪",
+     "type": "chapel",
+     "x": 46,
+     "z": -18,
+     "w": 10,
+     "d": 8,
+     "h": 7,
+     "color": 15919835,
+     "roof": 3821434
+    },
+    {
+     "name": "Campus Mosque",
+     "emoji": "🕌",
+     "type": "mosque",
+     "x": 46,
+     "z": 20,
+     "w": 10,
+     "d": 8,
+     "h": 7,
+     "color": 16052714,
+     "roof": 2062927
+    }
+   ],
+   "field": {
+    "name": "Sports Centre",
+    "x": 42,
+    "z": 0,
+    "w": 20,
+    "d": 14
+   }
+  },
+  "ui": {
+   "id": "ui",
+   "short": "UI",
+   "name": "University of Ibadan",
+   "tagline": "Nigeria’s first university: green, leafy and historic",
+   "accent": "#8a3b2b",
+   "ground": 5216837,
+   "trees": 90,
+   "features": [],
+   "buildings": [
+    {
+     "name": "Trenchard Hall",
+     "emoji": "🎓",
+     "type": "lecture",
+     "x": -24,
+     "z": -24,
+     "w": 16,
+     "d": 12,
+     "h": 10,
+     "color": 16050898,
+     "roof": 8007458
+    },
+    {
+     "name": "Faculty of Arts",
+     "emoji": "🎨",
+     "type": "lecture",
+     "x": 24,
+     "z": -24,
+     "w": 14,
+     "d": 12,
+     "h": 8,
+     "color": 15193016,
+     "roof": 5913122
+    },
+    {
+     "name": "Tedder Hall",
+     "emoji": "🛏️",
+     "type": "hostel",
+     "x": -26,
+     "z": 22,
+     "w": 16,
+     "d": 12,
+     "h": 10,
+     "color": 15781800,
+     "roof": 6961706
+    },
+    {
+     "name": "Queen Elizabeth II Hall",
+     "emoji": "🛏️",
+     "type": "hostel",
+     "x": 26,
+     "z": 42,
+     "w": 15,
+     "d": 10,
+     "h": 9,
+     "color": 16178368,
+     "roof": 9062954
+    },
+    {
+     "name": "Campus Buttery",
+     "emoji": "🍛",
+     "type": "canteen",
+     "x": 24,
+     "z": 22,
+     "w": 12,
+     "d": 10,
+     "h": 5,
+     "color": 16179322,
+     "roof": 11880479
+    },
+    {
+     "name": "Kenneth Dike Library",
+     "emoji": "📚",
+     "type": "library",
+     "x": 0,
+     "z": -42,
+     "w": 16,
+     "d": 10,
+     "h": 13,
+     "color": 15261904,
+     "roof": 7027242
+    },
+    {
+     "name": "Registry",
+     "emoji": "📋",
+     "type": "registry",
+     "x": -12,
+     "z": 36,
+     "w": 10,
+     "d": 8,
+     "h": 6,
+     "color": 15131350,
+     "roof": 3100538
+    },
+    {
+     "name": "Business Centre",
+     "emoji": "💼",
+     "type": "biz",
+     "x": -26,
+     "z": 42,
+     "w": 12,
+     "d": 10,
+     "h": 5,
+     "color": 14543088,
+     "roof": 3821414
+    },
+    {
+     "name": "Health Centre",
+     "emoji": "🏥",
+     "type": "clinic",
+     "x": -24,
+     "z": -44,
+     "w": 12,
+     "d": 9,
+     "h": 5,
+     "color": 15267054,
+     "roof": 2985839
+    },
+    {
+     "name": "Campus Market",
+     "emoji": "🛒",
+     "type": "shop",
+     "x": 26,
+     "z": -44,
+     "w": 12,
+     "d": 9,
+     "h": 4,
+     "color": 15784386,
+     "roof": 8014378
+    },
+    {
+     "name": "Campus Bookshop",
+     "emoji": "📚",
+     "type": "books",
+     "x": -40,
+     "z": -9,
+     "w": 9,
+     "d": 8,
+     "h": 5,
+     "color": 15982788,
+     "roof": 8010539
+    },
+    {
+     "name": "Campus Bank",
+     "emoji": "🏦",
+     "type": "bank",
+     "x": -40,
+     "z": 9,
+     "w": 9,
+     "d": 8,
+     "h": 5,
+     "color": 14674160,
+     "roof": 2051962
+    },
+    {
+     "name": "Campus Chapel",
+     "emoji": "⛪",
+     "type": "chapel",
+     "x": 46,
+     "z": -18,
+     "w": 10,
+     "d": 8,
+     "h": 7,
+     "color": 15919835,
+     "roof": 3821434
+    },
+    {
+     "name": "Campus Mosque",
+     "emoji": "🕌",
+     "type": "mosque",
+     "x": 46,
+     "z": 20,
+     "w": 10,
+     "d": 8,
+     "h": 7,
+     "color": 16052714,
+     "roof": 2062927
+    }
+   ],
+   "field": {
+    "name": "Sports Centre",
+    "x": 42,
+    "z": 0,
+    "w": 20,
+    "d": 14
+   }
+  },
+  "oau": {
+   "id": "oau",
+   "short": "OAU",
+   "name": "Obafemi Awolowo University",
+   "tagline": "Ile-Ife: a sprawling, scenic campus full of character",
+   "accent": "#c27a1a",
+   "ground": 8038474,
+   "trees": 50,
+   "features": [
+    "amphitheatre"
+   ],
+   "buildings": [
+    {
+     "name": "Hezekiah Oluwasanmi Library",
+     "emoji": "📚",
+     "type": "library",
+     "x": -24,
+     "z": -24,
+     "w": 16,
+     "d": 12,
+     "h": 10,
+     "color": 14997184,
+     "roof": 4872762
+    },
+    {
+     "name": "Faculty of Technology",
+     "emoji": "⚙️",
+     "type": "lecture",
+     "x": 40,
+     "z": -32,
+     "w": 14,
+     "d": 10,
+     "h": 8,
+     "color": 14275784,
+     "roof": 3816006
+    },
+    {
+     "name": "Awolowo Hall",
+     "emoji": "🛏️",
+     "type": "hostel",
+     "x": -26,
+     "z": 22,
+     "w": 16,
+     "d": 12,
+     "h": 10,
+     "color": 15911328,
+     "roof": 8014378
+    },
+    {
+     "name": "Angola Hall",
+     "emoji": "🛏️",
+     "type": "hostel",
+     "x": 26,
+     "z": 42,
+     "w": 14,
+     "d": 10,
+     "h": 9,
+     "color": 15382922,
+     "roof": 6961690
+    },
+    {
+     "name": "Student Union Building",
+     "emoji": "🍛",
+     "type": "canteen",
+     "x": 24,
+     "z": 22,
+     "w": 14,
+     "d": 10,
+     "h": 6,
+     "color": 16179322,
+     "roof": 11880479
+    },
+    {
+     "name": "Oduduwa Hall",
+     "emoji": "🎭",
+     "type": "auditorium",
+     "x": 0,
+     "z": -42,
+     "w": 18,
+     "d": 10,
+     "h": 12,
+     "color": 14993832,
+     "roof": 10111530
+    },
+    {
+     "name": "Registry",
+     "emoji": "📋",
+     "type": "registry",
+     "x": -12,
+     "z": 36,
+     "w": 10,
+     "d": 8,
+     "h": 6,
+     "color": 15131350,
+     "roof": 3100538
+    },
+    {
+     "name": "Business Centre",
+     "emoji": "💼",
+     "type": "biz",
+     "x": -26,
+     "z": 42,
+     "w": 12,
+     "d": 10,
+     "h": 5,
+     "color": 14543088,
+     "roof": 3821414
+    },
+    {
+     "name": "Health Centre",
+     "emoji": "🏥",
+     "type": "clinic",
+     "x": -24,
+     "z": -44,
+     "w": 12,
+     "d": 9,
+     "h": 5,
+     "color": 15267054,
+     "roof": 2985839
+    },
+    {
+     "name": "Campus Market",
+     "emoji": "🛒",
+     "type": "shop",
+     "x": 26,
+     "z": -44,
+     "w": 12,
+     "d": 9,
+     "h": 4,
+     "color": 15784386,
+     "roof": 8014378
+    },
+    {
+     "name": "Campus Bookshop",
+     "emoji": "📚",
+     "type": "books",
+     "x": -40,
+     "z": -9,
+     "w": 9,
+     "d": 8,
+     "h": 5,
+     "color": 15982788,
+     "roof": 8010539
+    },
+    {
+     "name": "Campus Bank",
+     "emoji": "🏦",
+     "type": "bank",
+     "x": -40,
+     "z": 9,
+     "w": 9,
+     "d": 8,
+     "h": 5,
+     "color": 14674160,
+     "roof": 2051962
+    },
+    {
+     "name": "Campus Chapel",
+     "emoji": "⛪",
+     "type": "chapel",
+     "x": 46,
+     "z": -18,
+     "w": 10,
+     "d": 8,
+     "h": 7,
+     "color": 15919835,
+     "roof": 3821434
+    },
+    {
+     "name": "Campus Mosque",
+     "emoji": "🕌",
+     "type": "mosque",
+     "x": 46,
+     "z": 20,
+     "w": 10,
+     "d": 8,
+     "h": 7,
+     "color": 16052714,
+     "roof": 2062927
+    }
+   ],
+   "field": {
+    "name": "Sports Centre",
+    "x": 42,
+    "z": 0,
+    "w": 20,
+    "d": 14
+   },
+   "amphitheatre": {
+    "x": 24,
+    "z": -22
+   }
+  },
+  "home": {
+   "id": "home",
+   "short": "HOME",
+   "name": "Home",
+   "tagline": "Your neighbourhood",
+   "accent": "#0a8f4f",
+   "ground": 9156704,
+   "trees": 24,
+   "features": [],
+   "gate": false,
+   "buildings": [
+    {
+     "name": "Family House",
+     "emoji": "🏠",
+     "type": "home",
+     "x": -26,
+     "z": 22,
+     "w": 14,
+     "d": 10,
+     "h": 6,
+     "color": 15983555,
+     "roof": 9059115
+    },
+    {
+     "name": "Cyber Cafe",
+     "emoji": "🖥️",
+     "type": "cafe",
+     "x": 24,
+     "z": -24,
+     "w": 12,
+     "d": 10,
+     "h": 5,
+     "color": 13624305,
+     "roof": 3100538
+    },
+    {
+     "name": "Mama Put",
+     "emoji": "🍛",
+     "type": "canteen",
+     "x": 24,
+     "z": 22,
+     "w": 12,
+     "d": 10,
+     "h": 5,
+     "color": 16179322,
+     "roof": 11880479
+    },
+    {
+     "name": "Provision Store",
+     "emoji": "🛒",
+     "type": "shop",
+     "x": -24,
+     "z": -24,
+     "w": 10,
+     "d": 8,
+     "h": 5,
+     "color": 15319746,
+     "roof": 6961706
+    },
+    {
+     "name": "Motor Park",
+     "emoji": "🚌",
+     "type": "park",
+     "x": 0,
+     "z": -42,
+     "w": 16,
+     "d": 8,
+     "h": 4,
+     "color": 14275784,
+     "roof": 3816006
+    },
+    {
+     "name": "Chemist",
+     "emoji": "💊",
+     "type": "clinic",
+     "x": 26,
+     "z": 44,
+     "w": 10,
+     "d": 8,
+     "h": 5,
+     "color": 15267054,
+     "roof": 2985839
+    }
+   ]
+  }
+ },
+ "cutoffs": {
+  "unilag": {
+   "medicine": 85.025,
+   "law": 78.225,
+   "engineering": 75.625,
+   "cs": 83.425,
+   "accounting": 75.7,
+   "masscomm": 74.074,
+   "pharmacy": 76.4,
+   "economics": 73.475,
+   "maths": 63.675
+  },
+  "ui": {
+   "medicine": 86,
+   "law": 80,
+   "engineering": 76,
+   "cs": 80,
+   "accounting": 72,
+   "masscomm": 70,
+   "pharmacy": 77,
+   "economics": 72,
+   "maths": 58
+  },
+  "oau": {
+   "medicine": 84,
+   "law": 77,
+   "engineering": 74,
+   "cs": 79,
+   "accounting": 72,
+   "masscomm": 71,
+   "pharmacy": 75,
+   "economics": 70,
+   "maths": 56
+  }
+ },
+ "cutoffSource": {
+  "unilag": "official",
+  "ui": "estimate",
+  "oau": "estimate"
+ },
+ "fees": {
+  "unilag": {
+   "amount": 30000,
+   "lateFee": 2500
+  },
+  "ui": {
+   "amount": 24000,
+   "lateFee": 2000
+  },
+  "oau": {
+   "amount": 27000,
+   "lateFee": 2000
+  }
+ },
+ "towns": [
+  {
+   "id": "lagos",
+   "name": "Lagos",
+   "km": {
+    "unilag": 15,
+    "ui": 130,
+    "oau": 200
+   }
+  },
+  {
+   "id": "ibadan",
+   "name": "Ibadan",
+   "km": {
+    "unilag": 130,
+    "ui": 8,
+    "oau": 90
+   }
+  },
+  {
+   "id": "ife",
+   "name": "Ile-Ife",
+   "km": {
+    "unilag": 200,
+    "ui": 90,
+    "oau": 5
+   }
+  },
+  {
+   "id": "uyo",
+   "name": "Uyo",
+   "km": {
+    "unilag": 780,
+    "ui": 700,
+    "oau": 640
+   }
+  },
+  {
+   "id": "abuja",
+   "name": "Abuja",
+   "km": {
+    "unilag": 760,
+    "ui": 640,
+    "oau": 580
+   }
+  },
+  {
+   "id": "portharcourt",
+   "name": "Port Harcourt",
+   "km": {
+    "unilag": 620,
+    "ui": 560,
+    "oau": 480
+   }
+  },
+  {
+   "id": "kano",
+   "name": "Kano",
+   "km": {
+    "unilag": 1050,
+    "ui": 900,
+    "oau": 800
+   }
+  }
+ ]
+}

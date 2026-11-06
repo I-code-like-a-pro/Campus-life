@@ -4,15 +4,12 @@
  * Fee bills reuse the hostel bills system in housing.js: same list, same reminders, same phone screen.
  */
 import { owed } from './housing.js';
+import { PACKS, PACK_ORDER } from './packs/index.js';
 
 /* ---------------- school fees ---------------- */
 
-// PLACEHOLDER amounts per university (game values, not the real fees of any school). Change them here only.
-export const FEES = {
-  unilag: { amount: 30000, lateFee: 2500 },   // placeholder
-  ui:     { amount: 24000, lateFee: 2000 },   // placeholder
-  oau:    { amount: 27000, lateFee: 2000 }    // placeholder
-};
+// PLACEHOLDER amounts per university (game values, not the real fees of any school). They live in each university pack (src/packs); change them there.
+export const FEES = Object.fromEntries(PACK_ORDER.map(id => [id, { ...PACKS[id].fees }]));
 export const FEE_DUE_OFFSET = 3;              // due on semester day 4 (Thursday): startDay + 3
 export const EXAM_OFFSET_FROM_DUE = 2;        // exams are on Saturday, two days after the due day
 export const INSTALMENT_SHARE = 0.5;          // paying half now clears you to write exams
