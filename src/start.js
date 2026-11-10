@@ -1,5 +1,6 @@
 import { CAMPUSES, CAMPUS_ORDER } from './campuses.js';
-import { COURSES, BACKGROUNDS, CUTOFFS, CUTOFF_SOURCE } from './admissions.js';
+import { COURSES, BACKGROUNDS, CUTOFFS, offeredCourses, cutoffIsEstimate } from './admissions.js';
+import { facultiesOf } from './packs/index.js';
 import { TOWNS } from './towns.js';
 
 import { t } from './i18n.js';
@@ -73,17 +74,29 @@ export function showJambForm(prefill) {
       const pre = prefill?.[i];
       const uni = el('select', {}, ...CAMPUS_ORDER.map(id =>
         el('option', { value: id, textContent: `${CAMPUSES[id].short} · ${CAMPUSES[id].name}` })));
-      const course = el('select', {}, ...COURSES.map(c =>
-        el('option', { value: c.id, textContent: `${c.emoji} ${c.name}` })));
+      const course = el('select', {});
       const hint = el('div', { className: 'hint' });
       uni.value = pre?.uni || CAMPUS_ORDER[i];
-      course.value = pre?.course || COURSES[i === 0 ? 3 : 4].id;
+
+      /** Fills the course list with what the chosen university offers, grouped by faculty when its pack has them. */
+      const fillCourses = (wanted) => {
+        const offered = offeredCourses(uni.value);
+        const option = c => el('option', { value: c.id, textContent: `${c.emoji} ${c.name}` });
+        const faculties = facultiesOf(uni.value);
+        if (faculties) {
+          course.replaceChildren(...faculties.map(f => el('optgroup', { label: f.name },
+            ...f.programmes.map(id => offered.find(c => c.id === id)).filter(Boolean).map(option))));
+        } else course.replaceChildren(...offered.map(option));
+        const prefer = [wanted, i === 0 ? 'cs' : 'accounting', offered[0]?.id];
+        course.value = prefer.find(id => id && offered.some(c => c.id === id));
+      };
+      fillCourses(pre?.course);
 
       const refresh = () => {
-        const note = CUTOFF_SOURCE[uni.value] === 'official' ? 'official 2025/26' : 'game estimate';
+        const note = cutoffIsEstimate(uni.value, course.value) ? 'game estimate' : 'official 2025/26';
         hint.textContent = `Last cut-off: ${CUTOFFS[uni.value][course.value].toFixed(1)} aggregate (${note})`;
       };
-      uni.addEventListener('change', refresh);
+      uni.addEventListener('change', () => { fillCourses(course.value); refresh(); });
       course.addEventListener('change', refresh);
       refresh();
 

@@ -353,6 +353,16 @@ export const QUESTIONS = {
 import { UPPER_QUESTIONS } from './upperlevels.js';
 Object.assign(QUESTIONS, UPPER_QUESTIONS);   // 'dept@level' banks for 200 to 400 level
 
+// Sample programmes (src/programmes.js) borrow questions from related subject banks at every level.
+import { PROGRAMME_LIST, familyBankKeys } from './programmes.js';
+for (const p of PROGRAMME_LIST) {
+  if (p.status !== 'generic') continue;
+  const seen = new Set();   // banks can share a question: keep each question once
+  const pool = familyBankKeys(p.family).flatMap(key => QUESTIONS[key] || []).filter(q => !seen.has(q[0]) && seen.add(q[0]));
+  QUESTIONS[p.id] = pool;
+  for (const level of [2, 3, 4]) QUESTIONS[`${p.id}@${level}`] = pool;
+}
+
 export function shuffle(list) {
   const a = list.slice();
   for (let i = a.length - 1; i > 0; i--) {

@@ -2,6 +2,7 @@ import { showModal } from './modal.js';
 import { DEPTS, buildCourses, bankOf } from './courses.js';
 import { QUESTIONS, shuffle } from './questions.js';
 import { courseOf } from './admissions.js';
+import { isGeneric } from './programmes.js';
 import { semesterHasStrike, strikeDays, lateGraceMinutes, seasonFor } from './eventengine.js';
 import { makeupHold } from './trouble.js';       // group trouble
 import { createAcademicLife, resetSemester, lecturerFacts } from './academic-life.js';
@@ -374,6 +375,7 @@ export function createAcademics({ state, day, minutes, venues, consume, toast, p
       } else if (pick === 'courses') {
         title = '📚 Courses';
         lines = a.courses.map(c => `${c.code} ${c.title}${c.carry ? ' (carryover)' : ''}: prep ${c.knowledge}% · attended ${c.att.ok + c.att.late}/${lectureCount(c.code)} · assignment ${c.assign.done ? 'submitted ✅' : `${c.assign.progress}/2`} · CA ${c.ca == null ? '–' : Math.round(c.ca * 100) + '%'}`);
+        if (isGeneric(state.course)) lines.push('ℹ️ Sample course list: these course titles are placeholders until the real list for this programme has been checked.');
       } else if (pick === 'results') {
         title = '📄 Results';
         const last = a.history[a.history.length - 1];

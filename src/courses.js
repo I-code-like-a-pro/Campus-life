@@ -3,6 +3,7 @@
 // `years` is the length of the degree.
 
 import { TITLES } from './upperlevels.js';
+import { PROGRAMME_LIST, genericFirstYear, genericTitles } from './programmes.js';
 
 export const DEPTS = {
   cs: { prefix: 'CSC', years: 4, courses: [
@@ -42,6 +43,13 @@ export const DEPTS = {
     [['MTH 102', 'Elementary Mathematics II'], ['MTH 104', 'Linear Algebra I'], ['PHY 102', 'General Physics II']]
   ] }
 };
+
+// Generic (sample) programmes from the catalogue: course titles are placeholders until a real list is researched (src/programmes.js).
+for (const p of PROGRAMME_LIST) {
+  if (p.status !== 'generic') continue;
+  DEPTS[p.id] = { prefix: p.prefix, years: p.years, courses: genericFirstYear(p), generic: true };
+  TITLES[p.id] = genericTitles(p);
+}
 
 // General studies course taken in 100 level only (higher levels get a departmental elective instead).
 export const GST = [['GST 111', 'Use of English I'], ['GST 112', 'Use of English II']];

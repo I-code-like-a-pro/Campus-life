@@ -23,6 +23,7 @@ export default {
     cutoffs: { medicine: 86, law: 80, engineering: 76, cs: 80, accounting: 72, masscomm: 70, pharmacy: 77, economics: 72, maths: 58 },
     cutoffSource: 'estimate'
   },
+  offers: ['medicine', 'law', 'engineering', 'cs', 'accounting', 'masscomm', 'pharmacy', 'economics', 'maths'],
   fees: { amount: 24000, lateFee: 2000 },
   travel: { lagos: 130, ibadan: 8, ife: 90, uyo: 700, abuja: 640, portharcourt: 560, kano: 900 },
   provenance: {

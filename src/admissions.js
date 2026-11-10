@@ -7,18 +7,9 @@
 //   what was reported (UI/OAU general minimum 200; Medicine, Law, Pharmacy and Engineering most competitive).
 
 import { PACKS, PACK_ORDER } from './packs/index.js';
+import { PROGRAMME_LIST } from './programmes.js';
 
-export const COURSES = [
-  { id: 'medicine',    name: 'Medicine & Surgery', emoji: '🩺' },
-  { id: 'law',         name: 'Law',                emoji: '⚖️' },
-  { id: 'engineering', name: 'Engineering',        emoji: '⚙️' },
-  { id: 'cs',          name: 'Computer Science',   emoji: '💻' },
-  { id: 'accounting',  name: 'Accounting',         emoji: '📊' },
-  { id: 'masscomm',    name: 'Mass Communication', emoji: '🎙️' },
-  { id: 'pharmacy',    name: 'Pharmacy',           emoji: '💊' },
-  { id: 'economics',   name: 'Economics',          emoji: '📈' },
-  { id: 'maths',       name: 'Mathematics',        emoji: '➗' }
-];
+export const COURSES = PROGRAMME_LIST.map(({ id, name, emoji }) => ({ id, name, emoji }));
 
 export const CUTOFFS = Object.fromEntries(PACK_ORDER.map(id => [id, { ...PACKS[id].admissions.cutoffs }]));
 export const CUTOFF_SOURCE = Object.fromEntries(PACK_ORDER.map(id => [id, PACKS[id].admissions.cutoffSource]));
@@ -49,7 +40,14 @@ export function rollScores(backgroundId, attempt = 1) {
 
 export const aggregate = (jamb, post) => jamb / 8 + post / 2;
 export const courseOf = id => COURSES.find(c => c.id === id);
-export const cutoff = (uni, course) => CUTOFFS[uni][course];
+export const cutoff = (uni, course) => CUTOFFS[uni]?.[course];
+
+/** The programmes a university offers, in catalogue order. */
+export const offeredCourses = uni => COURSES.filter(c => CUTOFFS[uni]?.[c.id] !== undefined);
+
+/** True when the cut-off for this programme is a game estimate rather than a published figure. */
+export const cutoffIsEstimate = (uni, course) =>
+  CUTOFF_SOURCE[uni] !== 'official' || !!PACKS[uni]?.admissions.estimated?.includes(course);
 
 /**
  * Decides the outcome for an aggregate score.
@@ -64,7 +62,7 @@ export function decide(choices, agg) {
   // change of institution / course: everything you qualify for, closest to what you wanted first
   const options = [];
   for (const uni of Object.keys(CUTOFFS)) {
-    for (const c of COURSES) {
+    for (const c of offeredCourses(uni)) {
       if (agg >= cutoff(uni, c.id)) options.push({ uni, course: c.id });
     }
   }

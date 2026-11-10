@@ -6,16 +6,18 @@ Everything specific to one university lives in one **pack** file in `src/packs/`
 |---|---|---|
 | `identity` | short name, full name, tagline, accent colour | `campuses.js` |
 | `campus` | ground colour, trees, features, the university-specific buildings, sports field | `campuses.js` |
-| `admissions` | cut-off per course, and whether they are `official` or an `estimate` | `admissions.js` |
+| `offers` | the programme ids this university offers (see `docs/PROGRAMMES.md`) | `admissions.js`, `start.js` |
+| `admissions` | cut-off for each offered programme, whether they are `official` or an `estimate`, and an `estimated` list of game figures | `admissions.js` |
+| `faculties` (optional) | faculties with their real department names and the programmes in each | `start.js` |
 | `fees` | school fee and late fee | `money.js` |
 | `travel` | road distance in km from each home town | `towns.js` |
-| `provenance` | for each section above: source, confidence, verified, note | the review tools |
+| `provenance` | for each section above (and `faculties` when present): source, confidence, verified, note | the review tools |
 
 The buildings every campus shares (Registry, Business Centre, Health Centre, Market, Bookshop, Bank, Chapel, Mosque) stay in `campuses.js` as templates.
 
 ## Rules (`src/packs/schema.js`)
 - A pack is **data only**. It may set numbers inside the limits in `LIMITS` and use only the building types in `BUILDING_TYPES`. It can never add or change game logic, so results stay comparable between universities.
-- `validatePack(pack, { courseIds, townIds })` returns a list of problems. An empty list means the pack is valid. It checks: building types, sizes, overlaps, the main path, the map edge, a cut-off for every course, a distance from every home town, fee limits, and provenance on every section.
+- `validatePack(pack, { courseIds, townIds })` returns a list of problems. An empty list means the pack is valid. It checks: building types, sizes, overlaps, the main path, the map edge, a cut-off for every offered programme and none for others, faculties that place every offered programme exactly once, a distance from every home town, fee limits, and provenance on every section.
 - Nothing in `schema.js` imports game code, so a generated pack can be checked without starting the game.
 
 ## Provenance

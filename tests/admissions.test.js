@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { aggregate, decide, rollScores, cutoff, COURSES, CUTOFFS } from '../src/admissions.js';
+import { aggregate, decide, rollScores, cutoff, COURSES, CUTOFFS, offeredCourses, cutoffIsEstimate } from '../src/admissions.js';
 
 const choices = [{ uni: 'unilag', course: 'cs' }, { uni: 'ui', course: 'law' }];
 
@@ -25,8 +25,19 @@ describe('admissions', () => {
     const lowest = Math.min(...Object.values(CUTOFFS).flatMap(c => Object.values(c)));
     expect(decide(choices, lowest - 1).kind).toBe('none');
   });
-  it('has a cut-off for every course at every university', () => {
-    for (const uni of Object.keys(CUTOFFS)) for (const c of COURSES) expect(CUTOFFS[uni][c.id]).toBeTypeOf('number');
+  it('has a cut-off for every course a university offers', () => {
+    for (const uni of Object.keys(CUTOFFS)) {
+      expect(offeredCourses(uni).length).toBeGreaterThan(0);
+      for (const c of offeredCourses(uni)) expect(CUTOFFS[uni][c.id]).toBeTypeOf('number');
+    }
+    expect(offeredCourses('ui')).toHaveLength(9);
+    expect(offeredCourses('unilag').length).toBeGreaterThan(9);
+    expect(cutoff('ui', 'nursing')).toBeUndefined();
+  });
+  it('says which cut-offs are game estimates', () => {
+    expect(cutoffIsEstimate('ui', 'law')).toBe(true);
+    expect(cutoffIsEstimate('unilag', 'law')).toBe(false);
+    expect(cutoffIsEstimate('unilag', 'nursing')).toBe(true);
   });
   it('rolls scores in range and improves on retakes on average', () => {
     const avg = n => Array.from({ length: 400 }, () => rollScores('average', n).jamb).reduce((a, b) => a + b) / 400;

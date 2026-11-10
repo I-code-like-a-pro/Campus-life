@@ -85,13 +85,47 @@ export function validatePack(pack, { courseIds = [], townIds = [] } = {}) {
       && Math.abs(a.x - b.x) < (a.w + b.w) / 2 + LIMITS.gap && Math.abs(a.z - b.z) < (a.d + b.d) / 2 + LIMITS.gap) bad('campus.buildings', `"${a.name}" overlaps "${b.name}"`);
   }
 
+  // what the university offers: every offered programme needs a cut-off, and nothing else may have one
+  const offers = Array.isArray(pack.offers) ? pack.offers : [];
+  if (!offers.length) bad('offers', 'a list of programme ids is required');
+  const seenOffer = new Set();
+  for (const o of offers) {
+    if (courseIds.length && !courseIds.includes(o)) bad(`offers.${o}`, 'unknown programme');
+    if (seenOffer.has(o)) bad(`offers.${o}`, 'listed twice');
+    seenOffer.add(o);
+  }
   const ad = pack.admissions || {};
   const cuts = ad.cutoffs || {};
-  for (const course of courseIds) {
+  for (const course of offers) {
     if (!inRange(cuts[course], [LIMITS.cutoff.min, LIMITS.cutoff.max])) bad(`admissions.cutoffs.${course}`, `number ${LIMITS.cutoff.min} to ${LIMITS.cutoff.max} is required`);
   }
-  for (const k of Object.keys(cuts)) if (courseIds.length && !courseIds.includes(k)) bad(`admissions.cutoffs.${k}`, 'unknown course');
+  for (const k of Object.keys(cuts)) if (!seenOffer.has(k)) bad(`admissions.cutoffs.${k}`, 'a cut-off for a programme this university does not offer');
   if (!['official', 'estimate'].includes(ad.cutoffSource)) bad('admissions.cutoffSource', 'must be "official" or "estimate"');
+  if (ad.estimated !== undefined) {
+    if (!Array.isArray(ad.estimated) || ad.estimated.some(e => !seenOffer.has(e))) bad('admissions.estimated', 'must list offered programme ids');
+  }
+
+  // faculties (optional): every offered programme sits in exactly one faculty, and every faculty has a playable programme
+  if (pack.faculties !== undefined) {
+    const placed = new Set(), facIds = new Set();
+    if (!Array.isArray(pack.faculties) || !pack.faculties.length) bad('faculties', 'a non-empty list is required when present');
+    (Array.isArray(pack.faculties) ? pack.faculties : []).forEach((f, i) => {
+      const at = `faculties[${i}]`;
+      if (!/^[a-z][a-z0-9-]{1,60}$/.test(f.id || '')) bad(`${at}.id`, 'lowercase letters, digits and hyphens');
+      else if (facIds.has(f.id)) bad(`${at}.id`, `duplicate faculty "${f.id}"`);
+      else facIds.add(f.id);
+      if (typeof f.name !== 'string' || !f.name.trim()) bad(`${at}.name`, 'text is required');
+      if (!Array.isArray(f.departments) || !f.departments.length || f.departments.some(d => typeof d !== 'string' || !d.trim())) bad(`${at}.departments`, 'a list of department names is required');
+      if (!Array.isArray(f.programmes) || !f.programmes.length) bad(`${at}.programmes`, 'every faculty needs at least one playable programme');
+      for (const pr of Array.isArray(f.programmes) ? f.programmes : []) {
+        if (!seenOffer.has(pr)) bad(`${at}.programmes`, `"${pr}" is not offered by this university`);
+        else if (placed.has(pr)) bad(`${at}.programmes`, `"${pr}" is in more than one faculty`);
+        else placed.add(pr);
+      }
+    });
+    for (const o of offers) if (!placed.has(o)) bad('faculties', `programme "${o}" is offered but not in any faculty`);
+    if (!pack.provenance?.faculties) bad('provenance.faculties', 'missing: the faculty structure must say where it came from');
+  }
 
   const fees = pack.fees || {};
   if (!inRange(fees.amount, [LIMITS.fee.min, LIMITS.fee.max])) bad('fees.amount', `${LIMITS.fee.min} to ${LIMITS.fee.max}`);
@@ -101,7 +135,7 @@ export function validatePack(pack, { courseIds = [], townIds = [] } = {}) {
   for (const town of townIds) if (!inRange(travel[town], [LIMITS.km.min, LIMITS.km.max])) bad(`travel.${town}`, `kilometres ${LIMITS.km.min} to ${LIMITS.km.max} are required`);
 
   const prov = pack.provenance || {};
-  for (const s of PROVENANCE_SECTIONS) {
+  for (const s of [...PROVENANCE_SECTIONS, ...(pack.faculties ? ['faculties'] : [])]) {
     const p = prov[s];
     if (!p) { bad(`provenance.${s}`, 'missing: every section must say where its facts came from'); continue; }
     if (typeof p.source !== 'string' || !p.source) bad(`provenance.${s}.source`, 'required');
@@ -114,6 +148,6 @@ export function validatePack(pack, { courseIds = [], townIds = [] } = {}) {
 /** How much of a pack a human has verified (0 to 1), for the review-coverage target. */
 export function verifiedShare(pack) {
   const prov = pack?.provenance || {};
-  const rows = PROVENANCE_SECTIONS.map(s => prov[s]).filter(Boolean);
+  const rows = [...PROVENANCE_SECTIONS, 'faculties'].map(s => prov[s]).filter(Boolean);
   return rows.length ? rows.filter(r => r.verified).length / rows.length : 0;
 }

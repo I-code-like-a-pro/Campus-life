@@ -17,7 +17,11 @@ describe('the pack refactor changed nothing', () => {
     expect(clone(CAMPUSES)).toEqual(before.campuses);
   });
   it('keeps cut-offs, fees and travel distances identical', () => {
-    expect(clone(CUTOFFS)).toEqual(before.cutoffs);
+    // UNILAG now also offers new programmes; the original nine are unchanged, and UI and OAU are identical
+    const nine = Object.keys(before.cutoffs.unilag);
+    expect(Object.fromEntries(nine.map(k => [k, CUTOFFS.unilag[k]]))).toEqual(before.cutoffs.unilag);
+    expect(clone(CUTOFFS.ui)).toEqual(before.cutoffs.ui);
+    expect(clone(CUTOFFS.oau)).toEqual(before.cutoffs.oau);
     expect(clone(CUTOFF_SOURCE)).toEqual(before.cutoffSource);
     expect(clone(FEES)).toEqual(before.fees);
     expect(TOWNS.map(t => ({ id: t.id, name: t.name, km: t.km }))).toEqual(before.towns);
@@ -96,7 +100,7 @@ describe('the validator', () => {
   it('measures how much of a pack a human has verified', () => {
     const p = fresh();
     p.provenance.identity.verified = true; p.provenance.travel.verified = true;
-    expect(verifiedShare(p)).toBeCloseTo(0.4);
+    expect(verifiedShare(p)).toBeCloseTo(2 / 6);      // the faculty structure counts too, so six sections
     expect(verifiedShare({})).toBe(0);
   });
 });

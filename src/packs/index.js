@@ -9,3 +9,5 @@ import oau from './oau.js';
 export const PACKS = { unilag, ui, oau };
 export const PACK_ORDER = ['unilag', 'ui', 'oau'];
 export const packOf = id => PACKS[id] || null;
+/** The faculties of a university with the programmes in each, or null when its pack has no faculty structure yet. */
+export const facultiesOf = id => PACKS[id]?.faculties || null;
