@@ -14,3 +14,7 @@ content-review.csv
 # installed third-party skills (local tooling, not part of the game)
 .agents/
 .claude/skills/
+
+# the shared STATE.md write lock (tools/state.js) and the skills lock file from locally installed skills
+.state.lock/
+skills-lock.json
