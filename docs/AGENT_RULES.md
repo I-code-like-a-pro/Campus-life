@@ -1,15 +1,15 @@
 # Rules for every agent working on Campus Life
 
-Read this file and `docs/FULL_SCHOOL_PLAN.md` before you start. You work in your own git worktree on your own branch.
+Read `AGENTS.md` (project rules; it wins if anything here disagrees), this file and `docs/FULL_SCHOOL_PLAN.md` before you start. You work in your own git worktree on your own branch.
 
 ## Commits
 - **Commit after every change**, as soon as a coherent edit works and tests pass. Small commits with clear messages. Do not wait until the end.
 - End every commit message with the line `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`.
-- **Do not push and do not merge.** The lead merges your branch and pushes.
+- **Do not push and do not merge.** The lead pushes your branch and opens a draft pull request; nobody merges to `main` without human review.
 - Never commit secrets, `.env` files, or the `.agents/` or `.claude/` tooling folders.
 
 ## Product rules
-- Standard English only. No Pidgin (NEPA, harmattan, ASUU and jollof are fine).
+- Language (see `AGENTS.md` section 5): standard English is the default and is **required** for menus, the portal, clearance, fees, results, hearings, legal pages and every researched fact. Nigerian Pidgin and campus slang are **also accepted** in informal NPC dialogue, banter and flavour text, but never carry a factual claim, always teen-safe and kind, short and consistently spelled.
 - Suitable for teenagers: nothing sexual, no graphic violence, no pressure or harassment.
 - Mobile first: check 375x812, 320x568 and 667x375 (no overlap, tap targets at least 44px, dialogs fit or scroll).
 - Characters keep the original blocky look. The game ends at graduation.
@@ -32,6 +32,10 @@ Read this file and `docs/FULL_SCHOOL_PLAN.md` before you start. You work in your
 - Test command: `npx vitest run --exclude "**/.claude/**" --exclude "**/node_modules/**"`
 - Build check: `npx vite build`
 - Document what you build in `docs/` (one file named for your area).
+
+## STATE.md (shared hand-off log)
+- Never edit `STATE.md` freehand. Use `node tools/state.js check`, then `begin <your-agent-name>` (takes the lock and prints the whole file: read it all), then `end <your-agent-name> --status "..." --note "..."`. If someone else is writing, wait and try again.
+- The live file and lock are in the main checkout, shared by all worktrees. Never commit `STATE.md`. Save state at milestones.
 
 ## Tooling notes
 - For long scripts or multi-line edits, create the file with the Write tool and run it. Long Bash heredocs break.
